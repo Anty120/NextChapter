@@ -5,6 +5,13 @@ research, durable team decisions, and the Doppler secrets policy. Read
 [COLLABORATION.md](COLLABORATION.md) before starting work. The shared board is
 https://github.com/users/Anty120/projects/2 and issues live in Anty120/NextChapter.
 
+- Treat external project facts as stale until rechecked. Use Exa search/fetch for
+  web sources; record URL, check time, and claim status in SOURCE_VERIFICATION.md.
+  A fetch can still be cached. Preserve source conflicts and failed fetches; do
+  not present old prize lists, provider offers, or prior chat claims as current.
+- Keep provider capabilities separate from confirmed event prizes. Auth0 is not
+  listed in the refreshed event sources; do not claim an Auth0 prize without new
+  primary organizer evidence. Repository/runtime success requires separate readback.
 - Refresh the board and reconcile existing issues before creating tasks.
 - Claim a Ready issue using `python3 scripts/kanban.py claim NUMBER --agent UNIQUE_SESSION`
   before editing. Stop if the claim fails. Save the returned claim SHA.
