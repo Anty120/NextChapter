@@ -1,2 +1,18 @@
 {% extends 'catalog/base.html' %}{% block title %}Log in · NextChapter{% endblock %}
-{% block content %}<section class="paper auth"><p class="eyebrow">Your place is waiting</p><h1>Welcome back.</h1><p>Save your chapter. Join the conversation.</p><form class="stack" method="post">{% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ next }}"><button class="button" type="submit">Log in →</button></form><p>New here? <a href="{% url 'signup' %}">Create an account</a></p></section>{% endblock %}
+{% block content %}
+<section class="paper auth"><p class="eyebrow">Your place is waiting</p><h1>Welcome back.</h1><p>Save your chapter. Join the conversation.</p>
+<form class="stack" method="post">
+{% csrf_token %}
+{% if form.errors %}<div id="login-errors" class="error" role="alert">
+{% if form.non_field_errors %}{{ form.non_field_errors }}{% endif %}
+{% for field in form %}{% for error in field.errors %}<p>{{ field.label }}: {{ error }}</p>{% endfor %}{% endfor %}
+<p>Check your username and password, then try logging in again.</p>
+</div>{% endif %}
+{% for field in form %}
+<p>{{ field.label_tag }}
+<input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}"{% if field.name == 'username' %} value="{{ field.value|default_if_none:'' }}" maxlength="150" autocomplete="username" autofocus{% else %} autocomplete="current-password"{% endif %}{% if field.field.required %} required{% endif %}{% if field.errors or form.non_field_errors %} aria-invalid="true" aria-describedby="login-errors"{% endif %}>
+</p>
+{% endfor %}
+<input type="hidden" name="next" value="{{ next }}"><button class="button" type="submit">Log in →</button>
+</form><p>New here? <a href="{% url 'signup' %}">Create an account</a></p></section>
+{% endblock %}
