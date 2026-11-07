@@ -28,6 +28,13 @@ tokens or Cloudflare credentials. Read `AGENTS.md` at the start of each session.
 ## Take one task
 
 1. Refresh the board, read the issue and its dependencies, and choose a **Ready** card.
+   Use [AGENT_QUEUE.md](AGENT_QUEUE.md) for the first independent assignments and
+   [API_CONTRACT.md](API_CONTRACT.md) for the current Django routes/data shapes.
+   The issue must contain exactly one plain line `Depends-on: none` or, for
+   completed prerequisites, `Depends-on: #12, #13`. Referenced issues must be
+   closed as completed. Record edit scope, verification, and next owner too.
+   The helper rejects missing declarations and non-Ready/unresolved tasks before
+   creating a reservation. An API/board-access failure stops the claim.
 2. Reserve it before editing:
 
    ```sh
@@ -63,8 +70,10 @@ Use **Blocked** when another person or dependency must act, or **Ready** when yo
 are returning unfinished work that another agent can continue. Always name the
 next actor, remaining work, work branch/commit, and relevant evidence. The helper
 updates the card, posts the handoff, and deletes only the matching reservation.
-A reviewer must reserve the task before changing code, then return it to Review
-or finish it. Reading a PR and leaving a review does not require an editing claim.
+A reviewer must reserve the task before changing code. First have the coordinator
+return the card to Ready with a bounded follow-up and resolved dependencies, then
+claim it and eventually return it to Review or finish it. Reading a PR and leaving
+a review does not require an editing claim.
 
 Claims do not expire automatically. For long work, post a progress comment at
 least every 30 minutes. A quiet agent may still be editing: never delete or take
