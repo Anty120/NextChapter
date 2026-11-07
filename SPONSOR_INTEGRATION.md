@@ -1,7 +1,8 @@
 # Sponsor integration readiness
 
-**Exa refresh:** 2026-11-07 22:24 UTC. Repository state checked at
-`57fecf5`. Read [SOURCE_VERIFICATION.md](SOURCE_VERIFICATION.md): external claims are
+**External-source Exa refresh:** 2026-11-07 22:24 UTC. Repository claims below
+were rechecked on November 7 against main
+`6d915f2e6198bf6d86b177e5a2a086748ac659d7`; this is not a new external-source refresh. Read [SOURCE_VERIFICATION.md](SOURCE_VERIFICATION.md): external claims are
 stale until rechecked, and a successful fetch is not proof of uncached content.
 
 **Correction:** Auth0 is not on the refreshed Devpost/MLH prize lists. Its technical
@@ -16,31 +17,54 @@ language practice through media and community, without lessons, quizzes, formal
 grammar instruction, or mandatory assessments.
 
 The repository has Django 6.1.3, WhiteNoise, environment-based production settings,
-health/readiness endpoints, and a CI workflow. Current main CI is failing because
-dependency hashes were removed; repair is tracked in #34. Django's built-in auth, sessions, and
-admin are installed. There are no project-defined catalog/member/community models,
-product login flow, or product sponsor SDKs in the checked main tree. A React/Vite
-starter frontend now exists but is not connected to the Django API.
+health/readiness endpoints, and a CI workflow. [Main CI passed for the checked commit](https://github.com/Anty120/NextChapter/actions/runs/42424700326).
+[PR #35](https://github.com/Anty120/NextChapter/pull/35) restored dependency hashes;
+[#34](https://github.com/Anty120/NextChapter/issues/34) covers maintenance folded into #4: restoration of
+the missing direct-dependency input and repeatable lock regeneration. CI is green.
 
-An earlier Cloudflare readback found D1 reachable with zero tables and no Worker
-named `nextchapter`; this is a historical snapshot, not a newly verified account state. Django still uses local SQLite. Doppler is selected,
-but team project/config access and deployed injection have not been verified.
-Do not confuse these foundations with a working hosted product.
+PR #35 also added `MediaItem`, `Club`, `Membership`, `Comment`, `ReadingProgress`,
+and `Report` in [catalog/models.py](catalog/models.py), the initial migration,
+and [admin registration](catalog/admin.py). Django user accounts provide signup,
+login/logout, and authenticated actions through [catalog/urls.py](catalog/urls.py)
+and [catalog/views.py](catalog/views.py). The real demo UI is rendered by
+[catalog/templates/](catalog/templates/); [frontend/src/App.tsx](frontend/src/App.tsx)
+still renders the Vite starter and is not connected to a demo API. These local
+features do not prove sponsor integration or deployment.
+
+Kevin selected **Vercel for Django + Turso hosted libSQL** on November 7, 2026.
+D1 is not used. The checked Django settings still use local SQLite; Turso/Django
+compatibility and deployment are untested and being implemented in #4.
+Doppler project `hack-coms-hackathon` contains blank credential placeholders that
+Kevin is filling in; teammate access and runtime injection still need verification.
+A hosting choice and placeholder names do not establish a working hosted product.
 
 ## What must be agreed first
 
 | Decision or prerequisite | Why it matters | Existing owner/task |
 | --- | --- | --- |
-| Final audience and smallest demo journey | Gemini eligibility and which integrations help the product depend on this. | Kevin/Anthony; #5, #10, #27 |
-| Django hosting versus a Worker runtime; one primary database | SDK compatibility, account storage, migrations, and deployment commands differ. Local SQLite is not the shared deployed database. | Kevin/Anthony; #3, then #4 |
-| Catalog records with reusable media and attribution | AI should consume permitted inputs and refer to real media, not invent availability or licensing. | Catalog/content owner; #12, #26 |
-| Stable local member identity and ownership rules | Login must connect to profiles, club membership, posts, private history, and moderation permissions. | Accounts/community owners; #11, #18, #21, #25 |
+| Gemini launch regions, permitted inputs, and current provider/API terms | Kevin closed #33 with an adults-only (18+) hackathon audience; remaining implementation checks do not establish full eligibility. | Gemini implementation owner; Kevin/Anthony |
+| Vercel Django + Turso compatibility | The host/database are selected, but Django/libSQL compatibility, migrations and durable storage must be demonstrated. D1 is not used. | Infrastructure owner; #4 |
+| Permitted catalog inputs and attribution | Catalog models and demo seed exist; rights and publication limits still need review before provider use. | Catalog/content owner; #12, #26 |
+| Broader member and moderation rules | Django accounts, memberships, comments, private positions, and reports exist; profiles, blocking, and the broader backlog remain. | Accounts/community owners; #11, #18, #21, #25 |
 | Doppler project/configs and runtime injection | A key on one laptop does not configure the deployed application or another teammate. | Secrets owner; #8 |
 
 These do not all block parallel work. Entire can be evaluated independently of
-hosting; provider wrappers and mocked tests can be designed while the product
-models are built. Production login, persistent user actions, and deployment still
-need the chosen storage/runtime path.
+hosting; provider wrappers and mocked tests can be designed independently.
+The product models already support the local demo. Production persistence and deployment still
+need the selected Vercel/Turso path to be implemented and verified.
+
+## Chosen categories and remaining gates
+
+**Kevin's decision, November 7, 2026:** the sponsor categories are **Gemini and
+Entire**. Keep the existing Inclusivity/theme direction where the working demo
+supports it; this decision adds no third sponsor and is not a category submission.
+Kevin closed [#33](https://github.com/Anty120/NextChapter/issues/33) on November 7:
+NextChapter is adults-only (18+) for the hackathon, assuming the team, judges and
+demo users are 18+ at this college hackathon. Audience no longer blocks Gemini.
+Launch regions, permitted inputs, and current provider/API terms remain
+implementation checks; full eligibility is not proven. Entire still needs verified
+capture evidence. Vercel (Django) + Turso (hosted libSQL) is selected; #4 owns the
+untested compatibility and deployment work.
 
 ## Comparison
 
@@ -52,8 +76,8 @@ measured durations or official challenge thresholds.
 | **Entire** | Development hooks/context tools and capture policy; no application/database replacement. | Lowest disruption. Evaluate Sessions + Graph first. |
 | **Gemini** | One bounded server-side feature, provider wrapper, error handling, quota controls, UI state, and a secret. | Good conditional fit after audience/data-use checks. |
 | **Auth0 (optional tool)** | Member login/callback/logout, local identity mapping, sessions, and permission checks. | Technically useful; no Auth0 challenge is listed in the refreshed event pages. |
-| **Vultr** | Production server/process, HTTPS, runtime secrets, durable database, and deploy automation. | Consider only as the actual hosting decision. |
-| **Tiger Data** | PostgreSQL driver/settings/migrations/testing; replaces the D1 direction or adds a second owned database. | Consider with a deliberate Postgres/analytics decision. |
+| **Vultr** | Production server/process, HTTPS, runtime secrets, durable database, and deploy automation. | Unselected; replacing Vercel requires a new owner decision. |
+| **Tiger Data** | PostgreSQL driver/settings/migrations/testing; would replace Turso or add a second owned database. | Consider with a deliberate Postgres/analytics decision. |
 | **GoDaddy Registry** | Qualifying domain registration plus DNS/TLS and updated application/auth URLs. | Add after a deployment works. |
 | **Solana** | Wallet/network/transaction workflow and a real product reason for it. | Defer; no on-chain requirement is established. |
 
@@ -62,7 +86,8 @@ and [MLH list](https://www.mlh.com/events/hack-coms-0e/prizes) corroborate six s
 sponsor challenges. Auth0 is not among them. MLH also lists a separate SpaceXSI
 raffle; its entry/cap treatment needs confirmation. All demonstrations below are **our proposed engineering evidence**, not
 published minimums or guarantees of eligibility. Sponsor-logo names were not reverified by Exa text extraction. Doppler and
-Cloudflare are supporting infrastructure, not listed prize categories.
+the selected Vercel/Turso stack support the project; this does not make them
+additional listed prize categories.
 
 ## Entire: verify the committed setup and capture boundaries
 
@@ -87,7 +112,7 @@ sessions, call a model, and install a watcher, so decide those separately.
 [Privacy](https://github.com/entireio/cli#security--privacy),
 [Brain](https://github.com/entireio/entire-brain).
 
-Suggested implementation scope if selected: tool/version setup, reviewed hooks,
+Remaining Entire verification scope: tool/version setup, reviewed hooks,
 a small project session, Graph activation, and sanitized demo evidence. No backend
 feature or hosting rewrite is needed. Do not claim unmeasured token/time savings.
 
@@ -97,10 +122,12 @@ The current terms require developers to be 18+ and exclude API clients directed
 toward or likely accessed by under-18s. Unpaid services must not receive sensitive,
 confidential, or personal information; serving users in the EEA, Switzerland, or
 UK requires Paid Services. Confirm the intended audience, regions, and permitted
-inputs before selection. Event participation rules do not settle product/API
+inputs before implementation. Event participation rules do not settle product/API
 eligibility. Do not assume a warning or checkbox resolves an incompatible audience.
 [Terms rechecked through Exa](https://aistudio.google.com/docs/terms). The audience
-decision remains deferred in #33; it was not answered by this refresh.
+decision in #33 is resolved: adults-only (18+) for the hackathon. Audience no
+longer blocks Gemini; regions, inputs and current provider/API terms still need
+implementation-time verification, so full eligibility is not established.
 
 A product-aligned first feature is: **authorized catalog metadata → suggested
 discovery tags or a short context summary → human confirmation**. Validate results
@@ -108,13 +135,14 @@ against supplied records and allowed values. Avoid fabricated media, licensing
 claims, lessons, quizzes, or certified proficiency claims. Do not send private
 profiles, discussions, history, or moderation reports through an unpaid demo.
 
-Proposed changes if selected:
+Proposed Gemini implementation with the audience decision resolved:
 
 - Add a small provider module behind the catalog service, a route, and frontend
   loading/success/error states. Suggested paths are illustrative; domain owners
   should agree on app/module boundaries before editing shared files.
 - For ordinary Django, add and lock the official `google-genai` client in
-  `requirements.in`/`requirements.txt`, or use its documented REST API. Keep model
+  `requirements.txt` once #4/#34 restores the missing `requirements.in` regeneration
+  input, or use its documented REST API. Keep model
   selection in configuration. For a Worker runtime, prove the chosen HTTP client
   and dependencies there before accepting the integration.
 - Inject `GEMINI_API_KEY` through Doppler into the backend. Add timeouts, bounded
@@ -160,24 +188,24 @@ mapped after re-login, two users cannot access each other's private records, and
 invalid callback state is rejected. This fits #11 and the community/privacy tasks;
 it must not create a second competing member account system.
 
-## Infrastructure candidates: decide before changing the stack
+## Unselected infrastructure alternatives: research only
 
-**Vultr:** if selected as the host, add a production application server such as
+**Vultr:** not selected; replacing Vercel would require a new owner decision. If chosen, add a production application server such as
 Gunicorn, process/container startup, HTTPS/proxy configuration, Doppler runtime
 injection, deployment credentials, and CI-gated/serialized deployment from `main`.
 Choose a durable database and migration owner. A VM does not automatically connect
-Django to D1 or establish database recovery. Prove the actual demo, commit identity,
+Django to the selected database or establish database recovery. Prove the actual demo, commit identity,
 health/readiness, and retained data after redeployment. Verify the account's actual
 credit/billing offer; the event promotion does not establish it.
 [Vultr Python deployment pattern](https://docs.vultr.com/how-to-deploy-a-fastapi-application-with-gunicorn-and-nginx-on-ubuntu-2404).
 That source illustrates app-server/proxy setup; it is not a Django compatibility test.
 
 **Tiger Data:** its service is PostgreSQL, so use it as the agreed main database
-instead of D1, or justify a separately owned analytics database. For Django, add a
+instead of the selected Turso database, or justify a separately owned analytics database. For Django, add a
 compatible driver, environment-based database configuration/TLS, Doppler connection
 credentials, migrations, and Postgres-backed CI. Analytics additionally needs an
 owned event schema and useful queries. An unused database is weak demo evidence;
-D1 plus Tiger would add synchronization/ownership work. Verify free/beta plan
+Turso plus Tiger would add synchronization/ownership work. Verify free/beta plan
 limits and account terms before provisioning.
 [Create service](https://www.tigerdata.com/docs/get-started/quickstart/create-service),
 [connection details](https://www.tigerdata.com/docs/integrate/find-connection-details).
@@ -200,25 +228,26 @@ confirm its acceptability for the challenge. [Frontend](https://solana.com/docs/
 
 ## Suggested order and handoff
 
-1. Kevin/Anthony settle the audience, smallest demo, runtime/database path, and
-   category slots. The event permits at most three categories; preserve the
+1. Use the smallest demo agreed in #10 and merged in #35 (see [DEMO.md](DEMO.md)).
+   Kevin resolved #33 with the adults-only hackathon audience and chose Vercel +
+   Turso; implementation/compatibility remains in #4. Gemini + Entire are the chosen sponsor categories. The event permits at most three categories; preserve the
    [published deadline and conflicts](HACKATHON.md#event-requirements).
 2. The secrets owner completes #8; catalog/content and accounts owners agree on
    record/identity contracts. Give each task its own owner and migration boundary.
-3. Evaluate Entire alongside actual development. Build one useful sponsor-backed
+3. Verify Entire capture evidence alongside actual development. Build one useful sponsor-backed
    product flow, rather than spreading work across every available provider.
-4. After a provider is selected, create its bounded implementation issue using the
-   relevant prerequisites and observable proof above. Resolve the final audience
-   decision before accepting Gemini as that feature.
+4. Create bounded implementation tasks for the chosen categories using the
+   prerequisites and observable proof above. Verify regions, permitted inputs and current provider/API terms during Gemini implementation.
 5. Verify one real staging integration after mock-based tests, then the complete
    demo in #27. CI success and account creation alone do not establish integration.
 
-Our recommendation remains **Entire + Inclusivity**, with **Gemini conditional on
-its audience/data terms and a useful media feature**. Auth0 remains a possible
-login tool, with no confirmed event prize; it is not our third-category recommendation.
-Vultr/Tiger should follow an intentional architecture decision. These are research
-recommendations; no categories or providers were selected by this document.
+The owner decision is **Gemini + Entire**, retaining the existing Inclusivity/theme
+direction where demonstrated. #33 is closed with the adults-only hackathon
+audience; remaining Gemini implementation checks and Entire capture evidence
+still need verification. Auth0 is an optional login tool,
+with no confirmed event prize. Vultr/Tiger are unselected research alternatives. Hosting is Vercel + Turso;
+no working deployment or category submission is recorded here.
 
 This audit did not install SDKs, read secret values, create accounts/resources,
 change application code, enable captures/watchers, or submit anything. The remaining
-owner decisions and current status belong on spike #28 and its linked issues.
+implementation gates and current status belong on spike #28 and its linked issues.

@@ -2,35 +2,26 @@
 
 ## Current state and hosting decision
 
-CI and production configuration are prepared in this branch. No hosting service,
+CI and production configuration are committed on main. The checked base
+`6d915f2e6198bf6d86b177e5a2a086748ac659d7`
+[passed CI](https://github.com/Anty120/NextChapter/actions/runs/42424700326). No hosting service,
 production database, deployment credential, or automatic deploy has been created
 or enabled by this work. The actual GitHub run and hosting readbacks must be
 recorded on [DevOps issue #29](https://github.com/Anty120/NextChapter/issues/29).
-Hosting/database choice remains in [#3](https://github.com/Anty120/NextChapter/issues/3).
 
-The current product kanban requires durable shared data. The demo in #27 includes
-joining a club, discussion, reporting/blocking, and resuming reading/playback.
-Profiles, memberships, posts, reports, and saved positions must survive a deploy.
-A continuously running server is not itself required: request handlers may run
-on demand, with a separate persistent database. A fresh SQLite file on an ephemeral
-web-service filesystem cannot serve as the shared deployed database.
+**Kevin's decision, November 7, 2026:** host Django on **Vercel**, with **Turso
+hosted libSQL** for shared data. D1 is not used. Turso + Django compatibility is
+untested and being implemented in [#4](https://github.com/Anty120/NextChapter/issues/4).
+The checked settings still use local SQLite; this document records the choice,
+not a working adapter or deployment.
 
-Recommendation pending Kevin's decision: a standard Django service on Render
-with Postgres. This changes the earlier D1 direction; do not provision or switch
-databases before that decision. Render supports deploying `main` after its CI
-checks pass, but requires an authorized Git provider connection. A public repository
-URL alone does not enable native auto-deploy. See
-[Render deployments](https://render.com/docs/deploys) and
-[Render Django](https://render.com/docs/deploy-django).
-
-Keeping D1 instead points to Python Workers with the WSGI `django-cf` backend.
-Its current documentation says production requires a paid Workers plan and the
-backend does not roll back transactions. Cloudflare's D1 Django example uses SQL
-migrations through Wrangler rather than assuming `manage.py migrate` works.
-Confirm runtime/package compatibility and schema ownership before implementing
-that path. See [Cloudflare Django](https://developers.cloudflare.com/workers/languages/python/packages/django/),
-[adapter limitations](https://github.com/cloudflare/workers-py/tree/main/packages/django-cf),
-and [D1 Django example](https://github.com/cloudflare/python-workers-examples/tree/main/django-todo-d1).
+The demo in #27 includes joining a club, discussion, reporting for staff review,
+and saving reading/playback positions. [DEMO.md](DEMO.md) explicitly defers user
+blocking; [AGENT_QUEUE.md](AGENT_QUEUE.md) also places profiles outside the demo.
+Accounts, memberships, comments, reports, and saved positions must survive a
+deploy. An ephemeral SQLite file is insufficient for shared deployed storage.
+The #4 implementation must verify the Django/libSQL adapter, migrations,
+transactions, runtime dependencies and persistence on the selected platform.
 
 ## Reproducible local and CI setup
 
@@ -46,9 +37,13 @@ python manage.py collectstatic --noinput
 python manage.py test
 ```
 
-`requirements.in` lists direct dependencies. Regenerate `requirements.txt` with
+`requirements.txt` contains the hashes restored by #35 and installs with the CI
+command above. `requirements.in` is currently absent. [Issues #4](https://github.com/Anty120/NextChapter/issues/4) and
+[#34](https://github.com/Anty120/NextChapter/issues/34) track restoring that direct-dependency input and verifying a repeatable lock
+regeneration command; #34 maintenance is folded into #4 and does not block current CI. The previously documented
 `uv pip compile --python-version 3.12 --generate-hashes requirements.in -o requirements.txt`
-when changing them. CI installs the lock, not whatever versions are newest.
+command cannot run from this checkout until the input is restored and verified.
+Do not remove `--require-hashes`; CI installs the committed lock.
 
 `.github/workflows/ci.yml` checks pull requests targeting `main` and pushes to
 `main`. Tests use an isolated temporary SQLite database and a public test-only
@@ -60,7 +55,9 @@ cancelled; the eventual deployment must have its own serialization policy.
 ## Production configuration contract
 
 Shared secret values belong in Doppler; see #8. Django reads environment variables.
-This does not mean a Doppler project/config or deployment sync already exists.
+Kevin identified Doppler project `hack-coms-hackathon`, with blank credential
+placeholders he is filling in. Config/access and deployment injection still need
+verification; placeholders do not establish usable credentials.
 
 | Variable | Purpose |
 | --- | --- |
@@ -79,18 +76,16 @@ password reset or other email flows must not be claimed working. Configure
 and `DJANGO_EMAIL_PASSWORD` through Doppler before using them. Development keeps
 the console mailer, and tests do not send real email.
 
-Doppler injects values into a process or syncs them to a provider's runtime secret
-store. Fetching values during a build does not automatically configure runtime
-secrets. For Render, its documented Doppler integration syncs a chosen config to
-the service. For Workers, upload only an explicit runtime-secret whitelist; never
-upload CI deployment credentials to the application. Keep separate configs/access
-for development, CI deployment, and the public demo as needed. References:
-[Doppler Render](https://docs.doppler.com/docs/render),
-[Doppler Workers](https://docs.doppler.com/docs/cloudflare-workers).
+Doppler injects values into a process or a provider's runtime secret store.
+Fetching values during a build does not automatically configure runtime secrets.
+The Vercel implementation must wire the agreed Doppler configuration into the
+Django runtime and verify key presence without printing values. Keep deployment
+credentials separate from application runtime credentials and grant only the
+required access. No credential values belong in Git, logs, or demo evidence.
 
 Local development defaults to local SQLite and a development-only key. The
-production database backend remains unresolved; this branch does not silently
-swap it or claim local SQLite is deployable shared storage. WhiteNoise collects
+selected Turso production database is not yet wired into the checked settings;
+local SQLite is not proof of deployed shared storage. WhiteNoise collects
 and serves static assets. The one-hour HSTS policy avoids a preload commitment;
 Django may warn that preload is disabled, which is intentional until the domain
 and HTTPS configuration are finalized.
@@ -115,7 +110,7 @@ A completed pipeline must:
 when the database cannot answer. It verifies connectivity, not every table or
 application feature. Run the product demo in #27 to verify actual user flows.
 
-The host-specific rollback command remains pending the hosting decision. Revert
+The Vercel-specific rollback procedure remains to be implemented and verified in #29. Revert
 code to a known-good commit and redeploy through the same pipeline; do not assume
 a code rollback reverses database changes. Retain migration history and agree on
 recovery before destructive schema work. No remote production schema changes are
