@@ -1,6 +1,8 @@
 # Working together on NextChapter
 
 [Open the shared hackathon kanban](https://github.com/users/kvn8888/projects/7).
+Read [HACKATHON.md](HACKATHON.md) for the canonical event/sponsor reference and
+the selected Doppler secrets policy. Keep task status on this GitHub Projects board.
 The board is private. Kevin owns it; Anty120 and Foryx07 have been granted write access.
 Repository access and project-board access are separate. New teammates need both.
 GitHub does not allow this board in the repository's Projects sidebar because their

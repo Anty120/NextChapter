@@ -1,3 +1,9 @@
 .venv
 __pycache__/
 *.pyc
+
+# Local secret files; shared values belong in Doppler.
+.env
+.env.*
+!.env.example
+.doppler/
