@@ -119,6 +119,28 @@ DATABASES = {
     }
 }
 
+# Doppler supplies the URL in deployed environments; blank keeps local SQLite.
+database_url = os.environ.get('DATABASE_URL', '').strip()
+if database_url:
+    import dj_database_url
+
+    try:
+        database = dj_database_url.parse(database_url, conn_max_age=0)
+        if (database['ENGINE'] != 'django.db.backends.postgresql'
+                or not database.get('HOST') or not database.get('NAME')):
+            raise ValueError
+    except (ValueError, KeyError):
+        # Parser exceptions can contain credentials from the URL.
+        raise ImproperlyConfigured(
+            'DATABASE_URL must be a valid PostgreSQL URL with a host and database name'
+        ) from None
+    options = database.setdefault('OPTIONS', {})
+    if options.get('sslmode') not in {'require', 'verify-ca', 'verify-full'}:
+        options['sslmode'] = 'require'
+    # Neon uses transaction pooling; cursors must not outlive their transaction.
+    database['DISABLE_SERVER_SIDE_CURSORS'] = True
+    DATABASES['default'] = database
+
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
