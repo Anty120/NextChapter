@@ -6,10 +6,13 @@
   if (!player) return;
   player.addEventListener('error', () => { error.hidden = false; });
   player.querySelector('source')?.addEventListener('error', () => { error.hidden = false; });
-  player.addEventListener('loadedmetadata', () => {
+  function restorePosition() {
     const saved = Number(player.dataset.seconds);
     if (Number.isFinite(saved) && saved > 0 && saved < player.duration) player.currentTime = saved;
-  });
+  }
+  // Cached audio can load its metadata before this deferred script runs.
+  if (player.readyState >= 1) restorePosition();
+  else player.addEventListener('loadedmetadata', restorePosition, { once: true });
   if (!form) return;
   const input = document.getElementById('audio-seconds');
   const status = document.getElementById('save-status');
