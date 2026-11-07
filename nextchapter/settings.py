@@ -66,6 +66,10 @@ APP_RELEASE = os.environ.get("APP_RELEASE", "unknown")
 # Application definition
 
 INSTALLED_APPS = [
+    'catalog',
+    # WhiteNoise handles byte-range requests so native audio can seek/resume
+    # under runserver as well as in production.
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -152,6 +156,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 if not DEBUG:
     STORAGES = {
         'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},

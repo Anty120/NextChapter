@@ -1,0 +1,2 @@
+{% extends 'catalog/base.html' %}{% block title %}Log in · NextChapter{% endblock %}
+{% block content %}<section class="paper auth"><p class="eyebrow">Your place is waiting</p><h1>Welcome back.</h1><p>Save your chapter. Join the conversation.</p><form class="stack" method="post">{% csrf_token %}{{ form.as_p }}<input type="hidden" name="next" value="{{ next }}"><button class="button" type="submit">Log in →</button></form><p>New here? <a href="{% url 'signup' %}">Create an account</a></p></section>{% endblock %}
