@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +22,45 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-we)!hjy5_3az73@s&qv-0&jvp_se-z!*ck_=((nkq77!bkn)z8'
+def env_bool(name, default=False):
+    value = os.environ.get(name, str(default)).lower()
+    if value not in {"true", "false", "1", "0"}:
+        raise ImproperlyConfigured(f"{name} must be true, false, 1, or 0")
+    return value in {"true", "1"}
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+# A deployed process must opt into production and receive its key from Doppler.
+APP_ENV = os.environ.get("APP_ENV", "development")
+if APP_ENV not in {"development", "test", "production"}:
+    raise ImproperlyConfigured("APP_ENV must be development, test, or production")
+DEBUG = env_bool("DJANGO_DEBUG", APP_ENV != "production")
+if APP_ENV == "production" and DEBUG:
+    raise ImproperlyConfigured("DJANGO_DEBUG must be false in production")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured("DJANGO_SECRET_KEY is required when debug is disabled")
+    SECRET_KEY = "development-only-key-do-not-use-for-deployed-environments"
+
+ALLOWED_HOSTS = [host.strip() for host in os.environ.get(
+    "DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]" if DEBUG else ""
+).split(",") if host.strip()]
+if not DEBUG and (not ALLOWED_HOSTS or "*" in ALLOWED_HOSTS):
+    raise ImproperlyConfigured("Set explicit DJANGO_ALLOWED_HOSTS when debug is disabled")
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.environ.get(
+    "DJANGO_CSRF_TRUSTED_ORIGINS", ""
+).split(",") if origin.strip()]
+
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = env_bool("DJANGO_SSL_REDIRECT", not DEBUG)
+SECURE_HSTS_SECONDS = 3600 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+# Enable only behind a host that strips and sets this header itself.
+if env_bool("DJANGO_TRUST_PROXY"):
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+APP_RELEASE = os.environ.get("APP_RELEASE", "unknown")
 
 
 # Application definition
@@ -41,6 +76,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -115,13 +151,31 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+if not DEBUG:
+    STORAGES = {
+        'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+        'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'},
+    }
 
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+# Do not pretend console output is delivered email in a deployed app.
+# No production mailer exists until the team configures a real SMTP host.
+MAILERS = {}
+if DEBUG:
+    MAILERS["default"] = {"BACKEND": "django.core.mail.backends.console.EmailBackend"}
+elif os.environ.get("DJANGO_EMAIL_HOST"):
+    MAILERS["default"] = {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": os.environ["DJANGO_EMAIL_HOST"],
+            "port": int(os.environ.get("DJANGO_EMAIL_PORT", "587")),
+            "username": os.environ.get("DJANGO_EMAIL_USER", ""),
+            "password": os.environ.get("DJANGO_EMAIL_PASSWORD", ""),
+            "use_tls": True,
+            "timeout": 10,
+        },
+    }
