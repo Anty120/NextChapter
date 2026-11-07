@@ -8,9 +8,9 @@ import uuid
 from datetime import datetime, timezone
 
 REPO = 'Anty120/NextChapter'
-PROJECT = 'PVT_kwHOBJujSM4Bqo-f'
-OWNER = 'kvn8888'
-NUMBER = '7'
+PROJECT = 'PVT_kwHOBmxSe84BqpDM'
+OWNER = 'Anty120'
+NUMBER = '2'
 
 
 def run(*args, data=None):

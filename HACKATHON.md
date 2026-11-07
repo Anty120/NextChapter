@@ -5,7 +5,7 @@
 **Research:** delegated sponsor review, independently checked against primary pages.
 
 This is the team's canonical reference for event facts, sponsor recommendations,
-and durable project decisions. The [GitHub Projects kanban](https://github.com/users/kvn8888/projects/7)
+and durable project decisions. The [GitHub Projects kanban](https://github.com/users/Anty120/projects/2)
 is the source of truth for current tasks, owners, blockers, and review state.
 [AGENTS.md](AGENTS.md) tells agents how to start; [COLLABORATION.md](COLLABORATION.md)
 defines task reservations and handoffs. Keep facts here instead of copying them

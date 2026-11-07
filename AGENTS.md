@@ -3,7 +3,7 @@
 Read [HACKATHON.md](HACKATHON.md) for verified event requirements, sponsor
 research, durable team decisions, and the Doppler secrets policy. Read
 [COLLABORATION.md](COLLABORATION.md) before starting work. The shared board is
-https://github.com/users/kvn8888/projects/7 and issues live in Anty120/NextChapter.
+https://github.com/users/Anty120/projects/2 and issues live in Anty120/NextChapter.
 
 - Refresh the board and reconcile existing issues before creating tasks.
 - Claim a Ready issue using `python3 scripts/kanban.py claim NUMBER --agent UNIQUE_SESSION`
