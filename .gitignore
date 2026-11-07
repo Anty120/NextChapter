@@ -1,3 +1,11 @@
 .venv
 __pycache__/
 *.pyc
+staticfiles/
+db.sqlite3
+
+# Shared credentials belong in Doppler, not local Git-tracked files.
+.env
+.env.*
+!.env.example
+.doppler/
