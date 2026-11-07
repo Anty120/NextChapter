@@ -8,7 +8,9 @@ This is the team's canonical reference for event facts, sponsor recommendations,
 and durable project decisions. The [GitHub Projects kanban](https://github.com/users/Anty120/projects/2)
 is the source of truth for current tasks, owners, blockers, and review state.
 [AGENTS.md](AGENTS.md) tells agents how to start; [COLLABORATION.md](COLLABORATION.md)
-defines task reservations and handoffs. Keep facts here instead of copying them
+defines task reservations and handoffs. [SPONSOR_INTEGRATION.md](SPONSOR_INTEGRATION.md)
+records the technical prerequisites, compatibility decisions, and proposed evidence
+for each candidate. Keep facts here instead of copying them
 into several instruction files. Organizer clarifications override this snapshot;
 record their source, date, and exact decision when updating it.
 
@@ -18,7 +20,7 @@ record their source, date, and exact decision when updating it.
 | --- | --- |
 | Shared task tracking | GitHub Projects, with real issues in Anty120/NextChapter |
 | Shared secrets | **Doppler selected by Kevin on November 7, 2026** |
-| Product/demo scope | Team decision pending in [#5](https://github.com/Anty120/NextChapter/issues/5); language-learning is a provisional concept |
+| Product/demo scope | Media/community language practice without formal teaching is recorded in [#10](https://github.com/Anty120/NextChapter/issues/10); the smallest demo and ownership still need agreement in #5/#10 |
 | Database | D1 was provisioned in the previous setup session; Django's checked settings still use local SQLite |
 | Django hosting | Decision pending in [#3](https://github.com/Anty120/NextChapter/issues/3) |
 | Sponsor integrations | No working integration verified by this research |
@@ -75,15 +77,17 @@ The following requirement summaries come from the
 | GoDaddy Registry | Register a domain through the challenge |
 | Solana | Build with Solana |
 
-**Our recommendation, conditional on the agreed demo:** prioritize Gemini and
-Entire. For a third category, consider Inclusivity & Cultural Representation if
+**Our recommendation, conditional on the agreed demo:** prioritize Entire and
+consider Gemini only after confirming its current audience/data-use terms. The
+[readiness audit](SPONSOR_INTEGRATION.md#gemini-resolve-audience-and-inputs-before-adding-the-feature)
+records the under-18 restriction and unpaid-service input constraints. For a third category, consider Inclusivity & Cultural Representation if
 the product solves a specific access/cultural-learning problem; choose Auth0 as
 a sponsor alternative if accounts are essential. These are engineering judgments,
 not organizer scoring criteria or a selection made for the team.
 
 | Candidate | Fit and proposed evidence for our demo |
 | --- | --- |
-| **Gemini — first product candidate** | If learning content is in scope, demonstrate a real server-side request that turns a learner's goal or passage into a useful explanation or exercise. Show the actual result and a handled failure. Store its credential in Doppler. A mocked response does not establish integration. |
+| **Gemini — conditional product candidate** | After audience/data-use eligibility is resolved, demonstrate a real server-side request that suggests discovery tags or context from authorized media metadata. Validate it and show a handled failure. Keep lessons and exercises outside the agreed scope; store the credential in Doppler. A mocked response does not establish integration. |
 | **Entire — first workflow candidate** | Demonstrate an actual project session linked to a commit and a Graph query that helps an agent find relevant code. Add Brain only if it solves a real context-sharing problem. Explain the human decisions and agent contributions. GitHub task tracking by itself does not demonstrate Entire. |
 | **Inclusivity — conditional third category** | Name the learner group and a concrete barrier; demonstrate how the working flow helps. Confirm the product purpose with the team instead of inventing an impact story. This is a general category, not a sponsor integration. |
 | **Auth0 — account-based alternative** | If the demo needs saved per-user progress, show login/logout, a protected route, and isolation between two users. Integrating authentication adds callback, session, and deployment work, so agree on ownership first. |
