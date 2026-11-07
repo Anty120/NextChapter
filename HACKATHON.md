@@ -1,14 +1,18 @@
 # NextChapter hackathon reference
 
 **Official event:** HACK.COMS 2026 at RIT, November 7–8, 2026.
-**Sources checked:** November 7, 2026, approximately 2:23 p.m. EST (19:23 UTC).
-**Research:** delegated sponsor review, independently checked against primary pages.
+**External sources refreshed with Exa:** 2026-11-07 22:24 UTC.
+**Freshness policy:** treat earlier external claims as stale until rechecked. Read
+[SOURCE_VERIFICATION.md](SOURCE_VERIFICATION.md) for source status, conflicts, and retrieval limits.
+**Correction:** Auth0 is not listed in the refreshed Devpost or MLH prizes; the earlier prize claim is withdrawn.
 
 This is the team's canonical reference for event facts, sponsor recommendations,
 and durable project decisions. The [GitHub Projects kanban](https://github.com/users/Anty120/projects/2)
 is the source of truth for current tasks, owners, blockers, and review state.
 [AGENTS.md](AGENTS.md) tells agents how to start; [COLLABORATION.md](COLLABORATION.md)
-defines task reservations and handoffs. Keep facts here instead of copying them
+defines task reservations and handoffs. [SPONSOR_INTEGRATION.md](SPONSOR_INTEGRATION.md)
+records the technical prerequisites, compatibility decisions, and proposed evidence
+for each candidate. Keep facts here instead of copying them
 into several instruction files. Organizer clarifications override this snapshot;
 record their source, date, and exact decision when updating it.
 
@@ -18,12 +22,12 @@ record their source, date, and exact decision when updating it.
 | --- | --- |
 | Shared task tracking | GitHub Projects, with real issues in Anty120/NextChapter |
 | Shared secrets | **Doppler selected by Kevin on November 7, 2026** |
-| Product/demo scope | Team decision pending in [#5](https://github.com/Anty120/NextChapter/issues/5); language-learning is a provisional concept |
+| Product/demo scope | Media/community language practice without formal teaching is recorded in [#10](https://github.com/Anty120/NextChapter/issues/10); the smallest demo and ownership still need agreement in #5/#10 |
 | Database | D1 was provisioned in the previous setup session; Django's checked settings still use local SQLite |
 | Django hosting | Decision pending in [#3](https://github.com/Anty120/NextChapter/issues/3) |
-| Sponsor integrations | No working integration verified by this research |
+| Sponsor integrations | Entire configuration is tracked in main; runtime capture and product integrations are not verified here |
 | Prize categories | Recommendations below; none selected or submitted by this work |
-| Entire | Candidate only; capture, hooks, uploads, and Brain setup require a separate team decision |
+| Entire | Hooks and Graph/Brain guidance are tracked; executable/destination/capture verification remains separate from committed configuration |
 
 ## Event requirements
 
@@ -53,56 +57,61 @@ Source: [rules](https://hack-coms-2026.devpost.com/rules).
 
 **Official-source conflicts to resolve:** the rules retain 2025 dates and an old
 registration link, while the 2026 overview/schedule agree on the dates above.
-The overview links to [the 2026 MLH registration](https://events.mlh.com/events/14418-hack-coms-2026).
+The [2026 MLH registration page](https://events.mlh.com/events/14418-hack-coms-2026)
+was independently rechecked through Exa; this does not verify individual registration.
 The schedule leaves judging blank; its 12:30 p.m. time comes from the overview.
 Use the 2026 overview for planning and obtain organizer confirmation before
 submission. Include both description and table number at the soft deadline.
 
 ## Sponsor challenges and recommendations
 
-The overview displays M&T and RIT Student Government as sponsors. Seven MLH
-challenges are listed below. Doppler and Cloudflare are not listed prize challenges.
-The following requirement summaries come from the
-[official prizes page](https://hack-coms-2026.devpost.com/#prizes).
+The refreshed [Devpost overview](https://hack-coms-2026.devpost.com/?verify=20261107)
+and [MLH prize list](https://www.mlh.com/events/hack-coms-0e/prizes) corroborate
+these six sponsor challenges. **Auth0 is absent from both; do not target it as an
+event prize without organizer confirmation.** Provider usefulness and event
+eligibility are separate.
 
 | Challenge | Published direction, summarized |
 | --- | --- |
 | Gemini API | Build using Gemini API |
-| Entire | Use Sessions, Graph, and/or Brain in an AI workflow |
-| Auth0 | Use Auth0 APIs |
-| Vultr | Use Vultr cloud infrastructure |
-| Tiger Data | Demonstrate useful, performance-oriented Tiger Data usage |
-| GoDaddy Registry | Register a domain through the challenge |
+| Entire | Demonstrate useful agent/human collaboration with its capabilities |
 | Solana | Build with Solana |
+| Tiger Data | Demonstrate useful, performance-oriented Tiger Data usage |
+| Vultr | Use Vultr cloud infrastructure |
+| GoDaddy Registry | Register a qualifying domain through the challenge |
 
-**Our recommendation, conditional on the agreed demo:** prioritize Gemini and
-Entire. For a third category, consider Inclusivity & Cultural Representation if
-the product solves a specific access/cultural-learning problem; choose Auth0 as
-a sponsor alternative if accounts are essential. These are engineering judgments,
-not organizer scoring criteria or a selection made for the team.
+The five general Devpost awards cover solo work, open source, a duck game,
+inclusivity/cultural representation, and first-year teams. First-Year needs a
+first-year majority. The refreshed Devpost response reports eleven prizes; older
+five- and twelve-prize responses are not current evidence.
 
-| Candidate | Fit and proposed evidence for our demo |
+MLH separately lists a **SpaceXSI raffle involving Cursor and Grok Bot**, absent
+from the refreshed Devpost list. Confirm its terms/entry route and interaction with
+the three-category cap before treating it as an additional entry. Do not change
+our development workflow solely on that listing. Sponsor-logo names were not
+reverified by Exa's text extraction.
+
+**Current recommendation:** prioritize Entire and the Inclusivity category if the
+finished demo demonstrates those criteria. Gemini stays conditional on the
+audience/data decision in [#33](https://github.com/Anty120/NextChapter/issues/33).
+Choose another confirmed category only when the product demonstrates it; Vultr or
+Tiger Data require the hosting/database decision, while a domain needs a qualifying
+registration. Auth0 may still be evaluated as a login tool, with no confirmed prize.
+
+| Candidate | Suggested evidence; not an official minimum |
 | --- | --- |
-| **Gemini — first product candidate** | If learning content is in scope, demonstrate a real server-side request that turns a learner's goal or passage into a useful explanation or exercise. Show the actual result and a handled failure. Store its credential in Doppler. A mocked response does not establish integration. |
-| **Entire — first workflow candidate** | Demonstrate an actual project session linked to a commit and a Graph query that helps an agent find relevant code. Add Brain only if it solves a real context-sharing problem. Explain the human decisions and agent contributions. GitHub task tracking by itself does not demonstrate Entire. |
-| **Inclusivity — conditional third category** | Name the learner group and a concrete barrier; demonstrate how the working flow helps. Confirm the product purpose with the team instead of inventing an impact story. This is a general category, not a sponsor integration. |
-| **Auth0 — account-based alternative** | If the demo needs saved per-user progress, show login/logout, a protected route, and isolation between two users. Integrating authentication adds callback, session, and deployment work, so agree on ownership first. |
-| **Vultr — hosting alternative** | Consider only if the hosting decision selects Vultr. Demonstrate the real deployed Django flow. A second unused deployment would distract from finishing the product. |
-| **Tiger Data — defer** | Current D1 direction makes an additional database costly to coordinate. Reconsider only if learning-event analytics becomes central and the team deliberately agrees on database ownership. |
-| **GoDaddy Registry — optional** | Consider after the demo works. Confirm eligible domain instructions, terms, and cost before registration; no purchase is authorized by this recommendation. |
-| **Solana — defer** | The discussed concept has no established transaction or blockchain need. Reconsider only when the product requires one. |
+| Entire | A real project session linked to a commit and useful Graph/Brain context retrieval; inspect capture contents/destination. |
+| Inclusivity | A specific access/cultural barrier addressed by working media/community features. |
+| Gemini | A permitted metadata-based discovery/context feature after audience/data requirements are resolved; no lessons or quizzes. |
+| Vultr | The actual demo deployed there, with release/health/data persistence evidence. |
+| Tiger Data | A deliberate Postgres/analytics role that contributes to the product, not an unused second database. |
+| GoDaddy Registry | A qualifying domain serving the working HTTPS demo after offer/terms confirmation. |
+| Solana | A useful on-chain action; no current product requirement establishes the need. |
 
-Other categories cover open source, a duck game, solo work, inclusivity, and
-first-year teams. First-Year requires a first-year majority; Solo requires an
-individual project. Neither team composition nor category eligibility is assumed.
-No detailed scoring thresholds are published on the overview; confirm unclear
-challenge requirements with organizers before committing a category slot.
-
-Provider guides for implementation, after the team chooses:
-[Gemini](https://ai.google.dev/gemini-api/docs/get-started) and
-[Auth0 with Django](https://developer.auth0.com/resources/guides/web-app/django/basic-authentication).
-Verify current model availability, account quotas, and costs when implementing;
-event promotional text does not establish the team's actual allowance.
+[SPONSOR_INTEGRATION.md](SPONSOR_INTEGRATION.md) records prerequisites and proposed
+verification. [SOURCE_VERIFICATION.md](SOURCE_VERIFICATION.md) separates rechecked
+facts, older guides, failed fetches, and unresolved account/runtime state. Current
+model/SDK versions, quotas, pricing, and account offers require their own check.
 
 ### Entire: decide capture boundaries before enabling it
 
@@ -183,7 +192,7 @@ result and evidence rather than allowing chat to become the only record:
 1. Confirm the demo scope in #5 and choose up to three categories before the lock.
 2. Confirm registration, event date corrections, table/judging arrangements, and
    any ambiguous category/reuse requirements with organizers.
-3. Agree on Entire adoption and the capture/checkpoint destination before setup.
+3. Verify the committed Entire setup actually runs on each intended machine, and confirm its capture/checkpoint destination before sharing sessions.
 4. Configure the team's Doppler project, access, names, and runtime injection;
    verify another teammate can run the application without copying secret values.
 5. Complete the hosting decision in #3 and isolated Django/D1 integration in #4.

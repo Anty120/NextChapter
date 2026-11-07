@@ -24,7 +24,9 @@ content credits, and known limitations. Local data lives in ignored `db.sqlite3`
 
 [**Open the GitHub Projects kanban →**](https://github.com/users/Anty120/projects/2)
 
+- [Source verification ledger](SOURCE_VERIFICATION.md): Exa evidence, withdrawn claims, freshness policy, and unresolved conflicts.
 - [Hackathon source of truth](HACKATHON.md): verified event requirements, sponsor research, team decisions, and Doppler secrets policy.
+- [Sponsor integration readiness](SPONSOR_INTEGRATION.md): prerequisites, required changes, and proposed verification for each candidate.
 - [Working together](COLLABORATION.md): claim tasks and collaborate across machines.
 - [Agent instructions](AGENTS.md): required starting point for coding agents.
 
