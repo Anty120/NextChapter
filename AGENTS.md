@@ -25,9 +25,10 @@ https://github.com/users/Anty120/projects/2 and issues live in Anty120/NextChapt
   with the helper and a concrete note; stop editing after releasing your claim.
 - Done requires verified acceptance criteria and merged code where applicable.
   Do not merge, deploy, or submit on a teammate's behalf without authorization.
-- Kevin selected Vercel (Django) + Turso (hosted libSQL) on November 7, 2026;
-  D1 is not used. Turso/Django compatibility is untested and being implemented in
-  #4. Verify runtime configuration and persistence before claiming deployment works.
+- Kevin selected Vercel (Django) + Neon Postgres on November 7, 2026;
+  use Django's built-in PostgreSQL backend. `DATABASE_URL` in Doppler
+  `hack-coms-hackathon` is blank until Kevin provisions Neon; implementation is in
+  #4. D1 is not used. Verify runtime configuration and persistence before claiming deployment works.
 - Doppler is the shared secrets manager; project `hack-coms-hackathon` contains
   blank credential placeholders Kevin is filling in. Config/access and runtime
   injection remain to be verified; follow HACKATHON.md. Never print secret values

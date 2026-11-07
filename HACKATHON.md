@@ -23,7 +23,7 @@ record their source, date, and exact decision when updating it.
 | Shared task tracking | GitHub Projects, with real issues in Anty120/NextChapter |
 | Shared secrets | **Doppler selected by Kevin on November 7, 2026** |
 | Product/demo scope | Media/community language practice without formal teaching is recorded in [#10](https://github.com/Anty120/NextChapter/issues/10); Anthony confirmed the smallest demo in [#10](https://github.com/Anty120/NextChapter/issues/10#issuecomment-6713665229), implemented in merged [#35](https://github.com/Anty120/NextChapter/pull/35); acceptance/rehearsal remains separate |
-| Database | **Turso hosted libSQL selected by Kevin on November 7, 2026**; D1 is not used. Checked Django settings still use local SQLite; Turso/Django compatibility is untested in #4 |
+| Database | **Neon Postgres selected by Kevin on November 7, 2026**, using Django's built-in PostgreSQL backend; D1 is not used. `DATABASE_URL` is blank in Doppler `hack-coms-hackathon` until Kevin provisions Neon; implementation and verification remain in #4 |
 | Django hosting | **Vercel selected by Kevin on November 7, 2026**; implementation and deployment verification remain in #4/#29 |
 | Sponsor integrations | Entire configuration is tracked in main; runtime capture and product integrations are not verified here |
 | Prize categories | **Kevin selected Gemini + Entire on November 7, 2026**; retain the existing Inclusivity/theme direction where demonstrated, with no third sponsor added; no submission receipt |
@@ -99,8 +99,10 @@ NextChapter is adults-only (18+) for the hackathon; the team, judges and demo us
 are assumed 18+ at this college hackathon. Audience no longer blocks Gemini.
 Regions, inputs and current provider/API terms remain implementation checks;
 full eligibility is not proven. Entire needs actual capture evidence. Hosting is
-**Vercel (Django) + Turso (hosted libSQL)**, with D1 unused; compatibility and
-implementation remain untested in #4.
+**Vercel (Django) + Neon Postgres**, using Django's built-in PostgreSQL backend.
+`DATABASE_URL` in Doppler `hack-coms-hackathon` is blank until Kevin provisions
+Neon; implementation and verification remain in #4. D1 is unused, and no working
+deployment is claimed.
 Auth0 remains an optional login tool with no confirmed prize. Selection is an
 owner decision, not proof of implementation, eligibility, or submission.
 
@@ -193,7 +195,7 @@ Team rules:
   revoke the old credential only after coordination.
 
 Proposed secret names are contracts to confirm during implementation, not claims
-that values exist: `DJANGO_SECRET_KEY`; `GEMINI_API_KEY` for the chosen Gemini implementation;
+that values exist: `DATABASE_URL` (blank until Kevin provisions Neon); `DJANGO_SECRET_KEY`; `GEMINI_API_KEY` for the chosen Gemini implementation;
 `AUTH0_CLIENT_SECRET` if Auth0 is selected; `CLOUDFLARE_API_TOKEN` only if the agreed
 runtime needs it. Public IDs and ordinary settings are not secret values.
 
@@ -210,8 +212,9 @@ result and evidence rather than allowing chat to become the only record:
 3. Verify the committed Entire setup actually runs on each intended machine, and confirm its capture/checkpoint destination before sharing sessions.
 4. Configure the team's Doppler project, access, names, and runtime injection;
    verify another teammate can run the application without copying secret values.
-5. Implement and verify the selected Vercel Django + Turso path in #4, including
-   Django/libSQL compatibility; D1 is not used. Record deployment evidence in #29.
+5. Implement and verify Vercel Django + Neon Postgres in #4 using Django's built-in
+   PostgreSQL backend. `DATABASE_URL` in Doppler `hack-coms-hackathon` is blank
+   until Kevin provisions Neon; D1 is not used. Record deployment evidence in #29.
 
 For submissions, humans retain final control over category selection, binding
 terms, purchases, account changes, and final Submit. This document records

@@ -37,11 +37,10 @@ The private board is owned by `Anty120` and linked to this repository's Projects
 tab. New teammates need project access as well as repository access. This board
 supersedes the earlier board under `kvn8888`; update tasks only on Anthony's board.
 
-The local demo uses SQLite. Kevin selected **Vercel (Django) + Turso (hosted
-libSQL)** on November 7, 2026; D1 is not used. Turso/Django compatibility is
-untested and being implemented in #4; no working deployment is claimed.
-Doppler project `hack-coms-hackathon` has blank credential placeholders Kevin is
-filling in; teammate access and runtime injection still need verification.
+The local demo uses SQLite. Kevin selected **Vercel (Django) + Neon Postgres** on November 7, 2026, using Django's built-in PostgreSQL backend. `DATABASE_URL`
+in Doppler `hack-coms-hackathon` is blank until Kevin provisions Neon;
+implementation and verification remain in #4. D1 is not used; no working
+deployment is claimed. Teammate access and runtime injection still need verification.
 
 **Sponsor decision (Kevin, November 7, 2026): Gemini + Entire**, retaining the
 existing Inclusivity/theme direction where demonstrated. Gemini implementation

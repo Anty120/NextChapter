@@ -9,18 +9,24 @@ production database, deployment credential, or automatic deploy has been created
 or enabled by this work. The actual GitHub run and hosting readbacks must be
 recorded on [DevOps issue #29](https://github.com/Anty120/NextChapter/issues/29).
 
-**Kevin's decision, November 7, 2026:** host Django on **Vercel**, with **Turso
-hosted libSQL** for shared data. D1 is not used. Turso + Django compatibility is
-untested and being implemented in [#4](https://github.com/Anty120/NextChapter/issues/4).
-The checked settings still use local SQLite; this document records the choice,
-not a working adapter or deployment.
+**Kevin's revised decision, November 7, 2026:** **Vercel + Neon Postgres**, using
+Django's built-in PostgreSQL backend. `DATABASE_URL` in Doppler
+`hack-coms-hackathon` is blank until Kevin provisions Neon; implementation and
+verification remain in [#4](https://github.com/Anty120/NextChapter/issues/4).
+D1 is not used. The checked settings still use local SQLite; this document
+records the choice, not a working Neon integration or deployment.
+
+Turso was evaluated and rejected because the [#4 backend gate](https://github.com/Anty120/NextChapter/issues/4#issuecomment-6714449107)
+found no supported Django 6.1 libSQL backend with real rollback; `TURSO_*`
+placeholders are unused. [Kevin's revised decision](https://github.com/Anty120/NextChapter/issues/3#issuecomment-6714584934)
+records the switch to Neon.
 
 The demo in #27 includes joining a club, discussion, reporting for staff review,
 and saving reading/playback positions. [DEMO.md](DEMO.md) explicitly defers user
 blocking; [AGENT_QUEUE.md](AGENT_QUEUE.md) also places profiles outside the demo.
 Accounts, memberships, comments, reports, and saved positions must survive a
 deploy. An ephemeral SQLite file is insufficient for shared deployed storage.
-The #4 implementation must verify the Django/libSQL adapter, migrations,
+The #4 implementation must verify the PostgreSQL driver/configuration, migrations,
 transactions, runtime dependencies and persistence on the selected platform.
 
 ## Reproducible local and CI setup
@@ -61,6 +67,7 @@ verification; placeholders do not establish usable credentials.
 
 | Variable | Purpose |
 | --- | --- |
+| `DATABASE_URL` | Planned Neon connection for Django's built-in PostgreSQL backend; blank in Doppler `hack-coms-hackathon` until Kevin provisions Neon; implementation in #4 |
 | `APP_ENV=production` | Enforce deployed configuration; refuses debug mode |
 | `DJANGO_DEBUG=false` | Prevent debug responses |
 | `DJANGO_SECRET_KEY` | Required injected credential; no production fallback |
@@ -84,7 +91,7 @@ credentials separate from application runtime credentials and grant only the
 required access. No credential values belong in Git, logs, or demo evidence.
 
 Local development defaults to local SQLite and a development-only key. The
-selected Turso production database is not yet wired into the checked settings;
+selected Neon Postgres production database is not yet wired into the checked settings;
 local SQLite is not proof of deployed shared storage. WhiteNoise collects
 and serves static assets. The one-hour HSTS policy avoids a preload commitment;
 Django may warn that preload is disabled, which is intentional until the domain

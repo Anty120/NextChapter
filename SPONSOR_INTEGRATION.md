@@ -31,11 +31,12 @@ and [catalog/views.py](catalog/views.py). The real demo UI is rendered by
 still renders the Vite starter and is not connected to a demo API. These local
 features do not prove sponsor integration or deployment.
 
-Kevin selected **Vercel for Django + Turso hosted libSQL** on November 7, 2026.
-D1 is not used. The checked Django settings still use local SQLite; Turso/Django
-compatibility and deployment are untested and being implemented in #4.
-Doppler project `hack-coms-hackathon` contains blank credential placeholders that
-Kevin is filling in; teammate access and runtime injection still need verification.
+Kevin selected **Vercel for Django + Neon Postgres** on November 7, 2026.
+Django's built-in PostgreSQL backend is the selected database backend. D1 is not
+used. `DATABASE_URL` is a blank placeholder in Doppler `hack-coms-hackathon` until
+Kevin provisions Neon; implementation and verification remain in #4. The checked
+settings still use local SQLite; no working Neon integration or deployment is
+claimed. Teammate access and runtime injection still need verification.
 A hosting choice and placeholder names do not establish a working hosted product.
 
 ## What must be agreed first
@@ -43,7 +44,7 @@ A hosting choice and placeholder names do not establish a working hosted product
 | Decision or prerequisite | Why it matters | Existing owner/task |
 | --- | --- | --- |
 | Gemini launch regions, permitted inputs, and current provider/API terms | Kevin closed #33 with an adults-only (18+) hackathon audience; remaining implementation checks do not establish full eligibility. | Gemini implementation owner; Kevin/Anthony |
-| Vercel Django + Turso compatibility | The host/database are selected, but Django/libSQL compatibility, migrations and durable storage must be demonstrated. D1 is not used. | Infrastructure owner; #4 |
+| Vercel Django + Neon Postgres implementation | Use Django's built-in PostgreSQL backend; `DATABASE_URL` in Doppler `hack-coms-hackathon` is blank until Kevin provisions Neon. Migrations, transactions and durable storage still need verification. D1 is not used. | Infrastructure owner; #4 |
 | Permitted catalog inputs and attribution | Catalog models and demo seed exist; rights and publication limits still need review before provider use. | Catalog/content owner; #12, #26 |
 | Broader member and moderation rules | Django accounts, memberships, comments, private positions, and reports exist; profiles, blocking, and the broader backlog remain. | Accounts/community owners; #11, #18, #21, #25 |
 | Doppler project/configs and runtime injection | A key on one laptop does not configure the deployed application or another teammate. | Secrets owner; #8 |
@@ -51,7 +52,7 @@ A hosting choice and placeholder names do not establish a working hosted product
 These do not all block parallel work. Entire can be evaluated independently of
 hosting; provider wrappers and mocked tests can be designed independently.
 The product models already support the local demo. Production persistence and deployment still
-need the selected Vercel/Turso path to be implemented and verified.
+need the selected Vercel/Neon Postgres path to be implemented and verified.
 
 ## Chosen categories and remaining gates
 
@@ -63,8 +64,9 @@ NextChapter is adults-only (18+) for the hackathon, assuming the team, judges an
 demo users are 18+ at this college hackathon. Audience no longer blocks Gemini.
 Launch regions, permitted inputs, and current provider/API terms remain
 implementation checks; full eligibility is not proven. Entire still needs verified
-capture evidence. Vercel (Django) + Turso (hosted libSQL) is selected; #4 owns the
-untested compatibility and deployment work.
+capture evidence. Vercel (Django) + Neon Postgres is selected, using Django's
+built-in PostgreSQL backend. `DATABASE_URL` in Doppler `hack-coms-hackathon` is
+blank until Kevin provisions Neon; #4 owns implementation and verification.
 
 ## Comparison
 
@@ -77,7 +79,7 @@ measured durations or official challenge thresholds.
 | **Gemini** | One bounded server-side feature, provider wrapper, error handling, quota controls, UI state, and a secret. | Good conditional fit after audience/data-use checks. |
 | **Auth0 (optional tool)** | Member login/callback/logout, local identity mapping, sessions, and permission checks. | Technically useful; no Auth0 challenge is listed in the refreshed event pages. |
 | **Vultr** | Production server/process, HTTPS, runtime secrets, durable database, and deploy automation. | Unselected; replacing Vercel requires a new owner decision. |
-| **Tiger Data** | PostgreSQL driver/settings/migrations/testing; would replace Turso or add a second owned database. | Consider with a deliberate Postgres/analytics decision. |
+| **Tiger Data** | PostgreSQL driver/settings/migrations/testing; would replace Neon or add a second owned database. | Consider with a deliberate Postgres/analytics decision. |
 | **GoDaddy Registry** | Qualifying domain registration plus DNS/TLS and updated application/auth URLs. | Add after a deployment works. |
 | **Solana** | Wallet/network/transaction workflow and a real product reason for it. | Defer; no on-chain requirement is established. |
 
@@ -86,7 +88,7 @@ and [MLH list](https://www.mlh.com/events/hack-coms-0e/prizes) corroborate six s
 sponsor challenges. Auth0 is not among them. MLH also lists a separate SpaceXSI
 raffle; its entry/cap treatment needs confirmation. All demonstrations below are **our proposed engineering evidence**, not
 published minimums or guarantees of eligibility. Sponsor-logo names were not reverified by Exa text extraction. Doppler and
-the selected Vercel/Turso stack support the project; this does not make them
+the selected Vercel/Neon Postgres stack support the project; this does not make them
 additional listed prize categories.
 
 ## Entire: verify the committed setup and capture boundaries
@@ -201,11 +203,11 @@ credit/billing offer; the event promotion does not establish it.
 That source illustrates app-server/proxy setup; it is not a Django compatibility test.
 
 **Tiger Data:** its service is PostgreSQL, so use it as the agreed main database
-instead of the selected Turso database, or justify a separately owned analytics database. For Django, add a
+instead of the selected Neon Postgres database, or justify a separately owned analytics database. For Django, add a
 compatible driver, environment-based database configuration/TLS, Doppler connection
 credentials, migrations, and Postgres-backed CI. Analytics additionally needs an
 owned event schema and useful queries. An unused database is weak demo evidence;
-Turso plus Tiger would add synchronization/ownership work. Verify free/beta plan
+Neon plus Tiger would add synchronization/ownership work. Verify free/beta plan
 limits and account terms before provisioning.
 [Create service](https://www.tigerdata.com/docs/get-started/quickstart/create-service),
 [connection details](https://www.tigerdata.com/docs/integrate/find-connection-details).
@@ -230,7 +232,8 @@ confirm its acceptability for the challenge. [Frontend](https://solana.com/docs/
 
 1. Use the smallest demo agreed in #10 and merged in #35 (see [DEMO.md](DEMO.md)).
    Kevin resolved #33 with the adults-only hackathon audience and chose Vercel +
-   Turso; implementation/compatibility remains in #4. Gemini + Entire are the chosen sponsor categories. The event permits at most three categories; preserve the
+   Neon Postgres with Django's built-in PostgreSQL backend; implementation remains
+   in #4. `DATABASE_URL` in Doppler `hack-coms-hackathon` is blank until Kevin provisions Neon. Gemini + Entire are the chosen sponsor categories. The event permits at most three categories; preserve the
    [published deadline and conflicts](HACKATHON.md#event-requirements).
 2. The secrets owner completes #8; catalog/content and accounts owners agree on
    record/identity contracts. Give each task its own owner and migration boundary.
@@ -245,8 +248,9 @@ The owner decision is **Gemini + Entire**, retaining the existing Inclusivity/th
 direction where demonstrated. #33 is closed with the adults-only hackathon
 audience; remaining Gemini implementation checks and Entire capture evidence
 still need verification. Auth0 is an optional login tool,
-with no confirmed event prize. Vultr/Tiger are unselected research alternatives. Hosting is Vercel + Turso;
-no working deployment or category submission is recorded here.
+with no confirmed event prize. Vultr/Tiger are unselected research alternatives. Hosting is Vercel + Neon Postgres via Django's built-in PostgreSQL backend;
+`DATABASE_URL` in Doppler `hack-coms-hackathon` is blank until Kevin provisions
+Neon and #4 implements the connection. No working deployment or category submission is recorded here.
 
 This audit did not install SDKs, read secret values, create accounts/resources,
 change application code, enable captures/watchers, or submit anything. The remaining
