@@ -26,3 +26,8 @@ https://github.com/users/Anty120/projects/2 and issues live in Anty120/NextChapt
 - Never commit secrets, tokens, private transcripts, or unrelated local changes.
 - Preserve existing hackathon guidance when combining instructions. Coordinate
   setup documentation changes through the board before editing shared files.
+
+<!-- entire-agent:begin -->
+Read .entire/agent-guide.md for this repository's workflow, source inspection, and verification guidance.
+@.entire/agent-guide.md
+<!-- entire-agent:end -->
