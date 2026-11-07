@@ -2,6 +2,7 @@
 """Shared GitHub kanban and exclusive task claims. Requires Python 3, git, gh."""
 import argparse
 import json
+import re
 import subprocess
 import sys
 import uuid
@@ -58,8 +59,37 @@ def comment(number, body):
     api(f'repos/{REPO}/issues/{number}/comments', {'body': body})
 
 
+def require_ready(number, task):
+    """Fail closed before creating a reservation or assigning anyone."""
+    board = json.loads(run('gh', 'project', 'item-list', NUMBER, '--owner', OWNER,
+                           '--format', 'json', '--limit', '1000'))
+    items = [item for item in board['items']
+             if item.get('content', {}).get('url') == task['html_url']]
+    if len(items) != 1 or items[0].get('status') != 'Ready':
+        raise RuntimeError('Issue must be on the canonical board with Status Ready. '
+                           'Review/Blocked/Backlog tasks cannot be claimed.')
+    body = task.get('body') or ''
+    declarations = re.findall(r'^Depends-on: ([^\n]+)$', body, re.MULTILINE)
+    if len(declarations) != 1:
+        raise RuntimeError('Issue needs exactly one Depends-on: none or Depends-on: #12, #13 line.')
+    declaration = declarations[0].strip()
+    if declaration == 'none':
+        return
+    if not re.fullmatch(r'#\d+(?:,\s*#\d+)*', declaration):
+        raise RuntimeError('Invalid Depends-on declaration; use none or same-repository issue numbers.')
+    for dependency in set(map(int, re.findall(r'\d+', declaration))):
+        if dependency == number:
+            raise RuntimeError('An issue cannot depend on itself.')
+        value = api(f'repos/{REPO}/issues/{dependency}')
+        if 'pull_request' in value or value['state'] != 'closed':
+            raise RuntimeError(f'Dependency #{dependency} must be a completed, closed issue before claiming.')
+        if value.get('state_reason') != 'completed':
+            raise RuntimeError(f'Dependency #{dependency} was not closed as completed.')
+
+
 def claim(number, agent):
-    issue(number)
+    task = issue(number)
+    require_ready(number, task)
     login = api('user')['login']
     repo = api(f'repos/{REPO}')
     base = api(f'repos/{REPO}/git/ref/heads/{repo["default_branch"]}')['object']['sha']

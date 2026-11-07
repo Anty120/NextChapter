@@ -14,6 +14,13 @@ body:
     attributes:
       label: Scope and dependencies
       description: Files or components owned, interfaces to coordinate, and blocking issues.
+      placeholder: |
+        Depends-on: none
+        Base: main at COMMIT
+        Edit-scope: exact allowed paths; shared-file owner and excluded paths
+        Verification: commands and observable result
+        Owner: successful claiming agent; coordinator NAME
+        Use Depends-on: #12, #13 for blocking issues; all must be completed before Ready.
     validations:
       required: true
   - type: textarea
