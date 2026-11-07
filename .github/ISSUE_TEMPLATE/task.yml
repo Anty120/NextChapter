@@ -1,0 +1,33 @@
+name: Team or agent task
+description: A bounded task with an owner, scope, and verifiable result.
+title: ""
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome and current problem
+      description: What should happen, and what happens now?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and dependencies
+      description: Files or components owned, interfaces to coordinate, and blocking issues.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria and verification
+      description: Observable results and how a teammate will verify them.
+      placeholder: "- [ ] Expected behavior is demonstrated and evidence is linked."
+    validations:
+      required: true
+  - type: textarea
+    id: handoff
+    attributes:
+      label: Owner, next action, and evidence
+      description: Responsible person, next step, blockers, work branch, PR, and test/build links.
+    validations:
+      required: true
