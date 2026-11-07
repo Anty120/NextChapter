@@ -22,11 +22,11 @@ record their source, date, and exact decision when updating it.
 | --- | --- |
 | Shared task tracking | GitHub Projects, with real issues in Anty120/NextChapter |
 | Shared secrets | **Doppler selected by Kevin on November 7, 2026** |
-| Product/demo scope | Media/community language practice without formal teaching is recorded in [#10](https://github.com/Anty120/NextChapter/issues/10); the smallest demo and ownership still need agreement in #5/#10 |
-| Database | D1 was provisioned in the previous setup session; Django's checked settings still use local SQLite |
-| Django hosting | Decision pending in [#3](https://github.com/Anty120/NextChapter/issues/3) |
+| Product/demo scope | Media/community language practice without formal teaching is recorded in [#10](https://github.com/Anty120/NextChapter/issues/10); Anthony confirmed the smallest demo in [#10](https://github.com/Anty120/NextChapter/issues/10#issuecomment-6713665229), implemented in merged [#35](https://github.com/Anty120/NextChapter/pull/35); acceptance/rehearsal remains separate |
+| Database | **Neon Postgres selected by Kevin on November 7, 2026**, using Django's built-in PostgreSQL backend; D1 is not used. `DATABASE_URL` is blank in Doppler `hack-coms-hackathon` until Kevin provisions Neon; implementation and verification remain in #4 |
+| Django hosting | **Vercel selected by Kevin on November 7, 2026**; implementation and deployment verification remain in #4/#29 |
 | Sponsor integrations | Entire configuration is tracked in main; runtime capture and product integrations are not verified here |
-| Prize categories | Recommendations below; none selected or submitted by this work |
+| Prize categories | **Kevin selected Gemini + Entire on November 7, 2026**; retain the existing Inclusivity/theme direction where demonstrated, with no third sponsor added; no submission receipt |
 | Entire | Hooks and Graph/Brain guidance are tracked; executable/destination/capture verification remains separate from committed configuration |
 
 ## Event requirements
@@ -91,12 +91,28 @@ the three-category cap before treating it as an additional entry. Do not change
 our development workflow solely on that listing. Sponsor-logo names were not
 reverified by Exa's text extraction.
 
-**Current recommendation:** prioritize Entire and the Inclusivity category if the
-finished demo demonstrates those criteria. Gemini stays conditional on the
-audience/data decision in [#33](https://github.com/Anty120/NextChapter/issues/33).
-Choose another confirmed category only when the product demonstrates it; Vultr or
-Tiger Data require the hosting/database decision, while a domain needs a qualifying
-registration. Auth0 may still be evaluated as a login tool, with no confirmed prize.
+**Owner decision (Kevin, November 7, 2026): Gemini and Entire are the chosen
+sponsor categories.** Preserve the existing Inclusivity/theme direction where the
+finished demo demonstrates its criteria; do not infer a third sponsor choice.
+Kevin closed [#33](https://github.com/Anty120/NextChapter/issues/33) on November 7:
+NextChapter is adults-only (18+) for the hackathon; the team, judges and demo users
+are assumed 18+ at this college hackathon. Audience no longer blocks Gemini.
+Regions, inputs and current provider/API terms remain implementation checks;
+full eligibility is not proven. Entire needs actual capture evidence. Hosting is
+**Vercel (Django) + Neon Postgres**, using Django's built-in PostgreSQL backend.
+`DATABASE_URL` in Doppler `hack-coms-hackathon` is blank until Kevin provisions
+Neon; implementation and verification remain in #4. D1 is unused, and no working
+deployment is claimed.
+Auth0 remains an optional login tool with no confirmed prize. Selection is an
+owner decision, not proof of implementation, eligibility, or submission.
+
+The agreed demo is: filter the shelf → open a story or bundled English audio →
+sign in → save a position → join a club and comment → report content for staff
+review. [DEMO.md](DEMO.md) records its limits. Django renders the UI from
+[catalog/templates/](catalog/templates/); [frontend/src/App.tsx](frontend/src/App.tsx)
+is still the Vite starter. Main at `6d915f2e6198bf6d86b177e5a2a086748ac659d7`
+[passed CI](https://github.com/Anty120/NextChapter/actions/runs/42424700326).
+#35 restored the hashes; #34 is dependency maintenance, not a current CI blocker.
 
 | Candidate | Suggested evidence; not an official minimum |
 | --- | --- |
@@ -135,15 +151,15 @@ without measurement. Entire history does not replace the required AI disclosure.
 ## Doppler: the team's secrets policy
 
 **Decision:** Doppler is the shared secrets manager. **Verification boundary:**
-CLI v3.76.1 is installed on the checked Mac; workspace/project existence, teammate
-membership, configuration access, stored values, and deployment injection were
-not inspected or configured by this research. Track setup in [#8](https://github.com/Anty120/NextChapter/issues/8).
+Kevin identified project `hack-coms-hackathon`; credential placeholders are blank
+and Kevin is filling them in. Teammate membership/configuration access and
+deployment injection still need verification; this does not establish usable credentials. Track setup in [#8](https://github.com/Anty120/NextChapter/issues/8).
 
-Proposed naming, pending the setup owner's verification:
+Project decision and configuration names pending the setup owner's verification:
 
 | Setting | Proposed value |
 | --- | --- |
-| Project | `nextchapter` |
+| Project | `hack-coms-hackathon` (Kevin-confirmed) |
 | Shared development config | `dev` |
 | Demo/deployed config | `prd` |
 
@@ -152,14 +168,13 @@ own Doppler login and inject values into the process:
 
 ```sh
 doppler login
-doppler setup --project nextchapter --config dev
+doppler setup --project hack-coms-hackathon --config dev
 # Example after setup and application dependencies are installed:
-doppler run --project nextchapter --config dev -- python manage.py runserver
+doppler run --project hack-coms-hackathon --config dev -- python manage.py runserver
 ```
 
 Doppler's CLI injects secrets as environment variables; Django must explicitly
-read the agreed names. Injection alone does not replace the current hard-coded
-Django setting. References: [CLI guide](https://docs.doppler.com/docs/cli) and
+read the agreed names. Injection alone does not prove the selected runtime consumes the agreed settings. References: [CLI guide](https://docs.doppler.com/docs/cli) and
 [service tokens](https://docs.doppler.com/docs/service-tokens).
 
 Team rules:
@@ -172,7 +187,7 @@ Team rules:
   scoped service token or supported deployment integration. Put the bootstrap
   credential in the host's protected secret store; never in a committed file.
 - Separate development from deployed/demo credentials. Do not give ordinary tests
-  write access to shared remote D1. A shared secrets config does not isolate data.
+  write access to shared remote databases. A shared secrets config does not isolate data.
 - Do not print the environment or export plaintext secrets into tracked files.
   Validate access through key presence and a harmless authenticated readback.
 - One claimed setup task owns changes to secret names/access. Record rotation or
@@ -180,7 +195,7 @@ Team rules:
   revoke the old credential only after coordination.
 
 Proposed secret names are contracts to confirm during implementation, not claims
-that values exist: `DJANGO_SECRET_KEY`; `GEMINI_API_KEY` if Gemini is selected;
+that values exist: `DATABASE_URL` (blank until Kevin provisions Neon); `DJANGO_SECRET_KEY`; `GEMINI_API_KEY` for the chosen Gemini implementation;
 `AUTH0_CLIENT_SECRET` if Auth0 is selected; `CLOUDFLARE_API_TOKEN` only if the agreed
 runtime needs it. Public IDs and ordinary settings are not secret values.
 
@@ -189,13 +204,17 @@ runtime needs it. Public IDs and ordinary settings are not secret values.
 Use the board to assign and resolve these; update this document with the durable
 result and evidence rather than allowing chat to become the only record:
 
-1. Confirm the demo scope in #5 and choose up to three categories before the lock.
+1. Verify the agreed #10/#35 demo against the independent reviews; verify Gemini regions, inputs
+   and current provider/API terms, and verify Entire capture evidence. Confirm the
+   chosen categories meet organizer requirements before the category lock.
 2. Confirm registration, event date corrections, table/judging arrangements, and
    any ambiguous category/reuse requirements with organizers.
 3. Verify the committed Entire setup actually runs on each intended machine, and confirm its capture/checkpoint destination before sharing sessions.
 4. Configure the team's Doppler project, access, names, and runtime injection;
    verify another teammate can run the application without copying secret values.
-5. Complete the hosting decision in #3 and isolated Django/D1 integration in #4.
+5. Implement and verify Vercel Django + Neon Postgres in #4 using Django's built-in
+   PostgreSQL backend. `DATABASE_URL` in Doppler `hack-coms-hackathon` is blank
+   until Kevin provisions Neon; D1 is not used. Record deployment evidence in #29.
 
 For submissions, humans retain final control over category selection, binding
 terms, purchases, account changes, and final Submit. This document records

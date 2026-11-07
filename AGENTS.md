@@ -25,10 +25,13 @@ https://github.com/users/Anty120/projects/2 and issues live in Anty120/NextChapt
   with the helper and a concrete note; stop editing after releasing your claim.
 - Done requires verified acceptance criteria and merged code where applicable.
   Do not merge, deploy, or submit on a teammate's behalf without authorization.
-- Do not test against the shared remote D1 database. A provisioned D1 database
-  does not mean Django uses it. Verify the current configuration before claiming it does.
-- Doppler is the chosen shared secrets manager. Project/config identifiers and
-  access are pending verification; follow HACKATHON.md. Never print secret values
+- Kevin selected Vercel (Django) + Neon Postgres on November 7, 2026;
+  use Django's built-in PostgreSQL backend. `DATABASE_URL` in Doppler
+  `hack-coms-hackathon` is blank until Kevin provisions Neon; implementation is in
+  #4. D1 is not used. Verify runtime configuration and persistence before claiming deployment works.
+- Doppler is the shared secrets manager; project `hack-coms-hackathon` contains
+  blank credential placeholders Kevin is filling in. Config/access and runtime
+  injection remain to be verified; follow HACKATHON.md. Never print secret values
   or put them in Git, issues, prompts, session captures, or evidence.
 - Never commit secrets, tokens, private transcripts, or unrelated local changes.
 - Preserve existing hackathon guidance when combining instructions. Coordinate

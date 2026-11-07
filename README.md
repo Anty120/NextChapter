@@ -3,7 +3,9 @@
 ## Run the local demo
 
 Use Python 3.12 or newer. The Django app serves the catalog and frontend together;
-Node/Vite is not needed for this demo.
+Node/Vite is not needed for this demo. The product UI lives in
+[catalog/templates/](catalog/templates/); [frontend/src/App.tsx](frontend/src/App.tsx)
+is still the separate Vite starter.
 
 ```sh
 python -m venv .venv
@@ -35,10 +37,18 @@ The private board is owned by `Anty120` and linked to this repository's Projects
 tab. New teammates need project access as well as repository access. This board
 supersedes the earlier board under `kvn8888`; update tasks only on Anthony's board.
 
-The demo uses local SQLite. A provisioned Cloudflare D1 database is a separate
-setup step; the hosting and application connection decisions remain on the board.
-Doppler is selected for shared secrets; team access and application injection
-still need setup and verification.
+The local demo uses SQLite. Kevin selected **Vercel (Django) + Neon Postgres** on November 7, 2026, using Django's built-in PostgreSQL backend. `DATABASE_URL`
+in Doppler `hack-coms-hackathon` is blank until Kevin provisions Neon;
+implementation and verification remain in #4. D1 is not used; no working
+deployment is claimed. Teammate access and runtime injection still need verification.
+
+**Sponsor decision (Kevin, November 7, 2026): Gemini + Entire**, retaining the
+existing Inclusivity/theme direction where demonstrated. Gemini implementation
+uses Kevin's resolved [audience decision #33](https://github.com/Anty120/NextChapter/issues/33):
+adults-only (18+) for the hackathon, assuming the team, judges and demo users are
+18+ at this college hackathon. Audience no longer blocks Gemini; regions, inputs
+and current provider/API terms still need checking, so full eligibility is not
+proven. Entire capture evidence still needs verification.
 
 Detailed setup documentation is being coordinated in issue #2. Preserve existing
 team setup notes when combining them with this navigation and the shared guidance.
