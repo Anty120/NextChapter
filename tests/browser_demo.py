@@ -4,10 +4,36 @@ Uses a running local demo, creates a uniquely named reader, and writes screensho
 to an ignored directory. Not part of the Django unit suite; no production access.
 """
 import argparse
+from html import escape
 from pathlib import Path
 from uuid import uuid4
 
 from playwright.sync_api import expect, sync_playwright
+
+
+def check_metadata_restore(page, base_url):
+    """Exercise both metadata orders explicitly, independent of cache timing."""
+    audio_url = page.locator('audio source').evaluate('(source) => source.src')
+    script_url = page.locator('script[src$="/player.js"]').evaluate('(script) => script.src')
+    fixture = page.context.new_page()
+    fixture.goto(base_url)
+    for metadata_first in (True, False):
+        preload = 'metadata' if metadata_first else 'none'
+        fixture.set_content(
+            f'<audio id="player" preload="{preload}" data-seconds="17" '
+            f'src="{escape(audio_url, quote=True)}"></audio>'
+            '<p id="audio-error" hidden></p>'
+        )
+        if metadata_first:
+            fixture.wait_for_function('document.querySelector("audio").readyState >= 1')
+        else:
+            assert fixture.locator('audio').evaluate('(audio) => audio.readyState') == 0
+        fixture.add_script_tag(url=script_url)
+        if not metadata_first:
+            fixture.locator('audio').evaluate('(audio) => audio.load()')
+        fixture.wait_for_function('Math.abs(document.querySelector("audio").currentTime - 17) < 0.1')
+        assert fixture.locator('audio').evaluate('(audio) => audio.paused'), 'Restore must not autoplay'
+    fixture.close()
 
 
 def main():
@@ -22,7 +48,8 @@ def main():
     password = 'Rehearsal-only-' + uuid4().hex
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(channel=args.channel, headless=True)
-        page = browser.new_page(viewport={'width': 1440, 'height': 1050})
+        context = browser.new_context(viewport={'width': 1440, 'height': 1050})
+        page = context.new_page()
         errors = []
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.goto(args.base_url)
@@ -95,6 +122,18 @@ def main():
         page.wait_for_function('document.querySelector("audio").currentTime >= 8')
         assert page.locator('audio').evaluate('(audio) => audio.paused'), 'Resume must not autoplay'
 
+        # Keep the pause-before-seek sequence working alongside the original native-control sequence.
+        audio.evaluate('(audio) => audio.pause()')
+        with page.expect_response(lambda response: response.request.method == 'POST'
+                                  and response.url.endswith('/progress/')) as saved:
+            audio.evaluate('(audio) => { audio.currentTime = 12; }')
+        assert saved.value.ok
+        expect(page.locator('#save-status')).to_have_text('Your listening position is saved.')
+        page.reload()
+        page.wait_for_function('Math.abs(document.querySelector("audio").currentTime - 12) < 0.1')
+        assert page.locator('audio').evaluate('(audio) => audio.paused'), 'Paused seek must not autoplay'
+        check_metadata_restore(page, args.base_url)
+
         for width in (390, 320):
             page.set_viewport_size({'width': width, 'height': 844})
             for path in ('/', story_path, audio_path, '/clubs/', club_url, '/accounts/login/'):
@@ -111,7 +150,7 @@ def main():
         expect(page.get_by_role('link', name='Log in', exact=True)).to_be_visible()
         assert not errors, errors
         browser.close()
-    print('PASS: filters, signup/login/logout, keyboard actions, reader resume, membership/comments, report, actual audio playback/resume, 390/320px overflow checks, no browser errors.')
+    print('PASS: filters, signup/login/logout, keyboard actions, reader resume, membership/comments, report, actual audio playback/resume, pause-before-seek, both metadata loading orders without autoplay, 390/320px overflow checks, no browser errors.')
     print(f'Screenshots: {output.resolve()}')
 
 
