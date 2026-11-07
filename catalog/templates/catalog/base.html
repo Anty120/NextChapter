@@ -1,0 +1,14 @@
+{% load static %}<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Discover stories, listen at your own pace, and find your community through culture.">
+<title>{% block title %}NextChapter · Your shelf{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'catalog/app.css' %}">
+{% block head %}{% endblock %}</head>
+<body><a class="skip" href="#main">Skip to content</a><div class="app">
+<header class="topbar"><a class="brand" href="{% url 'catalog' %}"><span class="logo" aria-hidden="true">✿</span>NextChapter</a>
+<nav class="nav" aria-label="Main navigation"><a href="{% url 'catalog' %}" {% if request.resolver_match.url_name == 'catalog' %}aria-current="page"{% endif %}>Shelf</a><a href="{% url 'club_list' %}" {% if 'club' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Clubs</a></nav>
+<div class="account">{% if user.is_authenticated %}<span class="username">Hi, {{ user.username }}</span><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="quiet" type="submit">Log out</button></form>{% else %}<a href="{% url 'login' %}">Log in</a><a class="button small" href="{% url 'signup' %}">Join us ↗</a>{% endif %}</div></header>
+{% if messages %}<div class="messages" role="status">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}
+<main id="main" tabindex="-1">{% block content %}{% endblock %}</main>
+<footer class="footer"><span>A little culture. A new chapter.</span><span>Free to explore · Your pace, your place.</span></footer>
+</div>{% block scripts %}{% endblock %}</body></html>

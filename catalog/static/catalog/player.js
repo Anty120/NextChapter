@@ -1,0 +1,51 @@
+/* Native playback stays usable without JavaScript. Personal progress is server-backed. */
+(() => {
+  const player = document.getElementById('player');
+  const form = document.getElementById('audio-progress');
+  const error = document.getElementById('audio-error');
+  if (!player) return;
+  player.addEventListener('error', () => { error.hidden = false; });
+  player.querySelector('source')?.addEventListener('error', () => { error.hidden = false; });
+  player.addEventListener('loadedmetadata', () => {
+    const saved = Number(player.dataset.seconds);
+    if (Number.isFinite(saved) && saved > 0 && saved < player.duration) player.currentTime = saved;
+  });
+  if (!form) return;
+  const input = document.getElementById('audio-seconds');
+  const status = document.getElementById('save-status');
+  let lastSaved = -1;
+  let pending = false;
+  let queued = false;
+  async function save() {
+    if (pending) { queued = true; return; }
+    if (!Number.isFinite(player.currentTime) || player.currentTime === lastSaved) return;
+    const position = player.currentTime;
+    input.value = position.toFixed(1);
+    const body = new FormData(form);
+    pending = true;
+    status.textContent = 'Saving your listening position…';
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST', body, credentials: 'same-origin', keepalive: true,
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok || !(response.headers.get('content-type') || '').includes('application/json')) throw new Error('Save failed');
+      lastSaved = position;
+      status.textContent = 'Your listening position is saved.';
+    } catch {
+      status.textContent = 'Could not save your place. Check your connection or sign in again, then use Save listening position.';
+    } finally {
+      pending = false;
+      if (queued) { queued = false; save(); }
+    }
+  }
+  player.addEventListener('timeupdate', () => {
+    input.value = player.currentTime.toFixed(1);
+    if (Math.abs(player.currentTime - lastSaved) >= 5) save();
+  });
+  player.addEventListener('pause', save);
+  player.addEventListener('seeked', save);
+  player.addEventListener('ended', save);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) save(); });
+  window.addEventListener('pagehide', save);
+})();

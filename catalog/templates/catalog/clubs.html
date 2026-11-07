@@ -1,0 +1,3 @@
+{% extends 'catalog/base.html' %}{% block title %}Reading clubs · NextChapter{% endblock %}
+{% block content %}<div class="heading"><div><p class="eyebrow">Good stories bring people together</p><h1>Find your people.</h1><p class="subtitle">A shared page. A different perspective. Everyone is welcome.</p></div></div>
+<div class="club-grid">{% for club in clubs %}<article class="panel club-card"><span class="badge">{{ club.language }} · All levels welcome</span><h2>{{ club.name }}</h2><p>{{ club.description }}</p><a class="button" href="{{ club.get_absolute_url }}">Meet the club ↗</a></article>{% empty %}<p class="empty">Our first reading circle is on its way. Come back soon.</p>{% endfor %}</div>{% endblock %}
