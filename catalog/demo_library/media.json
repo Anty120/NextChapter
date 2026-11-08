@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "items": [
+    {
+      "slug": "book-es-01",
+      "title": "Marianela",
+      "creator": "Benito Pérez Galdós",
+      "language": "Spanish",
+      "format": "book",
+      "level": "C1",
+      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "text_file": "text/book-es-01.txt",
+      "attribution": "Pending verified acquisition.",
+      "cultural_context": "Pending source check.",
+      "difficulty_note": "Editorial estimate; historical language requires support.",
+      "published": false,
+      "sources": [],
+      "assets": [],
+      "chapters": [
+        {
+          "title": "Chapter I",
+          "start_paragraph": 0
+        }
+      ]
+    },
+    {
+      "slug": "book-en-01",
+      "title": "Alice’s Adventures in Wonderland",
+      "creator": "Lewis Carroll",
+      "language": "English",
+      "format": "book",
+      "level": "B2",
+      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "text_file": "text/book-en-01.txt",
+      "attribution": "Pending verified acquisition.",
+      "cultural_context": "Pending source check.",
+      "difficulty_note": "Editorial estimate; historical language requires support.",
+      "published": false,
+      "sources": [],
+      "assets": [],
+      "chapters": [
+        {
+          "title": "Chapter I",
+          "start_paragraph": 0
+        }
+      ]
+    },
+    {
+      "slug": "audiobook-es-01",
+      "title": "Marianela — Chapter I",
+      "creator": "Benito Pérez Galdós",
+      "language": "Spanish",
+      "format": "audiobook",
+      "level": "C1",
+      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "text_file": "text/audiobook-es-01.txt",
+      "attribution": "Pending verified acquisition.",
+      "cultural_context": "Pending source check.",
+      "difficulty_note": "Editorial estimate; historical language requires support.",
+      "published": false,
+      "sources": [],
+      "assets": [],
+      "audio_file": "catalog/audio/library/audiobook-es-01.mp3",
+      "audio_mime": "audio/mpeg",
+      "duration_seconds": 1,
+      "performer": "Pending verification",
+      "excerpt": true
+    },
+    {
+      "slug": "audiobook-en-01",
+      "title": "Alice — Chapter I",
+      "creator": "Lewis Carroll",
+      "language": "English",
+      "format": "audiobook",
+      "level": "B2",
+      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "text_file": "text/audiobook-en-01.txt",
+      "attribution": "Pending verified acquisition.",
+      "cultural_context": "Pending source check.",
+      "difficulty_note": "Editorial estimate; historical language requires support.",
+      "published": false,
+      "sources": [],
+      "assets": [],
+      "audio_file": "catalog/audio/library/audiobook-en-01.mp3",
+      "audio_mime": "audio/mpeg",
+      "duration_seconds": 1,
+      "performer": "Pending verification",
+      "excerpt": true
+    },
+    {
+      "slug": "song-en-01",
+      "title": "Daisy Bell",
+      "creator": "Harry Dacre",
+      "language": "English",
+      "format": "song",
+      "level": "B2",
+      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "text_file": "text/song-en-01.txt",
+      "attribution": "Pending verified acquisition.",
+      "cultural_context": "Pending source check.",
+      "difficulty_note": "Editorial estimate; historical language requires support.",
+      "published": false,
+      "sources": [],
+      "assets": [],
+      "audio_file": "catalog/audio/library/song-en-01.ogg",
+      "audio_mime": "audio/ogg",
+      "duration_seconds": 1,
+      "performer": "Pending verification",
+      "excerpt": false
+    },
+    {
+      "slug": "song-en-02",
+      "title": "Auld Lang Syne",
+      "creator": "Robert Burns / traditional",
+      "language": "English",
+      "format": "song",
+      "level": "C1",
+      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "text_file": "text/song-en-02.txt",
+      "attribution": "Pending verified acquisition.",
+      "cultural_context": "Pending source check.",
+      "difficulty_note": "Editorial estimate; historical language requires support.",
+      "published": false,
+      "sources": [],
+      "assets": [],
+      "audio_file": "catalog/audio/library/song-en-02.ogg",
+      "audio_mime": "audio/ogg",
+      "duration_seconds": 1,
+      "performer": "Pending verification",
+      "excerpt": false
+    }
+  ]
+}
