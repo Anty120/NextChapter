@@ -81,6 +81,24 @@ shared cache; core reading/community continue to work. Add the optional install
 to the deployment build before enabling assistance there. Do not expose the URL
 or credentials in the browser. Shared Redis connectivity is a deployment check.
 
+## Club comment translation
+
+Sign in and open a club discussion. Each comment has a Translate to selector and
+Translate button. The default is English; choose from 11 supported languages.
+Translation appears beneath the original and is labeled as Gemini output. Hide
+or show it without another request. Changing language clears the previous result;
+the language preference is remembered locally when browser storage is available.
+Spoiler comments keep both controls and translations within their disclosure.
+
+Comments are sent to Gemini only when Translate is selected. The backend reads
+the comment from the database, detects its source language automatically and uses
+the existing fast lookup model, quotas, CSRF and error handling. Cached results
+are keyed by the comment's current text and chosen target. No translated copy is
+stored in the database, and original comments are never rewritten. Posting and
+reading still work if Gemini is disabled or unavailable.
+
+Optional browser rehearsal: `python manage.py test scripts.check_comment_translation_browser`.
+
 ## Recording flow
 
 Practice starts from a selected reference. Listen first, then choose Record.

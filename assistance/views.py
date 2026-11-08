@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.csrf import csrf_failure as django_csrf_failure
 
 from . import provider
-from .contracts import AssistanceError, reference, validate_wav
+from .contracts import AssistanceError, TRANSLATION_LANGUAGES, reference, validate_wav
 from .limits import allowance
 
 
@@ -26,14 +26,14 @@ def csrf_failure(request, reason=''):
 
 def endpoint(view):
     @wraps(view)
-    def guarded(request):
+    def guarded(request, *args, **kwargs):
         response = None
         try:
             if request.method != 'POST':
                 raise AssistanceError('post_required', 'Use POST for assistant requests.', 400)
             if not request.user.is_authenticated:
                 raise AssistanceError('authentication_required', 'Sign in to use assistance.', 401)
-            response = view(request)
+            response = view(request, *args, **kwargs)
         except AssistanceError as exc:
             response = error(exc.code, exc.message, exc.status)
         except (RequestDataTooBig, TooManyFieldsSent, TooManyFilesSent):
@@ -62,6 +62,31 @@ def json_reference(request, max_chars=300):
         return reference(json.loads(request.body), max_chars=max_chars)
     except (ValueError, UnicodeDecodeError):
         raise AssistanceError('invalid_request', 'Send valid selection JSON.') from None
+
+
+@endpoint
+def translate_comment(request, comment_id):
+    from catalog.models import Comment
+
+    if request.content_type != 'application/json':
+        raise AssistanceError('invalid_request', 'Send the target language as JSON.')
+    if len(request.body) > 1024:
+        raise AssistanceError('request_too_large', 'The translation request is too large.', 413)
+    try:
+        data = json.loads(request.body)
+    except (ValueError, UnicodeDecodeError):
+        raise AssistanceError('invalid_request', 'Send valid translation JSON.') from None
+    target = data.get('target_language') if isinstance(data, dict) else None
+    if not isinstance(target, str) or target not in dict(TRANSLATION_LANGUAGES):
+        raise AssistanceError('invalid_language', 'Choose a supported translation language.')
+    comment = Comment.objects.filter(pk=comment_id).first()
+    if comment is None:
+        raise AssistanceError('comment_not_found', 'This comment is no longer available.', 404)
+    if not comment.body.strip() or len(comment.body) > 2000:
+        raise AssistanceError('invalid_comment', 'This comment cannot be translated (maximum 2000 characters).')
+    provider.configuration('LOOKUP')
+    with allowance(request.user.pk):
+        return JsonResponse(provider.translate_comment(comment.pk, comment.body, target))
 
 
 @endpoint

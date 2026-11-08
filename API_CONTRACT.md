@@ -83,6 +83,18 @@ backward compatibility recorded in the issue.
 
 ## Optional Gemini assistance
 
+`POST /assist/comments/<comment_id>/translate/` accepts JSON
+`{"target_language":"en"}`. Supported targets: en/fr/es/de/it/pt/ja/ko/zh/ar/hi.
+It requires a signed-in session and CSRF, but not club membership, matching public
+comment visibility. The server reads the existing comment (up to 2000 characters);
+client-supplied text/model/prompts are ignored. Returns
+`{comment_id,target_language,translation}` as plain text data. Missing comments
+return 404; other errors follow the standard assistance envelope. The configured
+fast lookup model detects source language automatically. Existing quotas apply,
+and successful translations are cached by comment content and target language.
+The original text remains visible; translation controls/results stay inside
+spoiler disclosures. No database migration or new provider key is required.
+
 `POST /assist/explain/` and `POST /assist/pronounce/` require session authentication
 and a CSRF token. JSON fields: `media_id`, zero-based `paragraph`, `start`, `end`,
 BCP-47 `locale` and `explanation_locale` (default `en`). Offsets count Unicode

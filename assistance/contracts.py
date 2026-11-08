@@ -18,6 +18,11 @@ LANGUAGES = {'English': 'en', 'French': 'fr', 'Spanish': 'es', 'German': 'de',
              'Italian': 'it', 'Portuguese': 'pt', 'Japanese': 'ja', 'Chinese': 'zh',
              'Arabic': 'ar', 'Hindi': 'hi', 'Korean': 'ko'}
 LOCALE = re.compile(r'^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$')
+TRANSLATION_LANGUAGES = (
+    ('en', 'English'), ('fr', 'French'), ('es', 'Spanish'), ('de', 'German'),
+    ('it', 'Italian'), ('pt', 'Portuguese'), ('ja', 'Japanese'), ('ko', 'Korean'),
+    ('zh', 'Chinese'), ('ar', 'Arabic'), ('hi', 'Hindi'),
+)
 
 
 def reference(data, max_chars=300):
