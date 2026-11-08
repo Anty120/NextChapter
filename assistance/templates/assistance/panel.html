@@ -1,0 +1,23 @@
+<div class="assist-launch"><button type="button" class="button" id="assist-open" aria-controls="assist-panel" aria-expanded="false">Word &amp; pronunciation help</button><span class="muted"> Gemini assistance · optional</span></div>
+<section id="assist-panel" class="assist-panel" aria-labelledby="assist-title" lang="en" hidden>
+  <div class="assist-heading"><h2 id="assist-title" tabindex="-1">A little language help</h2><button type="button" id="assist-close" class="button secondary" aria-label="Close language help">Close</button></div>
+  <p class="muted">Click a word, or highlight up to 300 characters and choose Explain selection. You can also choose a passage below with your keyboard or touch.</p>
+  <p id="assist-availability" role="status"></p>
+  <p id="assist-login" hidden><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in to use language help</a>. You can keep reading without it.</p>
+  <div class="assist-picker"><label for="assist-paragraph">Paragraph</label><select id="assist-paragraph"></select><label for="assist-passage">Word or sentence</label><select id="assist-passage"></select></div>
+  <p id="assist-selection" class="assist-selection" aria-label="Selected text"></p>
+  <button type="button" class="button" id="assist-explain">Explain selection</button>
+  <p id="assist-status" role="status" aria-live="polite" aria-atomic="true"></p>
+  <div id="assist-result" hidden>
+    <p class="badge">Gemini model help · check uncertain details</p>
+    <dl id="assist-definitions"></dl><ul id="assist-examples"></ul>
+    <p class="muted">English sound comparisons are approximate and depend on your accent. They are not exact pronunciation rules.</p>
+  </div>
+  <div id="assist-actions" class="assist-actions" hidden>
+    <button type="button" class="button" id="assist-listen">Listen / replay</button><button type="button" class="button secondary" id="assist-stop">Stop voice</button>
+    <label for="assist-speed">Voice speed<select id="assist-speed"><option value="1">Normal</option><option value="0.75">Slower (0.75×)</option></select></label>
+    <button type="button" class="button secondary" id="assist-practice">Practice this aloud</button>
+  </div>
+  {% include 'assistance/practice.html' %}
+</section>
+<noscript><p>Language assistance needs JavaScript. The story and native audio controls remain available.</p></noscript>
