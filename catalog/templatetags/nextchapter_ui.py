@@ -4,9 +4,9 @@ from django import template
 register = template.Library()
 
 # A cover keeps one colour wherever it appears (shelf card, detail page, club
-# card), so the cross-page view transition morphs one object instead of
-# cross-fading two differently coloured ones. The old shelf cycled colours by
-# list position, which recoloured a book whenever a filter changed.
+# card), so a book is recognisably the same object from page to page. The old
+# shelf cycled colours by list position, which recoloured a book whenever a
+# filter changed.
 COVER_COLORS = ('orange', 'purple', 'green', 'yellow', 'pink', 'cream', 'blue')
 CLUB_COLORS = ('blue', 'purple', 'green', 'yellow')
 # Small resting tilts, like prints laid on a table. Kept under 1.5deg so text

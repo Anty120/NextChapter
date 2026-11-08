@@ -7,7 +7,7 @@
   <div class="heading"><div><p class="eyebrow reveal" style="--i:0">Good stories bring people together</p><h1 class="reveal" style="--i:1" id="clubs-title">Find your people.</h1><p class="subtitle reveal" style="--i:2">A shared page, a voice, a song. Browse freely and join a conversation at your own pace.</p></div></div>
   <div class="club-grid">
     {% for club in clubs %}
-    <article class="panel club-card club-{{ club|club_color }} reveal" style="--i:{{ forloop.counter|add:2 }};--pose:{{ forloop.counter|pose }}" data-club="{{ club.get_absolute_url }}" aria-labelledby="club-{{ club.pk }}-name">
+    <article class="panel club-card club-{{ club|club_color }} reveal" style="--i:{{ forloop.counter|add:2 }};--pose:{{ forloop.counter|pose }}" aria-labelledby="club-{{ club.pk }}-name">
       <span class="badge">{{ club.language }} · All levels welcome</span>
       <h2 id="club-{{ club.pk }}-name"><a href="{{ club.get_absolute_url }}">{{ club.name }}</a></h2>
       <p>{{ club.description }}</p>

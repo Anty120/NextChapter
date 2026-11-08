@@ -288,7 +288,7 @@ textarea { resize: vertical; min-height: 96px; }
 .media-header .badge { margin-left: 8px; }
 .byline { margin: 14px 0 6px; }
 .media-fact { margin-bottom: 6px; color: var(--ink-soft); }
-/* The shelf card's cover travels here (cross-document view transition). */
+/* The book's own cover, in the same colour it has on the shelf. */
 .media-cover { flex: none; width: 150px; aspect-ratio: 4 / 5; rotate: -2deg; box-shadow: var(--sticker); justify-content: flex-end; }
 .media-cover .cover-title { font-size: 17px; }
 .media-cover .cover-mark { top: 10px; font-size: 80px; }
@@ -329,21 +329,6 @@ input[type=checkbox]:checked::after { scale: 1; transition: scale var(--spring-s
 blockquote { border-left: 4px solid var(--purple); margin: 20px 0; padding-left: 15px; overflow-wrap: anywhere; }
 summary { cursor: pointer; font-size: 13px; font-weight: 700; padding: 10px 0; }
 
-/* ---------- Cross-document view transitions ----------
-   Only the shared object travels (noechague.com: one object travels): a shelf
-   cover into the book's header, a club card into its hero. ui.js names the one
-   element that matches, so nothing else floats across. The rest of the page swaps
-   instantly and runs its own blur-in. Reduced motion disables the whole thing. */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition { navigation: auto; }
-}
-::view-transition-old(root) { animation: .12s ease-out both fade-out; }
-::view-transition-new(root) { animation: none; }
-@keyframes fade-out { to { opacity: 0; } }
-::view-transition-group(*) { animation-duration: .42s; animation-timing-function: cubic-bezier(.32, .72, 0, 1); }
-.media-cover { view-transition-name: cover; }
-.club-hero { view-transition-name: club; }
-
 /* ---------- Small screens ---------- */
 @media (max-width: 1000px) {
   .tools { grid-template-columns: 1fr 1fr; }
@@ -372,7 +357,7 @@ summary { cursor: pointer; font-size: 13px; font-weight: 700; padding: 10px 0; }
   .shelf-heading { gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
   .shelf-heading h2 { font-size: 20px; }
   .shelf-heading > .badge { display: none; }
-  .tools { grid-template-columns: 1fr; padding: 10px; gap: 10px; }
+  .tools { grid-template-columns: 1fr 1fr; padding: 10px; gap: 10px; }
   .tools-actions { flex-wrap: wrap; }
   .tools .button { flex: 1; }
   .story-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
@@ -398,7 +383,9 @@ summary { cursor: pointer; font-size: 13px; font-weight: 700; padding: 10px 0; }
   .media-header h1 { font-size: 32px; }
   .media-header .badge { margin-left: 0; }
   .media-cover { width: 76px; }
-  .media-cover .cover-title, .media-cover .cover-mark { display: none; }
+  .media-cover { justify-content: center; }
+  .media-cover .cover-title { display: none; }
+  .media-cover .cover-mark { position: static; font-size: 40px; opacity: .35; text-align: center; }
   .auth { margin: 30px auto; padding: 24px 20px; }
   .auth h1 { font-size: 31px; }
   .context { display: grid; gap: 0; }

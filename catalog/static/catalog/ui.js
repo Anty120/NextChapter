@@ -316,28 +316,6 @@
     if (card && card.style.opacity === '0') play(card, { opacity: 1, transform: 'translateY(0px) scale(1)', filter: 'blur(0px)' }, FADE);
   });
 
-  /* ---------- Shared element across pages ----------
-     Cross-document view transitions (CSS @view-transition) morph one object: the
-     cover you chose into the book's header, a club card into the club's hero. Only
-     that one element is named, so nothing else floats across. */
-  const pathOf = (url) => { try { return new URL(url, window.location.href).pathname; } catch { return ''; } };
-  function nameShared(destination) {
-    const path = pathOf(destination);
-    document.querySelectorAll('[data-cover], [data-club]').forEach((el) => {
-      const match = (el.dataset.cover || el.dataset.club) === path;
-      el.style.viewTransitionName = match ? (el.dataset.cover ? 'cover' : 'club') : '';
-    });
-  }
-  window.addEventListener('pageswap', (event) => {
-    if (event.viewTransition && event.activation?.entry?.url) nameShared(event.activation.entry.url);
-  });
-  window.addEventListener('pagereveal', (event) => {
-    if (!event.viewTransition) return;
-    const from = window.navigation?.activation?.from?.url;
-    if (from) nameShared(from);
-    event.viewTransition.finished.finally(() => nameShared(''));
-  });
-
   /* ---------- Forms that reload the page: join, leave, post ----------
      The server round-trip stays a normal form post. While it is in flight the button
      says what is happening (and ignores double submits); when the page comes back,

@@ -11,7 +11,7 @@
   <div class="tools-actions"><button class="button" type="submit">Find a story <span aria-hidden="true">→</span></button>{% if filters.q or filters.language or filters.format or filters.level %}<a class="clear-filters" href="{% url 'catalog' %}">Clear filters</a>{% endif %}</div>
 </form>
 <div class="story-grid">{% for item in items %}<article class="book-card" style="--pose:{{ forloop.counter0|pose }}">
-  <div class="cover color-{{ item|cover_color }}" data-cover="{{ item.get_absolute_url }}"><span class="cover-number">{{ forloop.counter|stringformat:'02d' }}</span><span class="cover-title" aria-hidden="true">{{ item.title }}</span><span class="cover-mark" aria-hidden="true">{% if item.is_audio %}♫{% else %}✳{% endif %}</span></div>
+  <div class="cover color-{{ item|cover_color }}"><span class="cover-number">{{ forloop.counter|stringformat:'02d' }}</span><span class="cover-title" aria-hidden="true">{{ item.title }}</span><span class="cover-mark" aria-hidden="true">{% if item.is_audio %}♫{% else %}✳{% endif %}</span></div>
   <div class="card-meta"><span class="badge">{{ item.level }} approx.</span><span>{{ item.get_format_display }}</span></div>
   <h3><a class="card-link" href="{{ item.get_absolute_url }}">{{ item.title }}</a></h3>
   <p class="creator">{{ item.creator }} · {{ item.language }}</p><p class="card-description">{{ item.description }}</p>
