@@ -43,8 +43,18 @@ deployment or submission is implied.
 - Local Edge playback/quiz rehearsal passed in 6.218 seconds: all four audio
   files decode, advance playback, expose durations and seek; both quizzes submit
   and render scores at a 320px viewport without horizontal overflow.
-- Django regression suite and actual main seed/readback receipts are appended
-  in the issue handoff after execution.
+- Django suite: 97 tests passed in 84.717 seconds, with two Windows symlink skips.
+  `check`, migration dry-run and diff whitespace checks passed.
+- GitHub CI passed for implementation commit `3859be6`:
+  https://github.com/Anty120/NextChapter/actions/runs/42439052801 .
+- Actual local main was fast-forwarded to the implementation. Its existing
+  SQLite database was seeded twice; verify_demo confirmed 12 published media,
+  four clubs and every required asset. Static assets were collected successfully.
+- Existing localhost:8000 app readback passed through Edge: real lookup HTTP 200
+  in 1.457 seconds including browser interaction; repeat 0.045 seconds with zero
+  network calls; word expanded to a 36-character sentence; real phonetics HTTP
+  200 preserved text; French WAV played; Marianela quiz exposed five questions.
+  A temporary local authentication session was removed after the check.
 
 ## Reproduce
 

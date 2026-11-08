@@ -7,9 +7,9 @@ seed manifest replaces its three English recordings with these bundled files:
 
 | Slug | Language / content | Duration | Bytes |
 | --- | --- | ---: | ---: |
-| audiobook-fr-01 | French, complete original Le livre jaune short story | 24.60154 s | 1,186,918 |
+| audiobook-fr-01 | French, complete original Le livre jaune short story | 24.6 s | 1,186,918 |
 | song-fr-01 | French, Tourdion sung by the dwsChorale | 87.26671 s | 1,446,765 |
-| song-es-01 | Spanish, Las Mañanitas sung opening, Elisa / Kenmayer | 35.78966 s | 447,841 |
+| song-es-01 | Spanish, Las Mañanitas sung opening, Elisa / Kenmayer | 35.79261 s | 447,841 |
 
 The Spanish Marianela Chapter I recording and both complete books remain in the
 manifest. Reseeding unpublishes the old English audio without deleting activity.
