@@ -1,5 +1,28 @@
 # Project knowledge: verification ledger
 
+## Motion UI and GitHub completion audit — 2026-11-08 04:27 UTC
+
+Exa tools are unavailable in this session. Official Motion documentation was
+opened through web search/open; package metadata and tarball were fetched directly
+from the npm registry. Page responses may be cached. GitHub issues/board/PRs and
+remote-main ancestry were read through authenticated `gh`/Git, separately from
+local runtime tests. No deployment, provider account or secrets changes followed.
+
+| Primary source | Claim / checked result |
+| --- | --- |
+| https://motion.dev/docs/animate | Motion's browser animation API supports easing and spring transitions. Local integration uses transform/opacity animation, not a React framework migration. |
+| https://motion.dev/docs/spring | Reviewed spring configuration. UI uses restrained stiffness/damping/mass for hover, press and a short heading entrance. Runtime behavior is separately browser-tested. |
+| https://motion.dev/docs/quick-start | Official script-tag distribution is supported. Runtime scripts are bundled locally, with a no-library/no-JS fallback; no external CDN is contacted by the app. |
+| https://registry.npmjs.org/motion/14.10.1 | Verified package version, MIT license and published SHA-512 tarball integrity. Extracted only the named browser build and license, with no dependency install or lifecycle script. |
+| https://registry.npmjs.org/motion/-/motion-14.10.1.tgz | Downloaded tarball matched registry integrity. Unmodified `dist/motion.js`: 183,604 bytes; SHA-256 `b39d6cdb97506ae8c00da5221ad23bb3799845b64bf58b8e19c297d81211a916`. License and machine-readable provenance retained under `catalog/static/catalog/vendor/motion/`. |
+
+The remote project audit closed completed #3/#4/#5/#10/#28/#61/#62/#71/#72 and
+retired #66 as not planned because the English recordings were superseded.
+Deployment safety (#29), human speech evaluation (#64/#60), wider moderation
+(#21), teammate access (#8/#9) and ongoing independent redesign (#70) remain open.
+See `docs/reviews/project-audit-motion.md` and each issue's completion note for
+the evidence and limits; local-main-only work is not a remote deployment receipt.
+
 ## Reader speed and non-English recordings — checked 2026-11-08 02:29 UTC
 
 Exa is unavailable in this session. Official web search/page reads and direct

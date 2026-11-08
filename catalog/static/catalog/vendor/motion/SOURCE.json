@@ -1,0 +1,8 @@
+{
+  "package": "motion",
+  "version": "14.10.1",
+  "source": "https://registry.npmjs.org/motion/-/motion-14.10.1.tgz",
+  "integrity": "sha512-CRlxgrRmG5SNu5jxyYmiw3Oo6IrPq8xhQ0EmOm6WS6tx956G6O4WqVBA8ovrIwt4Sb/A9M0j2T2Vca7ze5PkRQ==",
+  "license": "MIT",
+  "browser_sha256": "b39d6cdb97506ae8c00da5221ad23bb3799845b64bf58b8e19c297d81211a916"
+}

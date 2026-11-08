@@ -4,6 +4,7 @@
 <title>{% block title %}NextChapter · Your shelf{% endblock %}</title>
 <link rel="stylesheet" href="{% static 'catalog/app.css' %}">
 <link rel="stylesheet" href="{% static 'catalog/back-to-top.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/ui-polish.css' %}">
 {% if item %}<link rel="stylesheet" href="{% static 'assistance/panel.css' %}"><link rel="stylesheet" href="{% static 'assistance/practice.css' %}">{% endif %}
 {% block head %}{% endblock %}</head>
 <body><a class="skip" href="#main">Skip to content</a><div class="app">
@@ -14,4 +15,4 @@
 <main id="main" tabindex="-1">{% block content %}{% endblock %}</main>
 {% if item %}{% include 'assistance/integration.html' %}{% endif %}
 <footer class="footer"><span>A little culture. A new chapter.</span><span>Free to explore · Your pace, your place.</span></footer>
-</div>{% include 'catalog/back_to_top.html' %}<script src="{% static 'catalog/back-to-top.js' %}" defer></script>{% block scripts %}{% endblock %}{% if item %}<script src="{% static 'assistance/panel.js' %}" defer></script><script src="{% static 'assistance/practice.js' %}" defer></script>{% endif %}</body></html>
+</div>{% include 'catalog/back_to_top.html' %}<script src="{% static 'catalog/back-to-top.js' %}" defer></script>{% block scripts %}{% endblock %}{% if item %}<script src="{% static 'assistance/panel.js' %}" defer></script><script src="{% static 'assistance/practice.js' %}" defer></script>{% endif %}<script src="{% static 'catalog/vendor/motion/motion-14.10.1.js' %}" defer></script><script src="{% static 'catalog/ui-motion.js' %}" defer></script></body></html>
