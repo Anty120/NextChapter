@@ -8,19 +8,127 @@
       "language": "Spanish",
       "format": "book",
       "level": "C1",
-      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "description": "Complete original-language book with 22 chapters. No illustrations or translation are bundled.",
       "text_file": "text/book-es-01.txt",
-      "attribution": "Pending verified acquisition.",
-      "cultural_context": "Pending source check.",
-      "difficulty_note": "Editorial estimate; historical language requires support.",
-      "published": false,
-      "sources": [],
-      "assets": [],
+      "attribution": "Benito Pérez Galdós; text from Project Gutenberg eBook 17340, digitized by Chuck Greif. Public domain in the USA; see bundled source notices.",
+      "cultural_context": "Published in 1878, this Spanish novel explores poverty, appearance and social exclusion around the fictional mines of Socartes in northern Spain. Its treatment of disability reflects its period and invites critical discussion.",
+      "difficulty_note": "C1 editorial estimate, not a tested CEFR rating: long nineteenth-century Spanish sentences, descriptive mining vocabulary and historical spellings.",
+      "published": true,
+      "sources": [
+        {
+          "component": "text",
+          "creator": "Benito Pérez Galdós",
+          "source_url": "https://www.gutenberg.org/ebooks/17340",
+          "license": "Public domain in the USA; Project Gutenberg electronic-edition terms retained",
+          "license_url": "https://www.gutenberg.org/policy/license.html",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "UTF-8; hard-wrapped lines joined; blank-line paragraph boundaries normalized. Front matter/illustration markers omitted from reader; full source including notices retained alongside. All chapters retained."
+        }
+      ],
+      "assets": [
+        {
+          "path": "text/book-es-01.txt",
+          "sha256": "e056d9e85fd4359a596a52386df784c4482029b5c858060ebf1aaf50b227a73c"
+        },
+        {
+          "path": "text/book-es-01.source.txt",
+          "sha256": "ec6e5dbd4260583360ab7bd29738505ad5f0dfdf58db3dcbbc401c5ce4fea03f"
+        }
+      ],
       "chapters": [
         {
-          "title": "Chapter I",
+          "title": "-I- Perdido",
           "start_paragraph": 0
+        },
+        {
+          "title": "-II- Guiado",
+          "start_paragraph": 35
+        },
+        {
+          "title": "-III- Un diálogo que servirá de exposición",
+          "start_paragraph": 111
+        },
+        {
+          "title": "-IV- La familia de piedra",
+          "start_paragraph": 197
+        },
+        {
+          "title": "-V- Trabajo. Paisaje. Figura",
+          "start_paragraph": 251
+        },
+        {
+          "title": "-VI- Tonterías",
+          "start_paragraph": 269
+        },
+        {
+          "title": "-VII- Más tonterías",
+          "start_paragraph": 346
+        },
+        {
+          "title": "-VIII- Prosiguen las tonterías",
+          "start_paragraph": 419
+        },
+        {
+          "title": "-IX- Los Golfines",
+          "start_paragraph": 494
+        },
+        {
+          "title": "-X- Historia de dos hijos del pueblo",
+          "start_paragraph": 567
+        },
+        {
+          "title": "-XI- El patriarca de Aldeacorba",
+          "start_paragraph": 583
+        },
+        {
+          "title": "-XII- El doctor Celipín",
+          "start_paragraph": 636
+        },
+        {
+          "title": "-XIII- Entre dos cestas",
+          "start_paragraph": 668
+        },
+        {
+          "title": "-XIV- De cómo la Virgen María se apareció a la Nela",
+          "start_paragraph": 683
+        },
+        {
+          "title": "-XV- Los tres",
+          "start_paragraph": 734
+        },
+        {
+          "title": "-XVI- La promesa",
+          "start_paragraph": 773
+        },
+        {
+          "title": "-XVII- Fugitiva y meditabunda",
+          "start_paragraph": 799
+        },
+        {
+          "title": "-XVIII- La Nela se decide a partir",
+          "start_paragraph": 866
+        },
+        {
+          "title": "-XIX- Domesticación",
+          "start_paragraph": 921
+        },
+        {
+          "title": "-XX- El nuevo mundo",
+          "start_paragraph": 1026
+        },
+        {
+          "title": "-XXI- Los ojos matan",
+          "start_paragraph": 1094
+        },
+        {
+          "title": "-XXII- Adiós",
+          "start_paragraph": 1248
         }
+      ],
+      "components_not_supplied": [
+        "translation",
+        "cover"
       ]
     },
     {
@@ -30,19 +138,87 @@
       "language": "English",
       "format": "book",
       "level": "B2",
-      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "description": "Complete original-language book with 12 chapters. No illustrations or translation are bundled.",
       "text_file": "text/book-en-01.txt",
-      "attribution": "Pending verified acquisition.",
-      "cultural_context": "Pending source check.",
-      "difficulty_note": "Editorial estimate; historical language requires support.",
-      "published": false,
-      "sources": [],
-      "assets": [],
+      "attribution": "Lewis Carroll; text from Project Gutenberg eBook 11, credited to Arthur DiBianca and David Widger. Public domain in the USA; see bundled source notices.",
+      "cultural_context": "Published in 1865, this English literary-nonsense story plays with Victorian manners, logic and wordplay. Historical attitudes and vocabulary remain in the original text.",
+      "difficulty_note": "B2 editorial estimate, not a tested CEFR rating: clear narrative is mixed with Victorian vocabulary, puns, verse and deliberately strange logic.",
+      "published": true,
+      "sources": [
+        {
+          "component": "text",
+          "creator": "Lewis Carroll",
+          "source_url": "https://www.gutenberg.org/ebooks/11",
+          "license": "Public domain in the USA; Project Gutenberg electronic-edition terms retained",
+          "license_url": "https://www.gutenberg.org/policy/license.html",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "UTF-8; hard-wrapped lines joined; blank-line paragraph boundaries normalized. Front matter/illustration markers omitted from reader; full source including notices retained alongside. All chapters retained."
+        }
+      ],
+      "assets": [
+        {
+          "path": "text/book-en-01.txt",
+          "sha256": "2758f36824f73018880ff3f28ef0a998fbd64a64e0168329d8965d2891649eb9"
+        },
+        {
+          "path": "text/book-en-01.source.txt",
+          "sha256": "01b38ea4c710a84bc18d0bd41271a5a1a92b94e97b2812f4dece97d4a694725e"
+        }
+      ],
       "chapters": [
         {
-          "title": "Chapter I",
+          "title": "CHAPTER I. Down the Rabbit-Hole",
           "start_paragraph": 0
+        },
+        {
+          "title": "CHAPTER II. The Pool of Tears",
+          "start_paragraph": 31
+        },
+        {
+          "title": "CHAPTER III. A Caucus-Race and a Long Tale",
+          "start_paragraph": 58
+        },
+        {
+          "title": "CHAPTER IV. The Rabbit Sends in a Little Bill",
+          "start_paragraph": 107
+        },
+        {
+          "title": "CHAPTER V. Advice from a Caterpillar",
+          "start_paragraph": 150
+        },
+        {
+          "title": "CHAPTER VI. Pig and Pepper",
+          "start_paragraph": 229
+        },
+        {
+          "title": "CHAPTER VII. A Mad Tea-Party",
+          "start_paragraph": 310
+        },
+        {
+          "title": "CHAPTER VIII. The Queen’s Croquet-Ground",
+          "start_paragraph": 416
+        },
+        {
+          "title": "CHAPTER IX. The Mock Turtle’s Story",
+          "start_paragraph": 488
+        },
+        {
+          "title": "CHAPTER X. The Lobster Quadrille",
+          "start_paragraph": 581
+        },
+        {
+          "title": "CHAPTER XI. Who Stole the Tarts?",
+          "start_paragraph": 663
+        },
+        {
+          "title": "CHAPTER XII. Alice’s Evidence",
+          "start_paragraph": 738
         }
+      ],
+      "components_not_supplied": [
+        "translation",
+        "cover"
       ]
     },
     {
@@ -52,19 +228,53 @@
       "language": "Spanish",
       "format": "audiobook",
       "level": "C1",
-      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "description": "Complete Chapter I (chapter excerpt from the full audiobook), narrated by Maritza Mateo. Includes LibriVox spoken notices; the readable transcript contains the chapter text only.",
       "text_file": "text/audiobook-es-01.txt",
-      "attribution": "Pending verified acquisition.",
-      "cultural_context": "Pending source check.",
-      "difficulty_note": "Editorial estimate; historical language requires support.",
-      "published": false,
-      "sources": [],
-      "assets": [],
+      "attribution": "Benito Pérez Galdós; text from Project Gutenberg eBook 17340, digitized by Chuck Greif. Public domain in the USA; see bundled source notices. Narration: Maritza Mateo / LibriVox, 2021. Recording public domain in the USA.",
+      "cultural_context": "Published in 1878, this Spanish novel explores poverty, appearance and social exclusion around the fictional mines of Socartes in northern Spain. Its treatment of disability reflects its period and invites critical discussion.",
+      "difficulty_note": "C1 editorial estimate, not a tested CEFR rating: long nineteenth-century Spanish sentences, descriptive mining vocabulary and historical spellings.",
+      "published": true,
+      "sources": [
+        {
+          "component": "text",
+          "creator": "Benito Pérez Galdós",
+          "source_url": "https://www.gutenberg.org/ebooks/17340",
+          "license": "Public domain in the USA; Project Gutenberg electronic-edition terms retained",
+          "license_url": "https://www.gutenberg.org/policy/license.html",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "UTF-8; hard-wrapped lines joined; blank-line paragraph boundaries normalized. Front matter/illustration markers omitted from reader; full source including notices retained alongside. Complete Chapter I only; LibriVox spoken intro/outro not transcribed."
+        },
+        {
+          "component": "recording",
+          "creator": "Maritza Mateo",
+          "source_url": "https://librivox.org/marianela-by-benito-perez-galdos/",
+          "license": "LibriVox public domain dedication (USA)",
+          "license_url": "https://librivox.org/pages/public-domain/",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "Original 64 kbps MP3 chapter bytes, unmodified; decoded for verification only."
+        }
+      ],
+      "assets": [
+        {
+          "path": "text/audiobook-es-01.txt",
+          "sha256": "8fac869f4bee884a919c99820afab966cb38dd6872389e479234b9a7472264fc"
+        },
+        {
+          "path": "catalog/audio/library/audiobook-es-01.mp3",
+          "sha256": "e3474b0f3ac0970882e92b63760d668119d2c03a89c82f556813bad71f4e0fc5"
+        }
+      ],
       "audio_file": "catalog/audio/library/audiobook-es-01.mp3",
       "audio_mime": "audio/mpeg",
-      "duration_seconds": 1,
-      "performer": "Pending verification",
-      "excerpt": true
+      "duration_seconds": 845.06125,
+      "performer": "Maritza Mateo",
+      "excerpt": true,
+      "components_not_supplied": [
+        "translation",
+        "cover"
+      ]
     },
     {
       "slug": "audiobook-en-01",
@@ -73,19 +283,53 @@
       "language": "English",
       "format": "audiobook",
       "level": "B2",
-      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "description": "Complete Chapter I (chapter excerpt from the full audiobook), narrated by Kara Shallenberg. Includes LibriVox spoken notices; the readable transcript contains the chapter text only.",
       "text_file": "text/audiobook-en-01.txt",
-      "attribution": "Pending verified acquisition.",
-      "cultural_context": "Pending source check.",
-      "difficulty_note": "Editorial estimate; historical language requires support.",
-      "published": false,
-      "sources": [],
-      "assets": [],
+      "attribution": "Lewis Carroll; text from Project Gutenberg eBook 11, credited to Arthur DiBianca and David Widger. Public domain in the USA; see bundled source notices. Narration: Kara Shallenberg / LibriVox, 2010. Recording public domain in the USA.",
+      "cultural_context": "Published in 1865, this English literary-nonsense story plays with Victorian manners, logic and wordplay. Historical attitudes and vocabulary remain in the original text.",
+      "difficulty_note": "B2 editorial estimate, not a tested CEFR rating: clear narrative is mixed with Victorian vocabulary, puns, verse and deliberately strange logic.",
+      "published": true,
+      "sources": [
+        {
+          "component": "text",
+          "creator": "Lewis Carroll",
+          "source_url": "https://www.gutenberg.org/ebooks/11",
+          "license": "Public domain in the USA; Project Gutenberg electronic-edition terms retained",
+          "license_url": "https://www.gutenberg.org/policy/license.html",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "UTF-8; hard-wrapped lines joined; blank-line paragraph boundaries normalized. Front matter/illustration markers omitted from reader; full source including notices retained alongside. Complete Chapter I only; LibriVox spoken intro/outro not transcribed."
+        },
+        {
+          "component": "recording",
+          "creator": "Kara Shallenberg",
+          "source_url": "https://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll-4/",
+          "license": "LibriVox public domain dedication (USA)",
+          "license_url": "https://librivox.org/pages/public-domain/",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "Original 64 kbps MP3 chapter bytes, unmodified; decoded for verification only."
+        }
+      ],
+      "assets": [
+        {
+          "path": "text/audiobook-en-01.txt",
+          "sha256": "6ac8701ac410da5799ca8fcae298622754234a2e97931dc91f2904f35ac1d8d9"
+        },
+        {
+          "path": "catalog/audio/library/audiobook-en-01.mp3",
+          "sha256": "da919b104680c7184a3451ec2cdd65ad0b48ebc0b4eb2ec91620dd9b29e623c6"
+        }
+      ],
       "audio_file": "catalog/audio/library/audiobook-en-01.mp3",
       "audio_mime": "audio/mpeg",
-      "duration_seconds": 1,
-      "performer": "Pending verification",
-      "excerpt": true
+      "duration_seconds": 796.2859375,
+      "performer": "Kara Shallenberg",
+      "excerpt": true,
+      "components_not_supplied": [
+        "translation",
+        "cover"
+      ]
     },
     {
       "slug": "song-en-01",
@@ -94,19 +338,76 @@
       "language": "English",
       "format": "song",
       "level": "B2",
-      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "description": "Complete 1894 sung archival recording with musical accompaniment and surface noise. Full lyrics not bundled; the text panel is a credited summary with a lyrics source link.",
       "text_file": "text/song-en-01.txt",
-      "attribution": "Pending verified acquisition.",
-      "cultural_context": "Pending source check.",
-      "difficulty_note": "Editorial estimate; historical language requires support.",
-      "published": false,
-      "sources": [],
-      "assets": [],
+      "attribution": "Words/music: Harry Dacre (1892); sung by Edward M. Favor (1894), Edison 1058; UCSB cylinder 10477, original cylinder John Levin collection. Spoken introduction removed upstream. Recording public domain in the USA. Full lyrics not bundled.",
+      "cultural_context": "Harry Dacre’s 1892 popular courtship song connects cycling with romance. This 1894 Edison cylinder is sung by Edward M. Favor; it is a historical performance, not a modern studio recording.",
+      "difficulty_note": "B2 editorial listening estimate, not a tested CEFR rating: historic diction, sung phrasing and cylinder noise make familiar courtship vocabulary harder to hear.",
+      "published": true,
+      "sources": [
+        {
+          "component": "recording",
+          "creator": "Edward M. Favor",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
+          "license": "Public domain in the USA (pre-1926 sound recording)",
+          "license_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "Unmodified Ogg Vorbis source bytes. Spoken introduction removed upstream."
+        },
+        {
+          "component": "composition",
+          "creator": "Harry Dacre",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
+          "license": "Public domain in the USA",
+          "license_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "No new arrangement; original historical performance retained."
+        },
+        {
+          "component": "lyrics",
+          "creator": "Harry Dacre",
+          "source_url": "https://rpo.library.utoronto.ca/content/daisy-bell-or-bicycle-built-two",
+          "license": "Historical original public domain in the USA; lyrics not redistributed in this pack",
+          "license_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "No lyric or subtitle text bundled. Linked source only; modern Commons subtitle adaptation not copied."
+        },
+        {
+          "component": "text",
+          "creator": "NextChapter editorial summary",
+          "source_url": "https://rpo.library.utoronto.ca/content/daisy-bell-or-bicycle-built-two",
+          "license": "Project-authored editorial summary (MIT)",
+          "license_url": "https://github.com/Anty120/NextChapter/blob/main/LICENSE",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "New summary/context; explicitly not lyrics or transcription."
+        }
+      ],
+      "assets": [
+        {
+          "path": "text/song-en-01.txt",
+          "sha256": "8601a2f564d93a70814cc9e7c34774c8063cec4d50f5b44f5c7aef18528ec61f"
+        },
+        {
+          "path": "catalog/audio/library/song-en-01.ogg",
+          "sha256": "26322d595d596470474543b069a53ee23c6ecea0ca18d6093903a00155bdf82b"
+        }
+      ],
       "audio_file": "catalog/audio/library/song-en-01.ogg",
       "audio_mime": "audio/ogg",
-      "duration_seconds": 1,
-      "performer": "Pending verification",
-      "excerpt": false
+      "duration_seconds": 134.5096875,
+      "performer": "Edward M. Favor",
+      "excerpt": false,
+      "lyrics_url": "https://rpo.library.utoronto.ca/content/daisy-bell-or-bicycle-built-two",
+      "lyrics_status": "Full lyrics not bundled",
+      "text_kind": "editorial_summary",
+      "components_not_supplied": [
+        "translation",
+        "cover"
+      ]
     },
     {
       "slug": "song-en-02",
@@ -115,19 +416,76 @@
       "language": "English",
       "format": "song",
       "level": "C1",
-      "description": "Acquisition in progress; unpublished schema skeleton.",
+      "description": "Complete 1910 sung archival recording with musical accompaniment and surface noise. Full lyrics not bundled; the text panel is a credited summary with a lyrics source link.",
       "text_file": "text/song-en-02.txt",
-      "attribution": "Pending verified acquisition.",
-      "cultural_context": "Pending source check.",
-      "difficulty_note": "Editorial estimate; historical language requires support.",
-      "published": false,
-      "sources": [],
-      "assets": [],
+      "attribution": "Lyrics: Robert Burns / Scottish song tradition; traditional tune; sung by Frank C. Stanley (1910), Indestructible 1267; UCSB cylinder 4410. Click removal by Adam Cuerden. Recording public domain in the USA. Full lyrics not bundled.",
+      "cultural_context": "Robert Burns collected and reworked a Scots song associated with friendship and Hogmanay. Frank C. Stanley’s 1910 performance uses English adaptations and Scots words; it is not a Spanish song. The linked Scots original differs from the performed wording.",
+      "difficulty_note": "C1 editorial listening estimate, not a tested CEFR rating: Scots words, historical adapted wording, sung phrasing and cylinder noise add difficulty. English catalog label reflects the adapted performance.",
+      "published": true,
+      "sources": [
+        {
+          "component": "recording",
+          "creator": "Frank C. Stanley",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Auld_Lang_Syne.ogg",
+          "license": "Public domain in the USA (pre-1926 sound recording)",
+          "license_url": "https://commons.wikimedia.org/wiki/File:Auld_Lang_Syne.ogg",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "Unmodified Ogg Vorbis source bytes. Upstream click removal by Adam Cuerden; original source claims no copyright."
+        },
+        {
+          "component": "composition",
+          "creator": "Traditional Scottish tune",
+          "source_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
+          "license": "Public domain in the USA",
+          "license_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "No new arrangement; original historical performance retained."
+        },
+        {
+          "component": "lyrics",
+          "creator": "Robert Burns / traditional",
+          "source_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
+          "license": "Historical original public domain in the USA; lyrics not redistributed in this pack",
+          "license_url": "https://commons.wikimedia.org/wiki/File:Auld_Lang_Syne.ogg",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "No lyric or subtitle text bundled. Linked source only; modern Commons subtitle adaptation not copied."
+        },
+        {
+          "component": "text",
+          "creator": "NextChapter editorial summary",
+          "source_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
+          "license": "Project-authored editorial summary (MIT)",
+          "license_url": "https://github.com/Anty120/NextChapter/blob/main/LICENSE",
+          "rights_territory": "United States; other jurisdictions not cleared by this pack",
+          "checked_at_utc": "2026-11-08T00:27:34Z",
+          "modifications": "New summary/context; explicitly not lyrics or transcription."
+        }
+      ],
+      "assets": [
+        {
+          "path": "text/song-en-02.txt",
+          "sha256": "9bcf7751712127ed1659ff32140aa456cbc5d308be456545ba073767f5280e92"
+        },
+        {
+          "path": "catalog/audio/library/song-en-02.ogg",
+          "sha256": "0d277de969ce02959923ec32fd94897a6791cf183fd954198d5e02166e36fb04"
+        }
+      ],
       "audio_file": "catalog/audio/library/song-en-02.ogg",
       "audio_mime": "audio/ogg",
-      "duration_seconds": 1,
-      "performer": "Pending verification",
-      "excerpt": false
+      "duration_seconds": 141.5456875,
+      "performer": "Frank C. Stanley",
+      "excerpt": false,
+      "lyrics_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
+      "lyrics_status": "Full lyrics not bundled",
+      "text_kind": "editorial_summary",
+      "components_not_supplied": [
+        "translation",
+        "cover"
+      ]
     }
   ]
 }
