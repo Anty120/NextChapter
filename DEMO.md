@@ -1,130 +1,144 @@
-# NextChapter end-of-day demo
+# Run #48: full local library rehearsal
 
-Implementation target: the scope Anthony confirmed on November 7, 2026 in
-[#10](https://github.com/Anty120/NextChapter/issues/10#issuecomment-6713665229).
+This integration implements [#48](https://github.com/Anty120/NextChapter/issues/48)
+and [#27](https://github.com/Anty120/NextChapter/issues/27). Initial main was
+`fb5e15375cf9439291a7528cd93d7cfae8cbd0d6`; main through `16e7d19` was incorporated
+before final checks. Django serves the entire interface; the React starter is separate.
 
-## Start from a fresh checkout
+## Fresh-clone startup
 
-Use Python 3.12+ and follow the quick start in [README.md](README.md). Activate
-the virtual environment before all commands. Existing shells configured with
-production environment variables should use a separate local development shell.
-The application needs no frontend build, external media service, or API key.
-Create your own superuser interactively; no shared password is committed or seeded.
+Use Python 3.12+ in a local development shell. The following macOS/Linux commands
+explicitly select SQLite and do not contact Neon, Doppler or Vercel:
 
 ```sh
-python manage.py check
-python manage.py makemigrations --check --dry-run
+git clone --branch run48/integration https://github.com/Anty120/NextChapter.git
+cd NextChapter
+unset DATABASE_URL
+export APP_ENV=development DJANGO_DEBUG=true DJANGO_SSL_REDIRECT=false
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --require-hashes -r requirements.txt
+python manage.py migrate
 python manage.py seed_demo
-python manage.py seed_demo
-python manage.py collectstatic --noinput
-python manage.py test
+python manage.py verify_demo
+python manage.py runserver 127.0.0.1:8000
 ```
 
-Seeding creates or updates seven stable-slug items and one club. It never resets
-accounts, memberships, comments, reports, or saved positions. It does not delete
-unrelated content. Only seed-owned metadata is updated on later runs. Migrations
-must run before seeding. Startup and tests use local SQLite; no remote D1 writes.
+On PowerShell, remove the URL with `Remove-Item Env:DATABASE_URL -ErrorAction SilentlyContinue`,
+set `$env:APP_ENV='development'`, `$env:DJANGO_DEBUG='true'` and
+`$env:DJANGO_SSL_REDIRECT='false'`, create the venv with `python -m venv .venv`,
+and activate with `.venv\Scripts\Activate.ps1`. The remaining Python commands are identical.
+Open http://127.0.0.1:8000/. Use **Join us** for a reader account. For staff review,
+stop the server, run `python manage.py createsuperuser`, and restart it; choose your
+own credentials. No accounts or passwords are seeded. Local data is ignored `db.sqlite3`.
+After dependency installation, reading, seeding and playback work offline with no
+provider account, TTS engine, ffmpeg, or runtime download.
 
-## Five-minute rehearsal
+## Bundled inventory and rights
 
-1. Open `/` without signing in. Filter Spanish + Short story + A1: three stories.
-   Change level to C2: an empty state offers a link back to the full shelf.
-2. Open **La panadería de la calle Sol**. Read the paragraphs, cultural context,
-   approximate difficulty, and credits. Create a reader with **Join us**, then log in.
-3. Open the story again. Select **Save my place** beneath paragraph three. Refresh:
-   the saved paragraph is highlighted. Visit the shelf: **Resume** returns to it.
-4. Open **The Blue Door** (English audiobook). Press native Play, wait, pause, and
-   verify the saved message. Refresh: playback is positioned at the saved timestamp
-   but does not autoplay. The transcript is available below the controls. With
-   JavaScript disabled, the seconds field and Save button provide manual resume saving.
-5. Open **Clubs → The Morning Pages**. Join, post a comment, and refresh. Membership
-   and the comment remain. Spoiler comments are hidden behind an expandable control.
-   Leave: the comment remains, but the form is unavailable until joining again.
-6. Report a comment or media item. In a separate staff session, open
-   `/admin/catalog/report/`, inspect the report, set its review status, and add notes.
-7. Log out using the POST-backed button. The catalog remains available; personal
-   progress and write actions require authentication.
+| Format | Stable slug | Content |
+| --- | --- | --- |
+| Book | book-es-01 | Marianela, complete Spanish text, 22 chapters / 1,264 paragraphs |
+| Book | book-en-01 | Alice’s Adventures in Wonderland, complete English text, 12 chapters / 811 paragraphs |
+| Audiobook | audiobook-es-01 | Marianela Chapter I, Maritza Mateo / LibriVox, 845.06125 seconds, MP3 |
+| Audiobook | audiobook-en-01 | Alice Chapter I, Kara Shallenberg / LibriVox, 796.2859375 seconds, MP3 |
+| Song | song-en-01 | Daisy Bell, Harry Dacre / Edward M. Favor (1894), 134.5096875 seconds, Ogg |
+| Song | song-en-02 | Auld Lang Syne, Burns/traditional / Frank C. Stanley (1910), 141.5456875 seconds, Ogg |
 
-## Mobile and keyboard checks
+Six original Spanish/French short stories remain, for 12 published media items.
+Both audiobook recordings contain complete first chapters, labeled **chapter excerpt**
+with actual lengths. These are human historical/LibriVox recordings, not generated voices.
+The four clubs are The Morning Pages, a book circle, an audiobook circle, and a song
+circle; each has featured media and a welcoming discussion prompt. No fake participants
+or comments are seeded. Difficulty B2/C1 on the new material is an editorial estimate,
+not a certification or a claim that the work is beginner Spanish.
 
-- At 390px and 320px widths, check filters, cards, the reader, player, login forms,
-  and club comments for horizontal overflow. Cards use two columns on phones;
-  reader context moves below the text.
-- Tab from **Skip to content** through navigation and the filters; use Enter to
-  submit. Each field has a label and each link/button has a visible focus ring.
-- Save a paragraph, join/leave a club, post a spoiler comment, and report it using
-  the keyboard. Native audio controls retain browser-provided keyboard behavior.
-- Check actual audio playback with sound enabled, then refresh to verify resume.
-- A teammate should perform the startup and full rehearsal independently before
-  declaring the handoff complete. A screen-reader pass still needs a person using
-  their chosen assistive technology; semantic markup alone does not prove it.
+[The manifest](catalog/demo_library/media.json) records per-component provenance,
+territory, MIME, durations, chapter indexes and SHA-256 checksums.
+[SOURCES.md](catalog/demo_library/SOURCES.md) and
+[LICENSES.md](catalog/demo_library/LICENSES.md) retain source URLs, check times,
+modifications and US public-domain scope. Check local law before redistribution
+outside that scope. Complete Gutenberg source notices are bundled. Third-party
+works do not inherit the code's MIT license. Original fictional stories and the
+shelf design's AI-assisted implementation retain their existing attribution.
 
-## Models and boundaries
+**Legacy Zira disposition (#42):** the unsupported `the-blue-door.wav` and optional
+Windows regeneration script were removed from the distributable tree; Git history
+retains them. Seeding unpublishes an existing `the-blue-door` row without deleting
+its ID, original metadata, or anyone's saved position. Fresh databases do not create
+that recording. No Microsoft redistribution permission or voice consent is asserted.
 
-`MediaItem` stores format, language, editorial level, text/transcript, bundled audio
-path, attribution, cultural context, and publication state. `Club` has featured
-media; `Membership` is unique per user/club. `Comment` belongs to its authenticated
-author and club, with spoiler handling. Only club members can post. `ReadingProgress`
-is private and unique per user/item. `Report` has exactly one media/comment target,
-the authenticated reporter, review status, and staff notes. All six models are
-registered in admin. State changes use POST with CSRF protection and server-side
-identity/permission checks. Submitted user IDs or moderation states are ignored.
+## Five-minute walkthrough
 
-Public reading/catalog/community pages require no account. Accounts are required
-for saving, membership, comments, and reports. Staff alone can access Django admin.
-Published media is shown to visitors; draft media cannot be opened, saved, or reported.
+1. **0:00–0:40:** Browse anonymously. Choose each Format filter: six short stories,
+   two books, two audiobooks, two songs. Spanish + Short story + A1 yields three;
+   changing to C2 shows the useful empty state.
+2. **0:40–1:40:** Sign up and log in. Open Marianela, use its chapter contents, save
+   paragraph three and refresh. Open Alice, save a different paragraph and refresh.
+   Full books remain readable; bookmarks belong only to the signed-in reader.
+3. **1:40–2:50:** Open each audiobook chapter, check narrator/transcript/credits,
+   play briefly, seek, pause and refresh. The saved position returns without autoplay.
+   Repeat with Daisy Bell and Auld Lang Syne. Songs show credited summaries and source
+   links, with an explicit **Full lyrics not bundled** notice. Native audio controls
+   support keyboard playback. With JavaScript disabled, use the seconds field and
+   Save listening position button to save manually.
+4. **2:50–4:10:** Visit all four clubs. Join, post an original comment (mark a spoiler),
+   refresh, reveal it, and leave. Leaving preserves comments but removes the posting
+   form. Only members may post; anonymous readers can browse.
+5. **4:10–5:00:** Report a comment. In a separate staff session, inspect it at
+   `/admin/catalog/report/`, change review status and save staff notes. Log the reader
+   out and confirm public browsing remains available while private positions disappear.
 
-## Content and design credits
+## Repeatable validation
 
-- The shelf layout adapts Anthony's supplied `NextChapter-shelf (1).html`: blue
-  shelving, colorful typographic covers, dark borders, yellow accents. Its mock
-  completion states and nonexistent reader/review links are replaced by real routes
-  and persisted user state. Frontend CSS uses local system fonts and no remote assets.
-- The Spanish/French stories and English adaptation are original AI-assisted demo
-  writing created for NextChapter, distributed under the repository MIT license.
-  The fictional scenes do not claim to represent entire cultures or regions.
-- `catalog/static/catalog/audio/the-blue-door.wav` is a bundled synthetic reading
-  of the original English adaptation, rendered with Microsoft Zira Desktop en-US.
-  It is approximately 39 seconds and needs no online voice service. See
-  `scripts/render_demo_audio.ps1` for the optional Windows-only regeneration step;
-  users do not need a voice engine to play the committed recording.
-- Difficulty levels are provisional editorial estimates. They are not official
-  CEFR certifications, user proficiency scores, or access restrictions.
+With the venv active and `DATABASE_URL` unset:
 
-## Verification recorded for this implementation
+```sh
+python manage.py seed_demo
+python manage.py verify_demo
+python manage.py seed_demo
+python manage.py verify_demo
+python manage.py check
+python manage.py makemigrations --check --dry-run
+python manage.py collectstatic --noinput
+python manage.py test --verbosity 2
+```
 
-- Django checks and migration consistency passed. The automated suite covers
-  seed idempotency, filtering, permission and CSRF boundaries, persistence, HTML
-  escaping, admin report review, and audio byte-range responses. It also checks
-  that new comments remain visible when older comments fill a page.
-- The optional browser rehearsal (`tests/browser_demo.py --channel msedge`, after
-  installing Playwright in the local environment) passed real audio playback and
-  seek/resume, reader bookmarks, account creation/login/logout, membership,
-  comments, reporting, keyboard actions, and overflow checks on the catalog,
-  reader, player, clubs, and login pages at 390px and 320px. Screenshots were
-  visually inspected. Playwright is a development-only tool, not an app dependency.
-- Production-style static collection and tests passed. Deployment checks have
-  only the pre-existing email-delivery and HSTS-preload warnings; neither feature
-  is claimed configured. Dependency versions are unchanged; hashes were added
-  because CI already requires `--require-hashes`.
-- A separate teammate startup/rehearsal, screen-reader pass, live deployment,
-  and human submission are still pending.
+Seeding validates the complete pack before an atomic database update. It preserves
+stable IDs, users, custom records, memberships, comments, reports, and reading/audio
+positions. Verification rejects missing/empty assets, checksum mismatches, bad
+containers/MIME, invalid club targets and incomplete format inventory. The suite
+covers malformed packs leaving no partial writes and preserves #40/#41 regressions.
 
-## Limits of this demo
+For the optional local-only browser rehearsal, install Playwright separately
+(`python -m pip install playwright`), run the server in another terminal, then:
 
-The narrowed scope includes basic reports and manual staff review, not a complete
-moderation system, blocking, appeals, password-reset email, or content submission.
-Songs/books are supported media formats, but the seed contains short stories and
-one English audiobook; no Spanish narration or licensed song has been supplied.
-Audio positions save every five seconds and on pause/seek; an abrupt crash can lose
-the last few seconds. Reading uses explicit paragraph bookmarks. The sample stories
-are short and do not implement chapter navigation or timed transcript highlighting.
+```sh
+python tests/browser_demo.py --channel chrome --output .venv/qa
+```
 
-The standalone `frontend/` React scaffold remains separate from the Django-served
-demo. Hosting, remote database selection, production secrets, and submission remain
-team follow-ups. A successful local rehearsal does not establish a deployed service
-or a completed human submission.
+Chrome must already be installed (or install Playwright Chromium and pass
+`--channel chromium`). This creates unique local readers/staff with random credentials,
+exercises all media and clubs, checks actual playback time/seek/resume and HTTP 206
+with correct MIME, tests CSRF/nonmember/private-progress boundaries, reviews a report
+in staff admin, and checks keyboard navigation and overflow at 320px/390px. Screenshots
+and `evidence.json` go into the ignored output directory. See
+[run48 verification](docs/reviews/run48-integration.md) for executed results and tested revision.
 
-Development uses WhiteNoise's `runserver_nostatic` integration so bundled audio
-supports byte-range requests and native seeking/resume. See the
-[WhiteNoise development guidance](https://whitenoise.readthedocs.io/en/stable/django.html#using-whitenoise-in-development).
+## Limits and human follow-ups
+
+- **Full song lyrics are absent:** a content filter blocked writing them. The songs
+  contain credited editorial summaries and lyric source links. A human must resolve
+  authorized lyrics and exact recording/verse agreement; do not retry lyric generation
+  or acquire them through another route in this run.
+- Human listening, screen-reader testing, and testing on a physical mobile device
+  have not been done. Automated audio time advancement and desktop viewport checks
+  do not prove audibility, intelligibility, assistive-technology usability, or device behavior.
+- Audio saves every five seconds and on pause/seek; a crash can lose recent seconds.
+  Books have chapter navigation and explicit paragraph bookmarks, not timed highlighting.
+- Reports and staff review work; blocking, appeals, password-reset email and public
+  content submissions remain outside this implementation.
+- Hosting is **Vercel Django + Neon Postgres**, with shared secrets managed through
+  Doppler. Local build configuration is merged; deployment and remote persistence
+  remain unverified in #29. Gemini is deferred. No deployment, production write,
+  prize eligibility, measured learning benefit or human submission is claimed.

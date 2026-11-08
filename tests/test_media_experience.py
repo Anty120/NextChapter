@@ -5,7 +5,7 @@ from types import ModuleType
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from catalog.models import Club, MediaItem, ReadingProgress
@@ -17,6 +17,10 @@ if 'catalog.library' not in sys.modules and importlib.util.find_spec('catalog.li
     sys.modules['catalog.library'] = helper
 
 
+@override_settings(STORAGES={
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+})
 class MediaExperienceTests(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user('reader', password='local-test-pass')
