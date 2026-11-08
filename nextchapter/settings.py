@@ -66,6 +66,7 @@ APP_RELEASE = os.environ.get("APP_RELEASE", "unknown")
 # Application definition
 
 INSTALLED_APPS = [
+    'assistance',
     'catalog',
     # WhiteNoise handles byte-range requests so native audio can seek/resume
     # under runserver as well as in production.
@@ -101,6 +102,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'assistance.context_processors.assistance',
             ],
         },
     },
@@ -181,6 +183,37 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Optional Gemini assistance. Reading/community work without provider credentials.
+GEMINI_ENABLED = env_bool('GEMINI_ENABLED')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+GEMINI_TEXT_MODEL = os.environ.get('GEMINI_TEXT_MODEL', '')
+GEMINI_TTS_MODEL = os.environ.get('GEMINI_TTS_MODEL', '')
+GEMINI_AUDIO_MODEL = os.environ.get('GEMINI_AUDIO_MODEL', '')
+GEMINI_VOICE_INPUT_ENABLED = env_bool('GEMINI_VOICE_INPUT_ENABLED')
+GEMINI_VOICE_INPUT_APPROVED = env_bool('GEMINI_VOICE_INPUT_APPROVED')
+
+
+def bounded_int(name, default, minimum, maximum):
+    try:
+        value = int(os.environ.get(name, str(default)))
+    except ValueError as exc:
+        raise ImproperlyConfigured(f'{name} must be an integer') from exc
+    if not minimum <= value <= maximum:
+        raise ImproperlyConfigured(f'{name} must be between {minimum} and {maximum}')
+    return value
+
+
+GEMINI_TIMEOUT_SECONDS = bounded_int('GEMINI_TIMEOUT_SECONDS', 20, 1, 45)
+GEMINI_RATE_LIMIT = bounded_int('GEMINI_RATE_LIMIT', 12, 1, 120)
+GEMINI_CACHE_TTL_SECONDS = bounded_int('GEMINI_CACHE_TTL_SECONDS', 3600, 0, 3600)
+if os.environ.get('GEMINI_CACHE_URL'):
+    CACHES = {'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': os.environ['GEMINI_CACHE_URL'],
+        'OPTIONS': {'socket_connect_timeout': 3, 'socket_timeout': 3},
+    }}
+CSRF_FAILURE_VIEW = 'assistance.views.csrf_failure'
 if not DEBUG:
     STORAGES = {
         'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},

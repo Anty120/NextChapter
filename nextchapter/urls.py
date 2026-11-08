@@ -20,6 +20,7 @@ from django.urls import include, path
 from .health import health, readiness
 
 urlpatterns = [
+    path('assist/', include('assistance.urls')),
     path('', include('catalog.urls')),
     path('health/', health, name='health'),
     path('ready/', readiness, name='readiness'),

@@ -1,0 +1,3 @@
+# Manifest checksums describe exact resource bytes. Prevent Windows checkout
+# conversion from changing the bundled text or upstream source snapshots.
+/catalog/demo_library/text/*.txt -text

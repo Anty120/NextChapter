@@ -122,3 +122,29 @@ claim a note in a pending PR is already in main.
   No deployment, remote environment mutation, Git connection, cloud migrate or seed
   was performed. These are the #49 worker's bounded results, retained separately from
   the integration's local runtime checks. Deployment/persistence remains #29.
+
+## Gemini implementation refresh — 2026-11-08 01:02 UTC / November 7 EST
+
+Exa was unavailable in this session. Official Google docs were fetched directly
+at 00:31 UTC after the web renderer rejected Markdown responses. Current API
+fields were rechecked with official-domain web search at 01:00–01:02 UTC. Cached
+documentation remains possible; account/model transport has separate live proof.
+
+| Primary source | Supported claim / boundary |
+| --- | --- |
+| [Audio input](https://ai.google.dev/gemini-api/docs/audio) | Audio input/transcription exists; it does not establish calibrated phonetic assessment. |
+| [TTS](https://ai.google.dev/gemini-api/docs/speech-generation) | Speech generation and French support documented; current examples emphasize Interactions. Legacy generateContent was independently live-tested. |
+| [GenerateContent schema](https://ai.google.dev/api/generate-content?hl=en) | Indexed reference documents inlineData, speechConfig.languageCode and responseSchema. Direct reference redirects conflicted with accessible indexed content; real requests resolve compatibility for the tested models only. |
+| [Structured output](https://ai.google.dev/gemini-api/docs/structured-output) | Structured JSON output; application validates shape/length separately. |
+| [Terms](https://ai.google.dev/gemini-api/terms) | Paid/unpaid data handling differs. Owner confirmed actual personal-voice configuration; no independent billing/region audit or billing changes were performed. |
+| [Django cache](https://docs.djangoproject.com/en/6.0/topics/cache/) | RedisCache requires redis-py; shared atomic quotas need an appropriate backend. Actual deployed Redis remains unverified. |
+| [Redis package](https://pypi.org/project/redis/8.1.0/) | Official PyPI metadata provided version 8.1.0 and artifact SHA-256 hashes for the optional production cache lock. |
+
+Runtime: authenticated Gemini model listing advertised generateContent for the
+configured 3.8 text/TTS models. Live French moi explanation returned /mwa/,
+maison and Spanish libro contextual help succeeded. A speech-script correction
+removed spoken prose instructions: the corrected moi WAV lasted 1.2 seconds and
+audio dictation returned Moi. This is a content/transport smoke, not an independent
+pronunciation benchmark. The dev Doppler model IDs/feature flags were configured;
+keys were never printed or committed. See [Gemini acceptance](docs/reviews/gemini-acceptance.md)
+for combined app checks and unresolved quality criteria. No main merge or deployment.

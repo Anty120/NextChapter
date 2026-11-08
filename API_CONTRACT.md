@@ -79,3 +79,27 @@ user activity; reviewers must use an isolated local database. Local runs use SQL
 The migration owner must coordinate schema changes before another agent generates
 a migration. API, schema and UI contract changes must land together or have explicit
 backward compatibility recorded in the issue.
+
+## Optional Gemini assistance
+
+`POST /assist/explain/` and `POST /assist/pronounce/` require session authentication
+and a CSRF token. JSON fields: `media_id`, zero-based `paragraph`, `start`, `end`,
+BCP-47 `locale` and `explanation_locale` (default `en`). Offsets count Unicode
+codepoints, not JavaScript UTF-16 code units. The server resolves the published
+paragraph and accepts 1–300 selected characters with at most 800 total context
+characters. Clients cannot supply arbitrary prompts, models or URLs.
+
+Explain returns `selection`, `language`, `explanation_locale`, `meaning`,
+`translation`, `ipa`, `sound_guidance`, `approximation`, `caveat`, `uncertainty`,
+and `examples: [{text,note}]`. Pronounce returns playable `audio/wav` bytes.
+
+`POST /assist/practice/` uses multipart with the same reference fields and one
+`audio` file: real mono 16-bit PCM WAV, 8–48 kHz, non-silent, at most 15 seconds
+and 5 MiB. It returns `transcript`, `reference_match`, `feedback: [{observation,suggestion}]`,
+`uncertainty`, and boolean `assessment_supported`. Unsupported assessment clears
+observations; dictation agreement is not a pronunciation grade.
+
+Errors use `{error: {code,message}}`, statuses 400/401/403/413/429/502/503. Responses
+are private/no-store, including speech analysis. Missing configuration returns 503.
+Features remain optional and credential-free core flows keep working. See
+[ASSISTANCE.md](ASSISTANCE.md) for flags, deployment cache and data handling.

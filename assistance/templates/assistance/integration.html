@@ -1,0 +1,13 @@
+<div id="assistance-root"
+     data-explain-url="{% url 'assistance:explain' %}"
+     data-pronounce-url="{% url 'assistance:pronounce' %}"
+     data-practice-url="{% url 'assistance:practice' %}"
+     data-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"
+     data-enabled="{{ assistance_enabled|yesno:'true,false' }}"
+     data-voice-enabled="{{ assistance_voice_enabled|yesno:'true,false' }}"
+     data-explanation-locale="en"
+     data-media-id="{{ item.pk }}"
+     data-target-locale="{% if item.language == 'French' %}fr-FR{% elif item.language == 'Spanish' %}es-ES{% else %}en-US{% endif %}">
+    {% csrf_token %}
+    {% include 'assistance/panel.html' %}
+</div>

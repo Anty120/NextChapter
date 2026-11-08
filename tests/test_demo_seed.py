@@ -209,7 +209,12 @@ class DemoSeedTests(TestCase):
         self.write_asset(text_name, original_text)
         self.items[0]['assets'][0] = self.asset(text_name)
         (self.root / 'outside.txt').write_text('outside')
-        (self.data / 'text/escape.txt').symlink_to(self.root / 'outside.txt')
+        try:
+            (self.data / 'text/escape.txt').symlink_to(self.root / 'outside.txt')
+        except OSError as exc:
+            if getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows account lacks symlink privilege; exercised in Linux CI.')
+            raise
         self.items[0]['text_file'] = 'text/escape.txt'
         self.save()
         with self.assertRaisesMessage(CommandError, 'escapes allowed root'):
@@ -272,7 +277,12 @@ class DemoSeedTests(TestCase):
         directory = self.static / 'catalog/audio/library'
         outside = self.root / 'external-audio'
         shutil.move(directory, outside)
-        directory.symlink_to(outside, target_is_directory=True)
+        try:
+            directory.symlink_to(outside, target_is_directory=True)
+        except OSError as exc:
+            if getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('Windows account lacks symlink privilege; exercised in Linux CI.')
+            raise
         with self.assertRaisesMessage(CommandError, 'escapes allowed root'):
             self.command('seed_demo')
         self.assertEqual(MediaItem.objects.count(), 0)

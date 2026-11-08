@@ -140,5 +140,29 @@ and `evidence.json` go into the ignored output directory. See
   content submissions remain outside this implementation.
 - Hosting is **Vercel Django + Neon Postgres**, with shared secrets managed through
   Doppler. Local build configuration is merged; deployment and remote persistence
-  remain unverified in #29. Gemini is deferred. No deployment, production write,
+  remain unverified in #29. Optional Gemini assistance is documented in
+  [ASSISTANCE.md](ASSISTANCE.md). No deployment, production database write,
   prize eligibility, measured learning benefit or human submission is claimed.
+
+## Optional Gemini demonstration
+
+Start this feature branch with the backend Doppler development configuration:
+`doppler run --project hack-coms-hackathon --config dev -- python manage.py runserver`.
+The application's regular migrate/seed steps above still apply to the local
+database. Do not run seed/migrate against a shared remote database without its
+owner's authorization. Gemini consumes the configured provider quota.
+
+Sign in, open a French story, and click a word or select a sentence. Choose
+Explain selection to see meaning, translation, IPA and approximate sound examples.
+Use Listen / replay, slower playback, and Stop voice. Keyboard/touch users can
+open Word & pronunciation help and choose a paragraph and word/sentence instead.
+Choose Practice this aloud, listen, Record, Stop and replay locally. Analyze is
+the explicit upload; review dictation separately from pronunciation observations,
+then discard/retry. Denied microphone permission leaves reference listening usable.
+The owner confirmed permitted personal voice inputs before enabling dev uploads.
+No pronunciation scores or proficiency changes are produced.
+
+Development model IDs were live-tested through generateContent on Nov 7 EST:
+`gemini-3.8-flash` (text/audio) and `gemini-3.8-flash-tts` (reference speech).
+No keys are in this repository. See [acceptance evidence](docs/reviews/gemini-acceptance.md)
+for test receipts and the still-open human pronunciation benchmark.
