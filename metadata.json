@@ -1,0 +1,69 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M6WSJFMAVMAY1GTM4NR01FSN",
+  "strategy": "manual-commit",
+  "branch": "work/issue-77-0de8a109",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "API_CONTRACT.md",
+    "SOURCE_VERIFICATION.md",
+    "UPLOADS.md",
+    "catalog/admin.py",
+    "catalog/migrations/0002_uploadedmedia_updated.py",
+    "catalog/models.py",
+    "catalog/static/catalog/uploads.css",
+    "catalog/static/catalog/uploads.js",
+    "catalog/templates/catalog/base.html",
+    "catalog/templates/catalog/catalog.html",
+    "catalog/templates/catalog/uploads/community_shelf.html",
+    "catalog/templates/catalog/uploads/delete.html",
+    "catalog/templates/catalog/uploads/detail.html",
+    "catalog/templates/catalog/uploads/edit.html",
+    "catalog/templates/catalog/uploads/form.html",
+    "catalog/templates/catalog/uploads/library.html",
+    "catalog/templates/catalog/uploads/submit.html",
+    "catalog/upload_forms.py",
+    "catalog/upload_middleware.py",
+    "catalog/upload_urls.py",
+    "catalog/upload_validation.py",
+    "catalog/upload_views.py",
+    "catalog/urls.py",
+    "catalog/views.py",
+    "nextchapter/settings.py",
+    "requirements.in",
+    "requirements.txt",
+    "scripts/check_uploads_browser.py",
+    "tests/test_uploads.py"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 131455,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 16892266,
+    "output_tokens": 68183,
+    "api_call_count": 50,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 15887,
+    "layers": {
+      "betterleaks": 40,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 84,
+      "credentialed_uri": 0,
+      "entropy": 15785,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  }
+}
