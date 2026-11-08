@@ -15,7 +15,7 @@ git clone --branch run48/integration https://github.com/Anty120/NextChapter.git
 cd NextChapter
 unset DATABASE_URL
 export APP_ENV=development DJANGO_DEBUG=true DJANGO_SSL_REDIRECT=false
-python3 -m venv .venv
+python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --require-hashes -r requirements.txt
 python manage.py migrate

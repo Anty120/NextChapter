@@ -1,0 +1,17 @@
+{
+  "source_commit": "c27708161533f6b8e591b95766987a3bb73b45fc",
+  "stable_ids_counts_and_all_activity": true,
+  "legacy_unpublished_and_progress_preserved": true,
+  "malformed_command_exit": 1,
+  "malformed_error": "CommandError: song-en-02: checksum mismatch: text/song-en-02.txt",
+  "partial_writes": false,
+  "counts": {
+    "User": 4,
+    "MediaItem": 14,
+    "Club": 4,
+    "Membership": 1,
+    "Comment": 5,
+    "Report": 2,
+    "ReadingProgress": 21
+  }
+}
