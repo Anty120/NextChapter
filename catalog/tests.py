@@ -194,3 +194,34 @@ class DemoTests(TestCase):
         self.assertTrue(self.client.login(username='new-reader', password='a-unique-test-password-813'))
         self.assertRedirects(self.client.post(reverse('logout')), '/')
         self.assertNotIn('_auth_user_id', self.client.session)
+
+    def test_story_language_applies_only_to_prose(self):
+        self.client.force_login(self.user)
+        for language, code in (('Spanish', 'es'), ('French', 'fr')):
+            story = MediaItem.objects.filter(language=language, format='story').first()
+            with self.subTest(language=language):
+                response = self.client.get(story.get_absolute_url())
+                self.assertContains(response, '<div class="story-text">')
+                self.assertContains(response, f'<p lang="{code}">{story.paragraphs[0]}</p>', html=True)
+                self.assertContains(response, 'aria-label="Save my place at paragraph 1"')
+                self.assertNotContains(response, f'<div class="story-text" lang="{code}">')
+                self.assertContains(response, '<html lang="en">')
+
+    def test_failed_login_explains_errors_and_marks_credentials_invalid(self):
+        response = self.client.post(reverse('login'), {'username': 'reader', 'password': 'wrong-password'})
+        self.assertContains(response, 'id="login-errors" class="error" role="alert"')
+        self.assertContains(response, 'Check your username and password, then try logging in again.')
+        self.assertContains(response, 'aria-invalid="true" aria-describedby="login-errors"', count=2)
+        self.assertContains(response, 'value="reader"')
+        self.assertNotContains(response, 'value="wrong-password"')
+        self.assertContains(response, '<label for="id_username">Username:</label>', html=True)
+        self.assertContains(response, '<label for="id_password">Password:</label>', html=True)
+
+    def test_login_required_field_errors_and_initial_form(self):
+        response = self.client.post(reverse('login'), {'username': 'reader'})
+        self.assertContains(response, 'Password: This field is required.')
+        self.assertContains(response, 'aria-invalid="true" aria-describedby="login-errors"', count=1)
+        response = self.client.get(reverse('login'), {'next': '/media/1/'})
+        self.assertNotContains(response, 'role="alert"')
+        self.assertNotContains(response, 'aria-invalid=')
+        self.assertContains(response, 'name="next" value="/media/1/"')
