@@ -8,7 +8,7 @@ Node/Vite is not needed for this demo. The product UI lives in
 is still the separate Vite starter.
 
 ```sh
-git clone --branch run48/integration https://github.com/Anty120/NextChapter.git
+git clone https://github.com/Anty120/NextChapter.git
 cd NextChapter
 unset DATABASE_URL
 export APP_ENV=development DJANGO_DEBUG=true DJANGO_SSL_REDIRECT=false

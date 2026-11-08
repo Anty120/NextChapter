@@ -11,7 +11,7 @@ Use Python 3.12+ in a local development shell. The following macOS/Linux command
 explicitly select SQLite and do not contact Neon, Doppler or Vercel:
 
 ```sh
-git clone --branch run48/integration https://github.com/Anty120/NextChapter.git
+git clone https://github.com/Anty120/NextChapter.git
 cd NextChapter
 unset DATABASE_URL
 export APP_ENV=development DJANGO_DEBUG=true DJANGO_SSL_REDIRECT=false
