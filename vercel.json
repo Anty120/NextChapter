@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "django",
+  "buildCommand": "sh scripts/vercel_build.sh",
+  "functions": {
+    "nextchapter/wsgi.py": {
+      "maxDuration": 60
+    }
+  }
+}
