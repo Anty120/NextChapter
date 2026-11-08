@@ -168,8 +168,15 @@ html:not(.motion) .menu-item:hover, html:not(.motion) .menu-item:focus-visible {
   to { opacity: 1; transform: none; filter: none; }
 }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+/* Blur scales with the element and has a budget: big containers (a whole book, the
+   shelf) rise and fade without blur, because blurring a layer that tall is costly. */
+@keyframes reveal-plain {
+  from { opacity: 0; transform: translateY(var(--reveal-shift)); }
+  to { opacity: 1; transform: none; }
+}
 @media (prefers-reduced-motion: no-preference) {
   .reveal { animation: reveal .7s var(--ease-reveal) both; animation-delay: calc(var(--i, 0) * var(--reveal-step)); }
+  .shelf.reveal, .paper.reveal, .club-discussion.reveal { animation-name: reveal-plain; }
 }
 @media (prefers-reduced-motion: reduce) {
   .reveal { animation: fade-in .2s ease-out both; }

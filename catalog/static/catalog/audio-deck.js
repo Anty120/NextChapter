@@ -27,10 +27,16 @@
   const duration = () => (Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0);
   let scrubbing = false;
 
+  // Per frame, only a transform is written. Text and the slider value change layout,
+  // so they are written only when the visible second changes.
+  let shownSecond = -1;
   function render(time = audio.currentTime) {
     const d = duration();
     const p = d ? Math.min(1, Math.max(0, time / d)) : 0;
     fill.style.transform = `scaleX(${p})`;
+    const second = Math.floor(time);
+    if (second === shownSecond) return;
+    shownSecond = second;
     currentText.textContent = clock(time);
     if (!scrubbing && d) seek.value = String(time);
   }
@@ -105,6 +111,7 @@
     const t = Number(seek.value);
     fill.style.transform = `scaleX(${t / d})`;
     currentText.textContent = clock(t);
+    shownSecond = -1;
   });
   seek.addEventListener('change', () => {
     scrubbing = false;

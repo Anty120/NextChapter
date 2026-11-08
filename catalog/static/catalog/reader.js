@@ -92,10 +92,17 @@
     swapText(label, links[current] ? `· ${links[current].textContent.trim()}` : '');
   }
   if (marks.length && marks.every(Boolean) && 'IntersectionObserver' in window) {
-    let initial = -1;
-    marks.forEach((mark, i) => { if (mark.getBoundingClientRect().top < 120) initial = i; });
-    setCurrent(initial);
+    // The observer's first report carries every mark's position, so the starting
+    // chapter needs no layout read of its own (no forced reflow at load).
+    let primed = false;
     const io = new IntersectionObserver((entries) => {
+      if (!primed) {
+        primed = true;
+        let initial = -1;
+        for (const entry of entries) if (entry.boundingClientRect.top < 120) initial = Math.max(initial, marks.indexOf(entry.target));
+        setCurrent(initial);
+        return;
+      }
       for (const entry of entries) {
         const i = marks.indexOf(entry.target);
         if (entry.isIntersecting) setCurrent(i);

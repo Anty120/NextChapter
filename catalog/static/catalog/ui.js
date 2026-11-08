@@ -268,10 +268,16 @@
       return `inset(${top}px ${w - 6 - left - chip.offsetWidth}px ${h - 6 - top - chip.offsetHeight}px ${left}px round 4px)`;
     };
     thumb.style.inset = '3px auto 3px 3px';
-    thumb.style.width = `${row.scrollWidth - 6}px`;
     const current = () => row.querySelector('input:checked')?.closest('.chip');
-    const snap = () => { thumb.style.width = `${row.scrollWidth - 6}px`; const c = current(); if (c) thumb.style.clipPath = clipFor(c); };
-    snap();
+    // Read layout first, then write, so a resize never forces a synchronous reflow.
+    const snap = () => {
+      const width = `${row.scrollWidth - 6}px`;
+      const c = current(); const clip = c ? clipFor(c) : '';
+      thumb.style.width = width;
+      if (clip) thumb.style.clipPath = clip;
+    };
+    // ResizeObserver reports after layout, so measuring here never forces a reflow.
+    if ('ResizeObserver' in window) new ResizeObserver(snap).observe(row); else snap();
     row.addEventListener('change', () => {
       const chip = current();
       if (!chip) return;
@@ -279,7 +285,6 @@
       M.animate(thumb, { clipPath: clipFor(chip) }, SPRING.settle);
       chip.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     });
-    window.addEventListener('resize', snap);
   });
 
   /* ---------- Shelf: cards dealt out as they scroll into view ----------
@@ -287,28 +292,39 @@
      already at its resting tilt, in reading order, 40ms apart. Cards above the
      fold are covered by the CSS reveal, so nothing visible is ever hidden by JS. */
   const cards = [...document.querySelectorAll('.story-grid .book-card')];
-  if (M && cards.length && !reduced()) {
-    const fold = window.innerHeight;
-    const later = cards.filter((card) => card.getBoundingClientRect().top > fold - 40);
-    for (const card of later) {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(28px) scale(.94)';
-      card.style.filter = 'blur(8px)';
-    }
+  if (M && cards.length && !reduced() && 'IntersectionObserver' in window) {
+    // The observer's first report says which cards start off-screen, without the
+    // script measuring layout itself (no forced reflow at load).
+    const seen = new WeakSet();
     let queue = [];
     let scheduled = false;
     const flush = () => {
       scheduled = false;
-      const batch = queue; queue = [];
+      // At most four cards blur in together; blurred layers are the expensive part.
+      const batch = queue.splice(0, 4);
+      if (queue.length) { scheduled = true; setTimeout(() => requestAnimationFrame(flush), 120); }
       batch.forEach((card, i) => {
         clearFilter(M.animate(card, { opacity: 1, transform: 'translateY(0px) scale(1)', filter: 'blur(0px)' },
           { ...SPRING.settle, delay: i * 0.04, opacity: { duration: 0.3, delay: i * 0.04 }, filter: { duration: 0.35, delay: i * 0.04 } }), card);
       });
     };
-    later.forEach((card) => M.inView(card, () => {
-      queue.push(card);
-      if (!scheduled) { scheduled = true; requestAnimationFrame(flush); }
-    }, { amount: 0.15 }));
+    const io = new IntersectionObserver((entries) => {
+      for (const { target: card, isIntersecting } of entries) {
+        if (!seen.has(card)) {
+          seen.add(card);
+          if (isIntersecting) { io.unobserve(card); continue; } // on screen at load: the CSS reveal has it
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(28px) scale(.94)';
+          card.style.filter = 'blur(6px)';
+          continue;
+        }
+        if (!isIntersecting) continue;
+        io.unobserve(card);
+        queue.push(card);
+        if (!scheduled) { scheduled = true; requestAnimationFrame(flush); }
+      }
+    }, { threshold: 0.15 });
+    cards.forEach((card) => io.observe(card));
   }
   // Without the CSS-hidden cards ever being stuck: anything focused is shown.
   document.addEventListener('focusin', (event) => {
