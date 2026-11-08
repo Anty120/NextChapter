@@ -1,4 +1,3 @@
-import wave
 from io import StringIO
 from pathlib import Path
 
@@ -10,6 +9,8 @@ from django.db import IntegrityError, transaction
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
+from catalog.library import get_media_metadata, validate_audio
+
 from .models import Club, Comment, MediaItem, Membership, ReadingProgress, Report
 
 
@@ -20,7 +21,7 @@ class DemoTests(TestCase):
         cls.user = get_user_model().objects.create_user('reader', password='a-test-only-password-293')
         cls.other = get_user_model().objects.create_user('other', password='another-test-password-719')
         cls.story = MediaItem.objects.get(slug='la-panaderia')
-        cls.audio = MediaItem.objects.get(slug='the-blue-door')
+        cls.audio = MediaItem.objects.get(slug='audiobook-en-01')
         cls.club = Club.objects.get(slug='the-morning-pages')
 
     def test_seed_twice_preserves_identity_and_user_activity(self):
@@ -32,7 +33,7 @@ class DemoTests(TestCase):
         call_command('seed_demo', stdout=StringIO())
         call_command('seed_demo', stdout=StringIO())
         self.assertEqual(list(MediaItem.objects.values_list('pk', flat=True)), ids)
-        self.assertEqual(Club.objects.count(), 1)
+        self.assertEqual(Club.objects.count(), 4)
         self.assertEqual(Membership.objects.count(), 1)
         self.assertEqual(Comment.objects.count(), 1)
         self.assertEqual(ReadingProgress.objects.get().paragraph, 2)
@@ -58,10 +59,12 @@ class DemoTests(TestCase):
         self.assertContains(response, '<audio', html=False)
         self.assertContains(response, 'controls preload="metadata"')
         self.assertContains(response, staticfiles_storage.url(self.audio.audio_file))
-        with wave.open(str(Path(__file__).parent / 'static' / self.audio.audio_file), 'rb') as audio:
-            self.assertGreater(audio.getnframes() / audio.getframerate(), 10)
-            samples = audio.readframes(audio.getnframes())
-            self.assertTrue(any(samples))
+        metadata = get_media_metadata(self.audio.slug)
+        self.assertContains(response, f'type="{metadata["audio_mime"]}"')
+        data = (Path(__file__).parent / 'static' / self.audio.audio_file).read_bytes()
+        validate_audio(data, metadata['audio_mime'], self.audio.audio_file)
+        self.assertGreater(metadata['duration_seconds'], 10)
+        self.assertTrue(any(data))
 
     def test_anonymous_reads_and_authentication_required_for_writes(self):
         for url in ('/', reverse('club_list'), self.club.get_absolute_url(), self.story.get_absolute_url()):
@@ -80,7 +83,11 @@ class DemoTests(TestCase):
         self.assertTrue(response['Content-Range'].startswith('bytes 0-63/'))
         content = b''.join(response.streaming_content)
         self.assertEqual(len(content), 64)
-        self.assertEqual(content[:4], b'RIFF')
+        metadata = get_media_metadata(self.audio.slug)
+        self.assertEqual(response['Content-Type'], metadata['audio_mime'])
+        source = (Path(__file__).parent / 'static' / self.audio.audio_file).read_bytes()
+        validate_audio(source, metadata['audio_mime'], self.audio.audio_file)
+        self.assertEqual(content, source[:64])
         self.assertEqual(self.client.get(url, HTTP_RANGE='bytes=99999999-').status_code, 416)
 
     def test_join_comment_refresh_and_leave_permissions(self):

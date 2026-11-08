@@ -37,8 +37,26 @@ def media_detail(request, pk):
     progress = None
     if request.user.is_authenticated:
         progress = ReadingProgress.objects.filter(user=request.user, media=item).first()
+    # The manifest helper is owned by the seed worker; custom items return {}.
+    from .library import get_media_metadata
+
+    metadata = get_media_metadata(item.slug)
+    paragraphs = item.paragraphs
+    chapters = [chapter for chapter in metadata.get('chapters', [])
+                if isinstance(chapter.get('start_paragraph'), int)
+                and 0 <= chapter['start_paragraph'] < len(paragraphs)]
+    mime = metadata.get('audio_mime') or {
+        '.mp3': 'audio/mpeg', '.ogg': 'audio/ogg', '.wav': 'audio/wav',
+    }.get(item.audio_file.lower()[-4:], '')
+    duration = metadata.get('duration_seconds')
+    duration_label = ''
+    if isinstance(duration, (int, float)) and duration > 0:
+        minutes, seconds = divmod(round(duration), 60)
+        duration_label = f'{minutes}:{seconds:02d}'
     return render(request, 'catalog/media_detail.html', {
         'item': item, 'progress': progress, 'report_form': ReportForm(),
+        'metadata': metadata, 'chapters': chapters, 'paragraphs': paragraphs,
+        'audio_mime': mime, 'duration_label': duration_label,
         'clubs': Club.objects.filter(featured_media=item),
     })
 

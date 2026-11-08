@@ -1,0 +1,79 @@
+{
+  "formats": {
+    "story": 6,
+    "book": 2,
+    "audiobook": 2,
+    "song": 2
+  },
+  "books": [
+    {
+      "slug": "la-panaderia",
+      "paragraphs": 4,
+      "bookmark": 2
+    },
+    {
+      "slug": "book-es-01",
+      "paragraphs": 1264,
+      "bookmark": 2
+    },
+    {
+      "slug": "book-en-01",
+      "paragraphs": 811,
+      "bookmark": 2
+    }
+  ],
+  "audio": [
+    {
+      "slug": "audiobook-es-01",
+      "mime": "audio/mpeg",
+      "range": 206,
+      "duration": 845.06125,
+      "resume": 12,
+      "autoplay": false
+    },
+    {
+      "slug": "audiobook-en-01",
+      "mime": "audio/mpeg",
+      "range": 206,
+      "duration": 796.2859375,
+      "resume": 12,
+      "autoplay": false
+    },
+    {
+      "slug": "song-en-01",
+      "mime": "audio/ogg",
+      "range": 206,
+      "duration": 134.5096875,
+      "resume": 12,
+      "autoplay": false
+    },
+    {
+      "slug": "song-en-02",
+      "mime": "audio/ogg",
+      "range": 206,
+      "duration": 141.5456875,
+      "resume": 12,
+      "autoplay": false
+    }
+  ],
+  "clubs": [
+    "the-morning-pages",
+    "demo-book-club",
+    "demo-audio-club",
+    "demo-song-club"
+  ],
+  "widths": [
+    320,
+    390
+  ],
+  "browser": "156.0.8078.80",
+  "errors": [],
+  "failed_assets": [],
+  "staff_report_review": true,
+  "privacy": true,
+  "csrf_and_nonmember": true,
+  "keyboard": true,
+  "human_listening": false,
+  "screen_reader": false,
+  "physical_mobile": false
+}
