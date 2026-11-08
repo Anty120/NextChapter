@@ -7,6 +7,10 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nextchapter.settings')
+    from nextchapter.development import configure_runserver
+    diagnostic = configure_runserver(sys.argv)
+    if diagnostic:
+        print(diagnostic, file=sys.stderr)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

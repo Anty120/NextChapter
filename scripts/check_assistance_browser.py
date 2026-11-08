@@ -29,6 +29,7 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
 
         user = get_user_model().objects.create_user('browser-rehearsal')
         item = MediaItem.objects.create(slug='browser-reference', title='Browser reference',
+            creator='NextChapter', format='story', level='A2', description='A short French passage for word help.',
             language='French', text='😀 Pour moi, un livre est une porte.\n\nBonjour le monde.', published=True)
         session = Client()
         session.force_login(user)
@@ -97,27 +98,41 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 page = context.new_page()
                 page.on('pageerror', lambda error: errors.append(str(error)))
                 page.goto(f'{self.live_server_url}/media/{item.pk}/')
+                context.grant_permissions(['clipboard-read', 'clipboard-write'])
+                page.locator('#paragraph-0 p').scroll_into_view_if_needed()
+                initial_scroll = page.evaluate('window.scrollY')
                 # Real DOM selection crosses an astral character: offsets must be codepoints.
                 page.evaluate("""() => { const text = document.querySelector('#paragraph-0 p').firstChild;
                     const r = document.createRange(); r.setStart(text, 8); r.setEnd(text, 11);
                     const s = getSelection(); s.removeAllRanges(); s.addRange(r); }""")
                 page.locator('.story-text').dispatch_event('pointerup')
                 expect(page.locator('#assist-selection')).to_have_text('moi')
+                self.assertEqual(page.evaluate('window.scrollY'), initial_scroll, 'Selection must not jump the reader to a panel')
+                popup = page.locator('#assist-panel').bounding_box()
+                self.assertLessEqual(popup['width'], 340)
+                self.assertLess(popup['height'], 260)
+                self.assertGreaterEqual(popup['x'], 10)
+                self.assertLessEqual(popup['x'] + popup['width'], 310)
+                self.assertFalse(page.locator('#assist-picker').evaluate('(d) => d.open'))
+                page.locator('#assist-copy').click()
+                self.assertEqual(page.evaluate('navigator.clipboard.readText()'), 'moi')
                 page.locator('#assist-explain').click()
                 expect(page.locator('#assist-result')).to_be_visible()
+                self.assertLess(page.locator('#assist-panel').bounding_box()['height'], 260)
                 artifacts = Path(tempfile.gettempdir()) / 'nextchapter-assistance-qa'
                 artifacts.mkdir(exist_ok=True)
-                page.screenshot(path=str(artifacts / 'reader-320.png'), full_page=True)
+                page.screenshot(path=str(artifacts / 'popup-320.png'))
                 page.set_viewport_size({'width': 390, 'height': 844})
                 self.assertLessEqual(page.evaluate('document.documentElement.scrollWidth'), 390)
                 page.set_viewport_size({'width': 1024, 'height': 800})
-                page.screenshot(path=str(artifacts / 'reader-desktop.png'), full_page=True)
+                page.screenshot(path=str(artifacts / 'popup-desktop.png'))
                 page.set_viewport_size({'width': 320, 'height': 800})
                 expect(page.locator('#assist-definitions')).to_contain_text('<b>me</b>')
                 self.assertEqual(page.locator('#assist-definitions b').count(), 0)
                 page.evaluate('getSelection().removeAllRanges()')
                 page.locator('#assist-listen').click()
                 expect(page.locator('#assist-status')).to_contain_text('Playing')
+                page.locator('#assist-details > summary').click()
                 page.locator('#assist-speed').select_option('0.75')
                 page.locator('#assist-stop').click()
                 failure[0] = True
@@ -129,7 +144,7 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 page.locator('#practice-reference').click()
                 expect(page.locator('#practice-status')).to_contain_text('Playing the reference')
                 page.locator('#assist-listen').click()
-                expect(page.locator('#assist-status')).to_contain_text('Playing model')
+                expect(page.locator('#assist-status')).to_contain_text('Playing pronunciation')
                 self.assertTrue(page.locator('#practice-reference-audio').evaluate('(a) => a.paused'))
                 count = len(seen)
                 page.locator('#practice-record').click()
@@ -183,6 +198,18 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 page.locator('#assist-explain').click()
                 expect(page.locator('#assist-result')).to_be_visible()
                 page.keyboard.press('Escape')
+                expect(page.locator('#assist-panel')).to_be_hidden()
+                # A real single-word click anchors the popup and automatically explains.
+                page.locator('#paragraph-1 p').scroll_into_view_if_needed()
+                point = page.locator('#paragraph-1 p').evaluate("""p => {
+                    const r = document.createRange(); r.setStart(p.firstChild, 0); r.setEnd(p.firstChild, 7);
+                    const b = r.getBoundingClientRect(); return {x:b.x + b.width/2, y:b.y + b.height/2}; }""")
+                click_scroll = page.evaluate('scrollY')
+                page.mouse.click(point['x'], point['y'])
+                expect(page.locator('#assist-result')).to_be_visible()
+                expect(page.locator('#assist-selection')).to_have_text('Bonjour')
+                self.assertEqual(page.evaluate('scrollY'), click_scroll)
+                page.mouse.click(315, 10)
                 expect(page.locator('#assist-panel')).to_be_hidden()
                 # Actual backend route, without fixture interception, handles missing key.
                 context.unroute('**/assist/**', provider_fixture)

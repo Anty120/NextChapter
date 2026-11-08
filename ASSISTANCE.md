@@ -8,9 +8,24 @@ any member's proficiency level. The Django media library works without Gemini.
 
 Use the application's normal virtual environment, migrations, seed command and
 server. The new assistance app requires no migrations or additional packages.
+For local `python manage.py runserver`, startup loads missing Gemini settings
+from the signed-in Doppler CLI (`hack-coms-hackathon/dev`). The CLI must be on
+PATH or at `.venv/doppler/doppler[.exe]`. Existing process settings take precedence;
+`GEMINI_ENABLED=false` explicitly keeps assistance off. `DOPPLER_PROJECT` and
+`DOPPLER_CONFIG` select a different authorized development config when needed.
+Only Gemini settings are imported: shared database URLs and other secrets are
+never pulled into local startup. No credentials are written to a project file.
+Restart an already-running server after configuration changes. Failed local
+loading prints an actionable startup diagnostic without secret/provider output.
+This bootstrap runs only for development runserver; migrations, seeding, tests,
+production WSGI and builds do not contact Doppler automatically.
 On a published story/book or a transcript/lyrics page, sign in, click a word or
-select a sentence, and open its explanation. Keyboard and touch users can use
-the explicit passage/selection controls. Reference speech plays only on request.
+select a sentence. A compact popup opens next to the selection, with Explain,
+Listen and Copy. Clicking a word explains it immediately; highlighted sentences
+wait for Explain. Short translation/IPA appear inline, with pronunciation details
+and voluntary practice expanded only on request. Outside click/Escape dismiss
+the popup without scrolling the reader. Keyboard and touch users can open Word
+help and use its passage picker. Reference speech plays only on request.
 
 The reader shows contextual meaning, translation, IPA when available, sound
 guidance and nearby sound examples. English mnemonics are approximations: French
