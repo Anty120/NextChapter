@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from catalog.models import Club, Comment, MediaItem, Membership
@@ -16,6 +16,10 @@ from catalog.models import Club, Comment, MediaItem, Membership
 MANIFEST = Path(__file__).resolve().parents[1] / 'catalog/demo_library/clubs.json'
 
 
+@override_settings(STORAGES={
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+})
 class ClubLibraryTests(TestCase):
     @classmethod
     def setUpTestData(cls):

@@ -28,7 +28,13 @@ class DemoSeedTests(TestCase):
         self.static.mkdir()
         self.enterContext(patch.object(library, 'DATA_ROOT', self.data))
         self.enterContext(patch.object(library, 'STATIC_ROOT', self.static))
-        self.enterContext(override_settings(STATICFILES_DIRS=[self.static], STATIC_ROOT=self.root / 'collected'))
+        self.enterContext(override_settings(
+            STATICFILES_DIRS=[self.static], STATIC_ROOT=self.root / 'collected',
+            STORAGES={
+                'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+                'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+            },
+        ))
         self.items = []
         for slug, (fmt, language) in library.REQUIRED_MEDIA.items():
             text_name = f'text/{slug}.txt'

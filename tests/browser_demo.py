@@ -30,6 +30,9 @@ def login(page, base, username, password):
 
 
 def keyboard_check(page):
+    # Login autofocus and same-URL navigation can retain a focused field. Start
+    # the sequential navigation check at the document boundary on every page.
+    page.locator('body').evaluate('(body) => { body.tabIndex = -1; body.focus(); body.removeAttribute("tabindex"); }')
     page.keyboard.press('Tab')
     expect(page.get_by_role('link', name='Skip to content')).to_be_focused()
     page.keyboard.press('Enter')
@@ -52,6 +55,11 @@ def main():
     get_user_model().objects.create_superuser(staffname, password=staffpassword)
     othername = 'other-' + uuid4().hex[:12]
     get_user_model().objects.create_user(othername, password=password)
+    # Playwright runs its sync API inside an event loop; read ORM data beforehand.
+    story = MediaItem.objects.get(slug='la-panaderia')
+    reading = [story] + list(MediaItem.objects.filter(format='book', published=True))
+    audio_items = list(MediaItem.objects.filter(format__in=['audiobook', 'song'], published=True))
+    clubs = list(Club.objects.all())
     evidence = {'formats': {}, 'books': [], 'audio': [], 'clubs': [], 'widths': [320, 390]}
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(channel=args.channel, headless=True)
@@ -84,8 +92,6 @@ def main():
         page.get_by_label('Password confirmation:', exact=True).fill(password)
         page.get_by_role('button', name='Create account').press('Enter')
         login(page, base, username, password)
-        story = MediaItem.objects.get(slug='la-panaderia')
-        reading = [story] + list(MediaItem.objects.filter(format='book', published=True))
         for item in reading:
             page.goto(base + item.get_absolute_url())
             keyboard_check(page)
@@ -93,12 +99,14 @@ def main():
             if item.format == 'book':
                 expect(page.get_by_role('navigation', name='Table of contents')).to_be_visible()
                 expect(page.locator('.chapter-toc a')).to_have_count(len(get_media_metadata(item.slug)['chapters']))
+                last = get_media_metadata(item.slug)['chapters'][-1]['start_paragraph']
+                page.locator('.chapter-toc a').last.press('Enter')
+                expect(page.locator(f'#paragraph-{last}')).to_be_focused()
             page.get_by_role('button', name='Save my place at paragraph 3', exact=True).press('Enter')
             page.reload()
             expect(page.locator('#paragraph-2')).to_have_class('paragraph saved-paragraph')
-            page.screenshot(path=str(output / (item.slug + '.png')), full_page=True)
+            page.screenshot(path=str(output / (item.slug + '.png')), full_page=False)
             evidence['books'].append({'slug': item.slug, 'paragraphs': len(item.paragraphs), 'bookmark': 2})
-        audio_items = list(MediaItem.objects.filter(format__in=['audiobook', 'song'], published=True))
         for item in audio_items:
             metadata = get_media_metadata(item.slug)
             page.goto(base + item.get_absolute_url())
@@ -133,7 +141,7 @@ def main():
             page.reload()
             page.wait_for_function('Math.abs(document.querySelector("audio").currentTime - 12) < 0.1')
             assert page.locator('audio').evaluate('(a) => a.paused && !a.autoplay')
-            page.screenshot(path=str(output / (item.slug + '.png')), full_page=True)
+            page.screenshot(path=str(output / (item.slug + '.png')), full_page=False)
             fixture = context.new_page()
             check_player_browser(fixture, base, url)
             fixture.close()
@@ -141,7 +149,6 @@ def main():
                                       'duration': metadata['duration_seconds'], 'resume': 12, 'autoplay': False})
         page.goto(base + '/clubs/')
         expect(page.locator('.club-card')).to_have_count(4)
-        clubs = list(Club.objects.all())
         report_reason = 'Browser rehearsal report ' + username
         for index, club in enumerate(clubs):
             page.goto(base + club.get_absolute_url())
@@ -187,7 +194,9 @@ def main():
             page.screenshot(path=str(output / f'catalog-{width}.png'), full_page=True)
         page.get_by_role('button', name='Log out', exact=True).press('Enter')
         expect(page.get_by_role('link', name='Log in', exact=True)).to_be_visible()
-        anon = context.request.post(base + f'/media/{story.pk}/progress/', form={'paragraph': '1'}, max_redirects=0)
+        csrf = next(cookie['value'] for cookie in context.cookies() if cookie['name'] == 'csrftoken')
+        anon = context.request.post(base + f'/media/{story.pk}/progress/', form={'paragraph': '1'},
+                                    headers={'X-CSRFToken': csrf}, max_redirects=0)
         assert anon.status == 302
         other = browser.new_context()
         private = other.new_page()
@@ -205,12 +214,15 @@ def main():
         admin.get_by_label('Username:', exact=True).fill(staffname)
         admin.get_by_label('Password:', exact=True).fill(staffpassword)
         admin.get_by_role('button', name='Log in', exact=True).press('Enter')
-        admin.goto(base + '/admin/catalog/report/')
-        admin.get_by_role('link', name='Open: ' + report_reason, exact=True).click()
-        expect(admin.get_by_label('Reason:', exact=True)).to_have_value(report_reason)
+        admin.goto(base + '/admin/catalog/report/?q=' + username)
+        expect(admin.locator('#result_list tbody tr')).to_have_count(1)
+        admin.locator('#result_list tbody th a').click()
+        expect(admin.locator('.field-reason .readonly')).to_have_text(report_reason)
         admin.get_by_label('Status:', exact=True).select_option('reviewed')
         admin.get_by_label('Review notes:', exact=True).fill('Local browser rehearsal reviewed.')
         admin.locator('input[name="_save"]').press('Enter')
+        admin.goto(base + '/admin/catalog/report/?q=' + username)
+        expect(admin.locator('#result_list .field-status')).to_have_text('Reviewed')
         staff.close()
         assert not errors, errors
         assert not failed_assets, failed_assets
