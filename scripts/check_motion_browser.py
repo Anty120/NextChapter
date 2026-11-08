@@ -14,6 +14,51 @@ from catalog.models import Club, Comment, MediaItem
 
 @override_settings(GEMINI_ENABLED=True)
 class MotionBrowserCheck(StaticLiveServerTestCase):
+    def check_card_menu_anchor(self, page):
+        from playwright.sync_api import expect
+
+        trigger = page.locator('.book-card .icon-button').first
+        menu = page.locator('.book-card [popover]').first
+
+        def check_geometry():
+            # Include the press spring, hover transition and popover entrance. A check
+            # during those animations can briefly pass before the trigger moves away.
+            page.wait_for_function('''() => {
+                const trigger = document.querySelector('.book-card .icon-button');
+                return [trigger, trigger.closest('.book-card'), document.querySelector('.book-card [popover]')]
+                    .every(e => e.getAnimations().every(a => a.playState !== 'running'));
+            }''')
+            page.wait_for_function('''() => {
+                const t = document.querySelector('.book-card .icon-button').getBoundingClientRect();
+                const m = document.querySelector('.book-card [popover]').getBoundingClientRect();
+                const vertical = Math.min(Math.abs(m.top - t.bottom - 8), Math.abs(t.top - m.bottom - 8));
+                const clamp = left => Math.max(8, Math.min(left, document.documentElement.clientWidth - m.width - 8));
+                const horizontal = Math.min(Math.abs(m.left - clamp(t.left)), Math.abs(m.left - clamp(t.right - m.width)));
+                return vertical < 3 && horizontal < 3;
+            }''')
+            box = menu.bounding_box()
+            self.assertGreaterEqual(box['x'], 0)
+            self.assertLessEqual(box['x'] + box['width'], page.viewport_size['width'])
+
+        # A quick click catches the press and hover animations in progress.
+        trigger.click()
+        expect(menu).to_be_visible()
+        check_geometry()
+        page.mouse.move(5, 5)
+        check_geometry()
+        page.evaluate('scrollBy(0, 80)')
+        check_geometry()
+        page.keyboard.press('Escape')
+        expect(menu).to_be_hidden()
+        expect(trigger).to_be_focused()
+        trigger.press('Enter')
+        expect(menu).to_be_visible()
+        expect(menu.locator('.menu-item').first).to_be_focused()
+        check_geometry()
+        page.keyboard.press('Escape')
+        expect(menu).to_be_hidden()
+        expect(trigger).to_be_focused()
+
     def test_motion_and_progressive_fallbacks(self):
         from playwright.sync_api import expect, sync_playwright
 
@@ -52,6 +97,7 @@ class MotionBrowserCheck(StaticLiveServerTestCase):
                 page.wait_for_function('document.querySelector(".book-card").getAnimations().length === 0')
                 page.evaluate('scrollTo({top:0,behavior:"instant"})')
                 page.screenshot(path=str(artifacts / 'motion-after-desktop.png'))
+                self.check_card_menu_anchor(page)
                 for width in [320,390]:
                     page.set_viewport_size({'width':width,'height':844})
                     for path in ['/', '/?format=audio', '/clubs/', club.get_absolute_url(), story.get_absolute_url(),
@@ -66,6 +112,7 @@ class MotionBrowserCheck(StaticLiveServerTestCase):
                     page.wait_for_function('document.querySelectorAll(".book-card")[0].getAnimations().length === 0')
                     page.evaluate('scrollTo({top:0,behavior:"instant"})')
                     page.screenshot(path=str(artifacts / f'motion-after-{width}.png'))
+                    self.check_card_menu_anchor(page)
                 page.emulate_media(reduced_motion='reduce')
                 expect(page.locator('html')).to_have_attribute('data-ui-motion','reduced')
                 card.hover()

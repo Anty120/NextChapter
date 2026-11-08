@@ -54,7 +54,57 @@ permissions are unchanged.
 
   Browsers without `[popover]` show the menus inline.
 
-## Verification (headless Chrome 156, local SQLite)
+## Recovery verification (November 8, 2026)
+
+The stopped session left merge `a3dfaeb` locally. It carries main `0ce080e`,
+including private uploads, My Library, community submissions, 10 MB song transport
+and pronunciation button changes. Those features remain in the redesigned UI.
+The merge already included the single-player fix described below; the previous
+chat handoff had incorrectly reported it as unfinished.
+
+The remaining card-menu failure was real: opening measured the trigger while its
+press spring and the card's hover transition were running. The menu kept that
+temporary position after the trigger settled. `ui.js` now repositions after those
+animations finish, after later card hover transitions, and on scroll. Positioning
+also clamps the menu to the viewport, fixing a second overflow at 320 px. It does
+not measure layout on every animation frame. The focused browser check now asserts
+settled alignment, mouse departure, scrolling, keyboard focus and Escape at
+1440/390/320 px.
+
+Checks executed against isolated local SQLite databases in Chrome 156.0.8078.80:
+
+- `manage.py test`: **117 tests passed**.
+- `check`, `makemigrations --check --dry-run`, fresh `migrate` through catalog
+  `0003`, `seed_demo`, `verify_demo`: passed. Debug `collectstatic` copied 158 files;
+  production manifest storage processed 462 files.
+- `tests/browser_demo.py`: passed, with `errors: []`, `failed_assets: []`, saved
+  bookmarks, 12-second audio resume, no autoplay, clubs, CSRF checks, privacy and
+  staff report review.
+- `scripts.check_motion_browser`: passed, including the new menu regression checks,
+  reduced motion, missing Motion and no JavaScript. No remote runtime requests.
+- `scripts.check_large_songs_browser`, `check_learning_browser` and
+  `check_comment_translation_browser`: passed in the five-check browser group.
+- `scripts.check_uploads_browser`: passed when rerun alone, including PDF page
+  saving, MP3 playback/resume, staff approval and withdrawal. In the initial group
+  run it failed immediately after reload because `#player` was absent when the
+  predicate ran. No upload source or assertion was changed; this inconsistent
+  result remains disclosed rather than claimed fixed.
+- The saved interaction rehearsal passed **41/41** checks; the player/upload-page
+  follow-up passed **37/37**, including custom playback and volume, keyboard-native
+  playback, JavaScript failure, audio failure and 320/390 px layouts.
+- Runtime motion audit: all nine scenarios reported **0 ms forced layout in Long
+  Animation Frames**. Menu open/close five times produced 49 layouts / 9.8 ms total.
+  Long frames were still observed, including a 641 ms shelf-load frame; this is
+  evidence about forced layout, not proof that every frame is smooth.
+- `node --check catalog/static/catalog/ui.js` and `git diff --check`: passed.
+
+Fresh screenshots are in [`recovery/`](recovery/). Previously regenerated
+screenshots in `interactions/` were preserved separately in the working tree.
+Production database migrations and deployment were not performed by this recovery.
+Kevin reviews PR #75; device/feel checks and acceptance of #74's consolidation
+remain tracked in #76.
+
+## Initial verification (headless Chrome 156, local SQLite)
 
 - `manage.py test`: 103 tests OK after merging main (90 before). Also clean: `check`, `makemigrations --check
   --dry-run`, `migrate`, `seed_demo`, `verify_demo` and `collectstatic` (debug and
@@ -77,7 +127,7 @@ permissions are unchanged.
     - Per-frame text and slider writes in the deck: 164 layouts in 2.5 s down to 56,
       and the rest is the native player.
 
-## Integration with main (7 commits after 8a1164f)
+## Integration with main
 
 Main gained features while this branch was in progress, and the merge keeps all of
 them in the new templates: book quizzes (link and end-of-book section), comment
@@ -113,6 +163,7 @@ JavaScript disabled. `interactions/` holds mid-animation and settled frames.
 - How the springs *feel* has not been judged by a person on real hardware, including
   Safari, Firefox and touch devices. The values come from the reference doc and the
   skills, not from tuning by eye.
-- The native `<audio>` stays visible under the deck on purpose: it is the
-  keyboard-accessible fallback and what the rehearsal drives. Some viewers may see this
-  as duplicate controls.
+- The native `<audio>` strip is visually hidden while the custom deck is available.
+  Keyboard focus reveals it, and JavaScript failure or an audio error leaves native
+  controls available. This behavior is verified in Chrome; VoiceOver and physical
+  device checks remain open in #76.

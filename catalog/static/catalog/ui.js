@@ -176,16 +176,34 @@
     function place() {
       const r = trigger.getBoundingClientRect();
       const vw = document.documentElement.clientWidth;
+      const width = pop.offsetWidth || parseFloat(getComputedStyle(pop).minWidth) || 220;
       const below = window.innerHeight - r.bottom;
       const alignRight = r.left + r.width / 2 > vw / 2;
       originY = below < 260 && r.top > below ? 'bottom' : 'top';
       const s = pop.style;
-      s.left = alignRight ? 'auto' : `${Math.max(8, r.left)}px`;
-      s.right = alignRight ? `${Math.max(8, vw - r.right)}px` : 'auto';
+      s.left = `${Math.max(8, Math.min(alignRight ? r.right - width : r.left, vw - width - 8))}px`;
+      s.right = 'auto';
       s.top = originY === 'top' ? `${r.bottom + 8}px` : 'auto';
       s.bottom = originY === 'bottom' ? `${window.innerHeight - r.top + 8}px` : 'auto';
       s.transformOrigin = `${originY} ${alignRight ? 'right' : 'left'}`;
     }
+    let raf = 0;
+    function schedulePlace() {
+      if (!pop.matches(':popover-open') || raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (pop.matches(':popover-open')) place();
+      });
+    }
+    const card = trigger.closest('.book-card');
+    // Opening can catch the button's press spring and the card's hover lift mid-flight.
+    // Re-anchor when they settle, without measuring layout on every animation frame.
+    function placeAfterMotion() {
+      const animations = [trigger, card].filter(Boolean).flatMap((el) => el.getAnimations());
+      Promise.allSettled(animations.map((animation) => animation.finished)).then(schedulePlace);
+    }
+    card?.addEventListener('transitionend', (event) => { if (event.target === card) schedulePlace(); });
+    card?.addEventListener('transitioncancel', (event) => { if (event.target === card) schedulePlace(); });
     trigger.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') openedByKeyboard = true; });
     trigger.addEventListener('pointerdown', () => { openedByKeyboard = false; });
     pop.addEventListener('beforetoggle', (event) => {
@@ -211,6 +229,7 @@
       closing = false;
       clearFilter(play(pop, from, { ...SPRING.settle, opacity: FADE, filter: { duration: 0.2 } }), pop);
       if (openedByKeyboard || trigger.matches(':focus-visible')) menuItems(pop)[0]?.focus();
+      placeAfterMotion();
     });
     // Arrow keys move between items; Home/End jump. Tab still leaves normally.
     pop.addEventListener('keydown', (event) => {
@@ -222,11 +241,7 @@
       items[(go + items.length) % items.length].focus();
     });
     // Keep it attached to its trigger while the page scrolls (read, then write once).
-    let raf = 0;
-    window.addEventListener('scroll', () => {
-      if (!pop.matches(':popover-open') || raf) return;
-      raf = requestAnimationFrame(() => { raf = 0; place(); });
-    }, { passive: true });
+    window.addEventListener('scroll', schedulePlace, { passive: true });
     window.addEventListener('resize', () => { if (pop.matches(':popover-open')) pop.hidePopover(); });
   }
   const supportsPopover = typeof HTMLElement.prototype.showPopover === 'function';
