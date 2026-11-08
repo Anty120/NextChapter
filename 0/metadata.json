@@ -1,0 +1,50 @@
+{
+  "cli_version": "0.13.1",
+  "checkpoint_id": "01M6WPQK574JRTMPRQZ7PKTG7B",
+  "session_id": "01a1b7b2-7ca7-7a03-ac22-6ca535e8035d",
+  "strategy": "manual-commit",
+  "created_at": "2026-11-08T04:30:17.2238939Z",
+  "branch": "work/issue-74-43ce6417",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".gitattributes",
+    "SOURCE_VERIFICATION.md",
+    "catalog/static/catalog/ui-motion.js",
+    "catalog/static/catalog/ui-polish.css",
+    "catalog/static/catalog/vendor/motion/LICENSE.md",
+    "catalog/static/catalog/vendor/motion/SOURCE.json",
+    "catalog/static/catalog/vendor/motion/motion-14.10.1.js",
+    "catalog/templates/catalog/base.html",
+    "docs/reviews/project-audit-motion.md",
+    "scripts/check_motion_browser.py"
+  ],
+  "agent": "Codex",
+  "model": "gpt-6.1-sol",
+  "turn_id": "b2ca396fa902",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 903417,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 67144956,
+    "output_tokens": 291980,
+    "api_call_count": 427,
+    "subagent_tokens_complete": true
+  },
+  "redaction": {
+    "replacements": 14369,
+    "layers": {
+      "betterleaks": 36,
+      "connection_string": 0,
+      "credential_key": 0,
+      "credential_value": 75,
+      "credentialed_uri": 0,
+      "entropy": 14280,
+      "key_context": 0,
+      "provider_token": 0,
+      "shell_stdin": 0
+    }
+  },
+  "session_metrics": {
+    "turn_count": 1
+  }
+}

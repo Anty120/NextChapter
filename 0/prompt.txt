@@ -1,0 +1,5 @@
+explain the current status of the project. DO NOT THINK LONG. You must simply give an 2 sentence explanation.
+
+---
+
+Review the github projects and issues, and start closing issues we have already done. Then, decide on which open issues we can focus on next. Finally, make the UI better by using motion.dev or springs or whatever else would work best.
