@@ -18,14 +18,18 @@ def catalog(request):
     filters = {key: request.GET.get(key, '').strip() for key in ('language', 'format', 'level', 'q')}
     for field in ('language', 'format', 'level'):
         if filters[field]:
-            items = items.filter(**{field: filters[field]})
+            if field == 'format' and filters[field] == 'audio':
+                items = items.filter(format__in=[MediaItem.Format.AUDIOBOOK, MediaItem.Format.SONG])
+            else:
+                items = items.filter(**{field: filters[field]})
     if filters['q']:
         items = items.filter(Q(title__icontains=filters['q']) | Q(creator__icontains=filters['q']))
     recent = None
     if request.user.is_authenticated:
         recent = ReadingProgress.objects.filter(user=request.user, media__published=True).select_related('media').first()
     return render(request, 'catalog/catalog.html', {
-        'items': items, 'filters': filters, 'formats': MediaItem.Format.choices,
+        'items': items, 'filters': filters,
+        'formats': [('audio', 'Songs & audiobooks'), *MediaItem.Format.choices],
         'levels': MediaItem.LEVELS,
         'languages': MediaItem.objects.filter(published=True).values_list('language', flat=True).distinct().order_by('language'),
         'recent': recent,

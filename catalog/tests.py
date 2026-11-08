@@ -50,6 +50,21 @@ class DemoTests(TestCase):
         self.assertContains(response, 'No media matches these filters')
         self.assertContains(response, 'Explore the full shelf')
 
+    def test_listening_shortcut_includes_both_audio_formats_and_combines_filters(self):
+        self.assertContains(self.client.get('/'), 'href="?format=audio"')
+        response = self.client.get('/', {'format': 'audio'})
+        items = list(response.context['items'])
+        self.assertEqual({item.format for item in items}, {'song', 'audiobook'})
+        self.assertTrue(all(item.published for item in items))
+        self.assertContains(response, '<option value="audio" selected>Songs &amp; audiobooks</option>', html=True)
+        response = self.client.get('/', {'format':'audio', 'language':'Spanish'})
+        self.assertEqual({item.format for item in response.context['items']}, {'song', 'audiobook'})
+        self.assertTrue(all(item.language == 'Spanish' for item in response.context['items']))
+        response = self.client.get('/', {'format':'audio', 'q':'Tourdion', 'level':'B1'})
+        self.assertEqual([item.slug for item in response.context['items']], ['song-fr-01'])
+        response = self.client.get('/', {'format':'audiobook'})
+        self.assertEqual({item.format for item in response.context['items']}, {'audiobook'})
+
     def test_media_text_credits_context_and_playable_audio_asset(self):
         response = self.client.get(self.story.get_absolute_url())
         self.assertContains(response, self.story.paragraphs[0])
