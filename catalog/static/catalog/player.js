@@ -45,6 +45,8 @@
       if (!response.ok || !(response.headers.get('content-type') || '').includes('application/json')) throw new Error('Save failed');
       lastSaved = position;
       status.textContent = 'Your listening position is saved.';
+      // Lets the optional listening deck move its saved-position marker.
+      player.dispatchEvent(new CustomEvent('progress-saved', { detail: { seconds: position } }));
     } catch {
       status.textContent = 'Could not save your place. Check your connection or sign in again, then use Save listening position.';
     } finally {
