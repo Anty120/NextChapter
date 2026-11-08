@@ -1,11 +1,120 @@
-/* Keep long books and their credits readable within the existing responsive shell. */
-.chapter-toc{border-block:1px solid #ddd;margin-block:20px;padding-block:8px}
-.chapter-toc ol{max-height:18rem;overflow:auto;padding-inline-start:26px;margin:8px 0}
-.chapter-toc a{display:inline-block;padding:6px 2px;overflow-wrap:anywhere}
-.paper,.context,.reader-credits{min-width:0}
-.story-text p{overflow-wrap:anywhere;white-space:pre-line}
-.reader-credits{overflow-wrap:anywhere}
-.component-credit{border-top:1px solid #ddd;padding-top:14px}
-.playback-speed{display:block;max-width:220px;margin-block:20px}
-.playback-speed select{margin-top:6px}
-.paragraph:focus{outline:3px solid #154caa;outline-offset:3px}
+/* Reader and listening chrome. Long books stay readable in the responsive shell. */
+.paper, .context, .reader-credits { min-width: 0; }
+.reader-credits { overflow-wrap: anywhere; }
+.component-credit { border-top: 1px solid var(--rule); padding-top: 14px; }
+.saved-link { font-weight: 700; }
+
+/* ---------- Reader bar ----------
+   Sticky inside the page: chapters button, current chapter, reading progress. */
+.reader-bar { position: sticky; top: 10px; z-index: 3; display: flex; align-items: center; gap: 12px; min-height: 48px; margin: 0 -10px 18px; padding: 6px 12px 6px 6px; background: var(--paper); border: var(--line); border-radius: 999px; box-shadow: var(--sticker-sm); }
+.reader-bar:not(:has(.toc-trigger)) { padding-left: 14px; }
+.toc-trigger { display: inline-flex; align-items: center; gap: 7px; min-width: 0; max-width: 62%; border-radius: 999px; box-shadow: none; }
+.toc-trigger svg { flex: none; }
+.toc-current { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; color: var(--muted); display: inline-block; }
+.toc-current:empty { display: none; }
+.read-progress { position: relative; flex: 1; min-width: 40px; height: 8px; border: 1.5px solid var(--ink); border-radius: 99px; overflow: hidden; background: var(--paper); }
+.read-progress span { position: absolute; inset: 0; background: var(--yellow); transform-origin: 0 50%; transform: scaleX(0); }
+html:not(.ui-ready) .read-progress { display: none; }
+
+/* ---------- Table of contents: a sheet that slides from the left ----------
+   Native [popover]: works without JS (Esc, click outside). reader.js springs it in. */
+.chapter-toc { max-width: 100%; }
+.chapter-toc ol { margin: 0; padding: 4px 8px 16px; list-style: none; counter-reset: chapter; }
+.chapter-toc li { counter-increment: chapter; }
+.chapter-toc a { display: flex; gap: 12px; align-items: baseline; padding: 9px 10px; overflow-wrap: anywhere; font-weight: 600; }
+.chapter-toc a::before { content: counter(chapter, decimal-leading-zero); flex: none; font-size: 11px; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chapter-toc a[aria-current] { background: var(--yellow-soft); }
+.chapter-toc a[aria-current]::before { color: var(--ink); }
+.sheet { padding: 0; color: var(--ink); background: var(--paper); border: var(--line); }
+@supports selector(:popover-open) {
+  .sheet { position: fixed; inset: 0 auto 0 0; width: min(380px, 90vw); height: 100dvh; max-height: none; margin: 0; overflow-y: auto; overscroll-behavior: contain; border-width: 0 2px 0 0; border-radius: 0 var(--r-lg) var(--r-lg) 0; box-shadow: 6px 0 0 var(--ink); }
+  .sheet::backdrop { background: rgb(23 23 23 / .3); opacity: 0; transition: opacity .25s ease-out, display .25s allow-discrete, overlay .25s allow-discrete; }
+  .sheet:popover-open::backdrop { opacity: 1; }
+  @starting-style { .sheet:popover-open::backdrop { opacity: 0; } }
+}
+/* Keep the sheet rendered while it slides out. */
+.ui-ready .sheet { transition: display .25s allow-discrete, overlay .25s allow-discrete; }
+.sheet-head { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 14px 10px 10px 18px; background: var(--paper); border-bottom: 1px solid var(--rule); }
+.sheet-head h2 { margin: 0; font-size: 18px; }
+
+/* ---------- Prose ---------- */
+.story-text { font-family: Georgia, 'Times New Roman', serif; font-size: 21px; line-height: 1.9; }
+.story-text p { overflow-wrap: anywhere; white-space: pre-line; }
+.paragraph { position: relative; isolation: isolate; padding: 12px 14px; margin: 0 -14px 6px; border-radius: var(--r-sm); scroll-margin-top: 84px; }
+.paragraph p { margin: 0; }
+.paragraph:focus { outline: none; }
+.paragraph:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+/* Landing on a paragraph (TOC, resume, bookmark) flashes a soft highlight that fades.
+   Opacity on a pseudo-element only, so it costs no paint per frame. */
+.paragraph::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--yellow-soft); opacity: 0; pointer-events: none; }
+@keyframes land { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+.paragraph:target::after { animation: land 1.8s ease-out; }
+/* The saved place: a yellow ribbon in the margin, dropped in on a spring. */
+.saved-paragraph { background: #fffaf0; box-shadow: inset 0 0 0 1.5px #e2c467; }
+.saved-paragraph::before { content: ""; position: absolute; top: -2px; left: -10px; width: 14px; height: 30px; background: var(--yellow); border: 2px solid var(--ink); border-top: 0; clip-path: polygon(-10% 0, 110% 0, 110% 100%, 50% 72%, -10% 100%); }
+@keyframes ribbon-drop { from { transform: translateY(-120%); opacity: 0; } 30% { opacity: 1; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) { .saved-paragraph::before { animation: ribbon-drop var(--spring-slap) both; } }
+
+.bookmark { display: inline-flex; align-items: center; gap: 7px; margin-top: 4px; padding: 6px 8px 6px 4px; border: 0; border-radius: var(--r-sm); background: transparent; font-family: 'Trebuchet MS', Arial, sans-serif; font-size: 12px; font-weight: 700; color: #5a4d1d; }
+.bookmark:hover { background: var(--wash); }
+.bookmark-dot { width: 12px; height: 12px; border: 2px solid currentColor; border-radius: 50%; display: inline-block; position: relative; }
+.bookmark-dot::after { content: ""; position: absolute; inset: 1px; border-radius: 50%; background: var(--yellow); scale: 0; }
+.saved-paragraph .bookmark { color: var(--ink); }
+.saved-paragraph .bookmark-dot::after { scale: 1; }
+@media (prefers-reduced-motion: no-preference) { .saved-paragraph .bookmark-dot::after { transition: scale var(--spring-slap); } }
+.bookmark-label { display: inline-block; }
+
+/* ---------- Audio ---------- */
+audio { display: block; width: 100%; margin: 16px 0; }
+.playback-speed { display: block; max-width: 220px; margin-block: 18px; font-weight: 700; font-size: 14px; }
+.playback-speed select { margin-top: 6px; }
+#audio-progress { border-top: 1px solid var(--rule); padding-top: 20px; margin-bottom: 26px; }
+#audio-progress label { display: block; font-weight: 700; font-size: 14px; }
+#audio-progress input { max-width: 200px; margin: 6px 0 15px; }
+#save-status { margin: 12px 0 0; }
+
+/* The deck: custom controls layered over the native <audio>, which stays visible,
+   focusable and fully working underneath. Hidden until audio-deck.js wires it. */
+.deck { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; margin: 18px 0 6px; padding: 14px 16px 14px 14px; background: var(--yellow-soft); border: var(--line); border-radius: var(--r-lg); box-shadow: var(--sticker); }
+.deck-play { position: relative; display: grid; place-items: center; width: 64px; height: 64px; padding: 0; border: var(--line); border-radius: 50%; background: var(--yellow); box-shadow: var(--sticker-sm); }
+.deck-icon { grid-area: 1 / 1; }
+.deck-icon-pause { opacity: 0; transform: scale(.6); }
+.deck[data-state="playing"] .deck-icon-play { opacity: 0; transform: scale(.6); }
+.deck[data-state="playing"] .deck-icon-pause { opacity: 1; transform: none; }
+.deck-body { min-width: 0; }
+.deck-meter { position: relative; height: 26px; }
+.deck-meter::before { content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 8px; border: 1.5px solid var(--ink); border-radius: 99px; background: var(--paper); }
+.deck-fill { position: absolute; left: 2px; right: 2px; top: 11px; height: 4px; border-radius: 99px; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); }
+/* Where you last saved: a small tick that springs to the new spot after each save. */
+.deck-saved { position: absolute; inset: 0 8px; pointer-events: none; transform: translateX(0); }
+.deck-saved i { position: absolute; left: -2px; top: 4px; width: 4px; height: 18px; border-radius: 2px; background: var(--orange); border: 1px solid var(--ink); }
+.deck-saved[hidden] { display: none; }
+.deck-seek { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; background: transparent; appearance: none; -webkit-appearance: none; cursor: pointer; }
+.deck-seek::-webkit-slider-runnable-track { height: 26px; background: transparent; }
+.deck-seek::-moz-range-track { height: 26px; background: transparent; }
+.deck-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: 4px; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); box-shadow: 1px 1px 0 var(--ink); }
+.deck-seek::-moz-range-thumb { width: 14px; height: 14px; border: 2px solid var(--ink); border-radius: 50%; background: var(--paper); }
+.deck-seek:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+.deck-times { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.deck-eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.deck-eq i { width: 3px; height: 12px; background: var(--ink); border-radius: 1px; transform-origin: 50% 100%; transform: scaleY(.25); }
+@keyframes eq { from { transform: scaleY(.25); } to { transform: scaleY(1); } }
+@media (prefers-reduced-motion: no-preference) {
+  .deck[data-state="playing"] .deck-eq i { animation: eq .5s ease-in-out infinite alternate; }
+  .deck[data-state="playing"] .deck-eq i:nth-child(2) { animation-duration: .38s; }
+  .deck[data-state="playing"] .deck-eq i:nth-child(3) { animation-duration: .62s; }
+  .deck[data-state="playing"] .deck-eq i:nth-child(4) { animation-duration: .44s; }
+}
+.deck-skips { display: flex; gap: 6px; }
+.deck-skips button { min-width: 44px; height: 36px; padding: 0 8px; border: var(--line); border-radius: var(--r-sm); background: var(--paper); font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.deck-skips button:hover { background: #fff; }
+
+@media (max-width: 700px) {
+  .story-text { font-size: 19.5px; }
+  .paragraph { padding: 10px 10px; margin-inline: -10px; }
+  .saved-paragraph::before { left: -8px; width: 12px; }
+  .reader-bar { margin-inline: -6px; }
+  .deck { grid-template-columns: auto minmax(0, 1fr); gap: 12px; padding: 12px; }
+  .deck-play { width: 54px; height: 54px; }
+  .deck-skips { grid-column: 1 / -1; justify-content: flex-start; }
+}
