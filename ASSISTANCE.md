@@ -95,9 +95,12 @@ Gemini responses and synthetic browser audio input to test the actual selection,
 reference playback, WAV capture/replay/upload and cleanup UI. Those fixtures are
 test data, not a fake production provider or proof of model pronunciation quality.
 
-Live text, reference-speech and personal-audio receipts require permitted
-credentials/configuration. None were present in the implementation session at
-startup. A human/reference-annotated pronunciation benchmark, including
+The owner supplied credentials through Doppler and confirmed permitted voice
+inputs. Development now enables the live-tested `gemini-3.8-flash` text/audio and
+`gemini-3.8-flash-tts` models. Live text/TTS/audio and the complete Edge flow passed
+with generated public speech as the microphone source. This verifies integration;
+it does not verify a real learner's pronunciation. A human/reference-annotated
+pronunciation benchmark, including
 same-transcript/different-articulation cases and multiple accents, is required
 before claiming reliable phonetic error detection. Keep that acceptance item
 open until real results exist. Do not replace it with LLM self-grading.
@@ -105,3 +108,20 @@ open until real results exist. Do not replace it with LLM self-grading.
 Core integration must also preserve the independently developed #48 library,
 its manifests/seeding, and the #40/#41 audio-resume/accessibility regressions.
 No live deployment or submission follows from local tests.
+
+To repeat credential-free checks, run `python manage.py test`. Optional browser
+rehearsal: install Playwright in the development environment, install its Chromium
+or set `ASSISTANCE_BROWSER` to a local Chrome/Edge executable, then run
+`python manage.py test scripts.check_assistance_browser`. It uses a temporary
+database, mocked provider responses and synthetic microphone audio.
+
+An explicit live smoke consumes provider quota:
+`python manage.py check_gemini --media-id ID --paragraph 0 --start START --end END --locale fr-FR`.
+Supply a published local passage and codepoint offsets. It prints status, model,
+timing and audio duration rather than content/keys; `--include-audio` analyzes
+generated public reference audio. The opt-in full browser smoke is
+`NC_LIVE_GEMINI=1 python manage.py test scripts.check_assistance_live`, with the
+backend Gemini environment injected. Use local SQLite (`DATABASE_URL` empty),
+never a shared database. This generates a temporary public speech file solely
+for fake microphone input; cleanup removes it at exit. See
+[acceptance evidence](docs/reviews/gemini-acceptance.md) for exact checks/limits.

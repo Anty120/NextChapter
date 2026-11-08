@@ -255,3 +255,17 @@ Neon and #4 implements the connection. No working deployment or category submiss
 This audit did not install SDKs, read secret values, create accounts/resources,
 change application code, enable captures/watchers, or submit anything. The remaining
 implementation gates and current status belong on spike #28 and its linked issues.
+
+### Gemini implementation receipt — November 7, 2026 EST
+
+The separately authorized #60–#64 batch implements optional reader explanations,
+reference TTS and actual audio-input analysis with server-side REST. Live
+generateContent requests succeeded with `gemini-3.8-flash` and
+`gemini-3.8-flash-tts` using the owner's Doppler development key. French `moi`
+returned /mwa/; another French word and a Spanish contextual example succeeded.
+Reference audio is a real playable WAV; generated public speech was accepted by
+audio analysis. These receipts establish transport, not calibrated pronunciation
+accuracy. See [acceptance evidence](docs/reviews/gemini-acceptance.md).
+The owner confirmed personal-voice input eligibility before dev flags were enabled.
+No SDK is added to the main lock, no billing is changed, and no live deployment,
+prize qualification, learning outcome or reliable phonetic scoring is claimed.

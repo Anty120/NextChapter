@@ -40,6 +40,7 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
             output.writeframes(struct.pack('<hh', 1200, -1200) * 8000)
         seen, attempts, errors = [], [], []
         failure = [False]
+        expected_offsets = [(7, 10)]
 
         def provider_fixture(route):
             request = route.request
@@ -65,7 +66,7 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                     'feedback': [], 'assessment_supported': False, 'uncertainty': 'Synthetic UI fixture; no assessment.'})
             else:
                 payload = request.post_data_json
-                self.assertEqual((payload['start'], payload['end']), (7, 10))
+                self.assertEqual((payload['start'], payload['end']), expected_offsets[0])
                 route.fulfill(json={'language': 'fr-FR', 'meaning': '<b>me</b>', 'translation': 'me',
                     'ipa': '/mwa/', 'sound_guidance': 'French oi is /wa/.', 'approximation': 'roughly wah',
                     'examples': [{'text': 'moi', 'note': 'Approximation varies by accent.'}],
@@ -120,6 +121,11 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 failure[0] = False
                 page.locator('#assist-practice').click()
                 self.assertEqual(page.evaluate('capturedTracks.length'), 0)
+                page.locator('#practice-reference').click()
+                expect(page.locator('#practice-status')).to_contain_text('Playing the reference')
+                page.locator('#assist-listen').click()
+                expect(page.locator('#assist-status')).to_contain_text('Playing model')
+                self.assertTrue(page.locator('#practice-reference-audio').evaluate('(a) => a.paused'))
                 count = len(seen)
                 page.locator('#practice-record').click()
                 expect(page.locator('#practice-status')).to_contain_text('Recording locally')
@@ -162,9 +168,15 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 page.locator('#assist-open').focus()
                 page.keyboard.press('Enter')
                 expect(page.locator('#assist-title')).to_be_focused()
+                page.evaluate("""() => { const text = document.querySelector('#paragraph-0 p').firstChild;
+                    const r = document.createRange(); r.setStart(text, 8); r.setEnd(text, 11);
+                    const s = getSelection(); s.removeAllRanges(); s.addRange(r); }""")
                 page.locator('#assist-paragraph').select_option('1')
                 page.locator('#assist-passage').select_option('0:7')
                 expect(page.locator('#assist-selection')).to_have_text('Bonjour')
+                expected_offsets[0] = (0, 7)
+                page.locator('#assist-explain').click()
+                expect(page.locator('#assist-result')).to_be_visible()
                 page.keyboard.press('Escape')
                 expect(page.locator('#assist-panel')).to_be_hidden()
                 # Actual backend route, without fixture interception, handles missing key.

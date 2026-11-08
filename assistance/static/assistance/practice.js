@@ -9,6 +9,7 @@
   let reference = null, stream = null, context = null, source = null, processor = null, mute = null;
   let chunks = [], frames = 0, rate = 0, recording = false, blob = null, replayURL = null, referenceURL = null;
   let timer = null, request = null, generation = 0, previousFocus = null, starting = false;
+  let referenceSerial = 0;
   const enabled = () => root.dataset.authenticated === 'true' && root.dataset.enabled === 'true';
   const voiceEnabled = () => enabled() && root.dataset.voiceEnabled === 'true';
   const secure = () => window.isSecureContext && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext || window.webkitAudioContext);
@@ -38,6 +39,7 @@
   }
   function clearPersonal() {
     generation++;
+    referenceSerial++;
     if (request) request.abort(); request = null;
     stopHardware(); chunks = []; frames = 0; blob = null;
     clearAudio(get('replay'), replayURL); replayURL = null;
@@ -144,12 +146,15 @@
   }
   async function listen() {
     if (!enabled() || recording || starting || request) return;
+    const serial = ++referenceSerial;
+    window.dispatchEvent(new CustomEvent('nextchapter:reference-playback', {detail: {owner: 'practice'}}));
+    document.querySelectorAll('audio,video').forEach(media => media.pause());
     const token = generation; request = new AbortController(); controls(); status('Preparing reference audio.');
     try {
       const response = await fetch(root.dataset.pronounceUrl, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf()}, body: JSON.stringify(fields()), signal: request.signal});
       if (!response.ok) throw new Error(await failure(response));
       if (!response.headers.get('Content-Type')?.startsWith('audio/')) throw new Error('The pronunciation service did not return playable audio.');
-      const audio = await response.blob(); if (token !== generation) return;
+      const audio = await response.blob(); if (token !== generation || serial !== referenceSerial) return;
       clearAudio(get('reference-audio'), referenceURL); referenceURL = URL.createObjectURL(audio); get('reference-audio').src = referenceURL;
       await get('reference-audio').play(); status('Playing the reference.');
     } catch (error) { if (token === generation && error.name !== 'AbortError') status(error.message || 'Reference audio is unavailable.'); }
@@ -169,6 +174,12 @@
   get('cancel').addEventListener('click', close);
   panel.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); close(); } });
   window.addEventListener('pagehide', clearPersonal);
+  window.addEventListener('nextchapter:reference-playback', event => {
+    if (event.detail?.owner !== 'practice') {
+      referenceSerial++;
+      get('reference-audio').pause();
+    }
+  });
   window.addEventListener('nextchapter:logout', close);
   document.addEventListener('submit', event => { if (event.target.action && /\/logout\/?(?:\?|$)/.test(event.target.action)) close(); });
   new MutationObserver(() => { if (root.dataset.authenticated !== 'true' || root.hidden || panel.hidden) { clearPersonal(); if (root.dataset.authenticated !== 'true') { reference = null; get('target').textContent = ''; } } }).observe(root, {attributes: true, attributeFilter: ['data-authenticated', 'hidden'], subtree: false});

@@ -204,9 +204,9 @@ def bounded_int(name, default, minimum, maximum):
     return value
 
 
-GEMINI_TIMEOUT_SECONDS = bounded_int('GEMINI_TIMEOUT_SECONDS', 20, 1, 60)
+GEMINI_TIMEOUT_SECONDS = bounded_int('GEMINI_TIMEOUT_SECONDS', 20, 1, 45)
 GEMINI_RATE_LIMIT = bounded_int('GEMINI_RATE_LIMIT', 12, 1, 120)
-GEMINI_CACHE_TTL_SECONDS = bounded_int('GEMINI_CACHE_TTL_SECONDS', 3600, 0, 86400)
+GEMINI_CACHE_TTL_SECONDS = bounded_int('GEMINI_CACHE_TTL_SECONDS', 3600, 0, 3600)
 if os.environ.get('GEMINI_CACHE_URL'):
     CACHES = {'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',

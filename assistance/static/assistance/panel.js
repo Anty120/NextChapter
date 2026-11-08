@@ -119,8 +119,8 @@
   panel.addEventListener('keydown', (event) => { if (event.key === 'Escape') { event.preventDefault(); close(); } });
   el('explain').addEventListener('click', () => { captureSelection(false); explain(); });
   for (const p of paragraphs) { const option = document.createElement('option'); option.value = String(p.index); option.textContent = `Paragraph ${p.index + 1}: ${p.prose.textContent.slice(0, 65)}`; el('paragraph').append(option); }
-  el('paragraph').addEventListener('change', () => { const p = paragraphs.find((p) => String(p.index) === el('paragraph').value); populatePassages(p); el('passage').dispatchEvent(new Event('change')); });
-  el('passage').addEventListener('change', () => { const p = paragraphs.find((p) => String(p.index) === el('paragraph').value); const [start, end] = el('passage').value.split(':').map(Number); if (p) choose(p, start, end, false); });
+  el('paragraph').addEventListener('change', () => { window.getSelection()?.removeAllRanges(); const p = paragraphs.find((p) => String(p.index) === el('paragraph').value); populatePassages(p); el('passage').dispatchEvent(new Event('change')); });
+  el('passage').addEventListener('change', () => { window.getSelection()?.removeAllRanges(); const p = paragraphs.find((p) => String(p.index) === el('paragraph').value); const [start, end] = el('passage').value.split(':').map(Number); if (p) choose(p, start, end, false); });
   story?.addEventListener('pointerup', () => {
     if (window.getSelection()?.toString().trim() && captureSelection(false)) status('Text selected. Choose Explain selection.');
   });
@@ -137,6 +137,8 @@
   });
   el('listen').addEventListener('click', async () => {
     if (!reference || !allowed) return;
+    window.dispatchEvent(new CustomEvent('nextchapter:reference-playback', {detail: {owner: 'panel'}}));
+    document.querySelectorAll('audio,video').forEach(media => media.pause());
     const key = JSON.stringify(payload()); stopVoice(); const current = ++voiceGeneration;
     try {
       if (voiceKey !== key || !voice) {
@@ -153,6 +155,17 @@
   });
   el('stop').addEventListener('click', () => { stopVoice(); status('Pronunciation reference stopped.'); });
   el('speed').addEventListener('change', () => { if (voice) voice.playbackRate = Number(el('speed').value); });
+  window.addEventListener('nextchapter:reference-playback', (event) => {
+    if (event.detail?.owner !== 'panel') stopVoice();
+  });
+  document.addEventListener('play', (event) => {
+    if (!(event.target instanceof HTMLMediaElement)) return;
+    window.dispatchEvent(new CustomEvent('nextchapter:reference-playback', {
+      detail: {owner: event.target.id === 'practice-reference-audio' ? 'practice' : 'media'}
+    }));
+    stopVoice();
+    document.querySelectorAll('audio,video').forEach(media => { if (media !== event.target) media.pause(); });
+  }, true);
   window.addEventListener('nextchapter:recording', (event) => {
     if (event.detail?.active) stopVoice();
     el('listen').disabled = Boolean(event.detail?.active);

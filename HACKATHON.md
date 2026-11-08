@@ -219,3 +219,15 @@ result and evidence rather than allowing chat to become the only record:
 For submissions, humans retain final control over category selection, binding
 terms, purchases, account changes, and final Submit. This document records
 research and decisions; it is not a submission receipt.
+
+## November 7 owner scope update: voluntary language help
+
+Anthony explicitly requested contextual Gemini word/sentence help, pronunciation
+references, and voluntary microphone dictation/practice, then authorized immediate
+implementation in #60–#64. This extends the earlier content-first scope to optional
+instructional help. It does not authorize mandatory tests, numerical grades,
+content gating, proficiency changes, billing or submission. Retain #33's 18+
+hackathon audience. The owner confirmed that the actual configured service permits
+personal voice inputs before development voice uploads were enabled. This records
+the owner's configuration confirmation, not an independent account/region audit.
+Implementation/receipts and remaining model-quality checks: [ASSISTANCE.md](ASSISTANCE.md).

@@ -108,6 +108,8 @@ class AssistanceTests(TestCase):
         generate.return_value = [{'inlineData': {'mimeType': 'audio/L16;codec=pcm;rate=24000', 'data': base64.b64encode(b'\x01\x00' * 24000).decode()}}]
         response = self.client.post('/assist/pronounce/', self.ref, content_type='application/json')
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(generate.call_args.args[1], [{'text': 'Bonjour'}])
+        self.assertEqual(generate.call_args.args[2]['speechConfig']['languageCode'], 'fr-FR')
         self.assertEqual(response['Content-Type'], 'audio/wav')
         with wave.open(io.BytesIO(response.content), 'rb') as recording:
             self.assertEqual(recording.getframerate(), 24000)
