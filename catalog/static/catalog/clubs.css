@@ -1,0 +1,25 @@
+/* Club-only refinements preserve the shared paper-and-sticker visual language. */
+.club-library { overflow-wrap: anywhere; }
+.club-library .club-card { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.club-library .club-card:nth-child(3n + 2) { background: var(--purple); }
+.club-library .club-card:nth-child(3n) { background: var(--green); }
+.club-library .club-card h2 a { text-decoration-thickness: 1px; }
+.club-featured-preview { border-top: 2px solid var(--ink); padding: 16px 0; width: 100%; margin-top: auto; }
+.club-featured-preview .eyebrow { margin-bottom: 5px; }
+.club-meet { margin-top: 5px; }
+.club-membership { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.club-membership-note { font-size: 13px; margin-top: 18px; }
+.club-membership .club-membership-note { margin: 0; }
+.club-library .club-context { grid-column: 2; grid-row: 1; min-width: 0; }
+.club-discussion { grid-column: 1; grid-row: 1; min-width: 0; }
+.club-library .pagination { flex-wrap: wrap; }
+.club-library .comment-heading strong { overflow-wrap: anywhere; min-width: 0; }
+.club-library :is(a, button, input, textarea, summary):focus-visible { outline: 3px solid #154caa; outline-offset: 4px; }
+.club-library .report-link { display: inline-block; padding: 8px 0; }
+@media (max-width: 700px) {
+  .club-library .club-context, .club-discussion { grid-column: 1; grid-row: auto; }
+  .club-library .club-card h2 { font-size: 26px; }
+  .club-library .club-hero, .club-library .panel, .club-library .paper { padding: 18px; }
+  .club-library .empty { padding: 18px; }
+  .club-membership .button { width: 100%; }
+}

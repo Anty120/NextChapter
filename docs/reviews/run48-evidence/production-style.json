@@ -1,0 +1,14 @@
+[
+  {
+    "command": "collectstatic --noinput",
+    "exit": 0,
+    "stdout": "\n0 static files copied to '/private/tmp/nextchapter-run48-final/staticfiles', 139 unmodified, 409 post-processed.\n",
+    "stderr": ""
+  },
+  {
+    "command": "test --verbosity 1",
+    "exit": 0,
+    "stdout": "Found 63 test(s).\n",
+    "stderr": "Creating test database for alias 'default'...\nSystem check identified some issues:\n\nWARNINGS:\n?: (mail.W001) Your MAILERS setting has no 'default' entry. Sending email without a valid mailer will fail.\n\tHINT: Add a 'default' entry to MAILERS.\n\nSystem check identified 1 issue (0 silenced).\n...............................................................\n----------------------------------------------------------------------\nRan 63 tests in 7.528s\n\nOK\nDestroying test database for alias 'default'...\n"
+  }
+]

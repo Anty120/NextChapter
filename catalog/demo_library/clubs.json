@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "clubs": [
+    {
+      "slug": "the-morning-pages",
+      "name": "The Morning Pages",
+      "language": "Spanish",
+      "description": "A welcoming corner for short stories and everyday culture. All levels welcome: a word, a sentence, or a longer reflection belongs here. Start with the bakery story: which detail reminds you of a place that feels like home?",
+      "featured_media_slug": "la-panaderia"
+    },
+    {
+      "slug": "demo-book-club",
+      "name": "Marianela Reading Circle",
+      "language": "Spanish",
+      "description": "Read Marianela at your own pace. All levels welcome. How does the opening landscape shape your first impression? Share a detail, or ask about a word that caught your eye. Short replies and questions are welcome; mark plot spoilers so others can keep discovering.",
+      "featured_media_slug": "book-es-01"
+    },
+    {
+      "slug": "demo-audio-club",
+      "name": "Marianela Listening Circle",
+      "language": "Spanish",
+      "description": "Listen together to the opening chapter of Marianela. All levels welcome: pause, replay, or follow the transcript whenever you like. What sound, phrase, or detail helped you picture the scene? Share a timestamp if useful, and mark spoilers. There is no listening speed to keep up with.",
+      "featured_media_slug": "audiobook-es-01"
+    },
+    {
+      "slug": "demo-song-club",
+      "name": "Daisy Bell Song Circle",
+      "language": "English",
+      "description": "Explore Daisy Bell through its words, voices, and music. All levels welcome, whether you share a single phrase or a longer thought. Which repeated line or musical moment stays with you, and what mood does it create? Questions about unfamiliar words belong here too; no singing experience needed.",
+      "featured_media_slug": "song-en-01"
+    }
+  ]
+}

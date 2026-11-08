@@ -1,6 +1,6 @@
 # Demo interface and data contract
 
-Observed at merged PR #35, commit `bdff75af30d06b8ef3b5f27fe28952e793dccb33`.
+Run #48 integration, initial base `fb5e15375cf9439291a7528cd93d7cfae8cbd0d6`; main through `16e7d19` incorporated.
 Source: `catalog/urls.py`, `catalog/views.py`, `catalog/forms.py`, and
 `catalog/models.py`. These are existing Django HTML/form interfaces. Changes need
 an explicitly assigned implementation issue and coordination with Anthony.
@@ -64,8 +64,18 @@ in the current demo. A future React task must define those interfaces first.
 - `Report`: exactly one media/comment target, reporter, reason, review status and
   staff notes. Public forms accept only reason; staff review occurs in Django admin.
 
-`seed_demo` owns seven stable media slugs and one club. Repeating it preserves
-user activity; reviewers must use an isolated local database. No remote D1 writes.
+`seed_demo` owns six original story slugs, six manifest media slugs and four clubs.
+New slugs: `book-es-01`, `book-en-01`, `audiobook-es-01`, `audiobook-en-01`,
+`song-en-01`, `song-en-02`. Clubs: `the-morning-pages`, `demo-book-club`,
+`demo-audio-club`, `demo-song-club`. `catalog.library.get_media_metadata(slug)`
+returns local manifest metadata or `{}` for custom media. Book chapter entries use
+zero-based `start_paragraph`; audio metadata includes actual duration, MIME,
+performer and excerpt status. MP3 and Ogg static files support HTTP byte ranges.
+Songs have editorial summaries and lyric source links, not bundled full lyrics.
+`verify_demo` checks the real pack, database and playable static paths without writes.
+The legacy `the-blue-door` is no longer created/published; existing rows and progress
+remain. The binary and Windows regeneration script are retired. Repeating it preserves
+user activity; reviewers must use an isolated local database. Local runs use SQLite with `DATABASE_URL` unset. Hosting is Vercel + Neon Postgres; deployment verification stays #29, and Gemini is deferred.
 The migration owner must coordinate schema changes before another agent generates
 a migration. API, schema and UI contract changes must land together or have explicit
 backward compatibility recorded in the issue.

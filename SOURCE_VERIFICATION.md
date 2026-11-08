@@ -97,3 +97,28 @@ remain pending until their exact sources and account state are checked.
 Durable source corrections belong in HACKATHON.md / SPONSOR_INTEGRATION.md and the
 linked issue bodies. Keep task status/owners on the GitHub Projects board. Never
 claim a note in a pending PR is already in main.
+
+## Run #48 bundled library and Vercel build evidence
+
+- **2026-11-08T00:27:34Z — #26 evidence:** Six-item Gutenberg/LibriVox/Commons pack
+  independently downloaded, hashed, fully audio-decoded and source-checked; see
+  [catalog/demo_library/SOURCES.md](catalog/demo_library/SOURCES.md) for each primary
+  source URL, exact component license, modifications and check time, and
+  [PR #59](https://github.com/Anty120/NextChapter/pull/59) for executed acquisition checks.
+  USA scope retained; full lyrics absent and human listening pending. This is an
+  imported worker verification record, not a claim that the integrator repeated
+  source acquisition or that public-domain status applies in every jurisdiction.
+- **2026-11-08 00:28 UTC — #49 source record:** Checked through Exa and live HTTPS
+  (cache still possible). Primary sources:
+  https://vercel.com/docs/frameworks/full-stack/django (Django entry resolution and CDN collectstatic),
+  https://vercel.com/docs/functions/runtimes/python (Python 3.12/top-level WSGI callable),
+  https://vercel.com/docs/project-configuration/vercel-json (buildCommand/functions),
+  https://vercel.com/docs/cli/build (local output and --yes environment-pull behavior).
+  Claim status: supported by fetched primary docs and local output; live deployment
+  unverified. Evidence: [#49 comment 6715073527](https://github.com/Anty120/NextChapter/issues/49#issuecomment-6715073527),
+  PR #57 / `9d89773`: Vercel CLI 58.5.1 build exited 0 with Python 3.12/uv 0.13.7,
+  Build Output API v3, django.func Python 3.12, generated WSGI launcher and CDN assets.
+  This macOS fixture build does not verify remote environment or portable Linux output.
+  No deployment, remote environment mutation, Git connection, cloud migrate or seed
+  was performed. These are the #49 worker's bounded results, retained separately from
+  the integration's local runtime checks. Deployment/persistence remains #29.
