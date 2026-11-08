@@ -1,5 +1,32 @@
 # Component rights and retained notices
 
+## French and Spanish additions — 2026-11-08 02:29 UTC
+
+**Tourdion**: Pierre Attaignant / traditional French text; performed by
+**dwsChorale / Dwsolo**, 2006. Source and creator attribution:
+https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg .
+Recording supplied unchanged under **Creative Commons Attribution-ShareAlike 3.0**:
+https://creativecommons.org/licenses/by-sa/3.0/ . Retain attribution, source,
+license link, and change notices; adaptations must follow the license's ShareAlike
+terms. Inclusion does not relicense this recording under the code's MIT license.
+
+**Las Mañanitas**: traditional Mexican song; **Elisa (vocals), Kenmayer (mix),
+Educational Options, Inc.** Source:
+https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg . Unmodified sung opening
+recording, not a complete song, supplied under **CC BY-SA 3.0** with the same
+attribution and ShareAlike conditions: https://creativecommons.org/licenses/by-sa/3.0/ .
+Written lyrics and musical scores are not copied; original editorial summaries
+are NextChapter-authored MIT text. See the source page for the performance.
+
+**Le livre jaune**: original AI-assisted NextChapter story, MIT. Synthetic
+Gemini narration (Kore) generated for this project; no human voice recording
+was uploaded. NextChapter distributes this generated WAV under MIT without
+claiming exclusive copyright in AI output. No third-party narrator is implied.
+https://github.com/Anty120/NextChapter/blob/main/LICENSE .
+
+Old English recordings remain in the repository as historical resources with
+their notices below, but the current seed no longer publishes them.
+
 Checked UTC: **2026-11-08T00:27:34Z**. This pack preserves the exact primary-source rights statements and their territorial limits. It does not promise worldwide clearance. Third-party books and recordings do **not** become MIT-licensed because NextChapter's code is MIT.
 
 ## Project Gutenberg text editions

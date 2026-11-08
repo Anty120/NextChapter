@@ -53,28 +53,52 @@ def endpoint(view):
     return csrf_protect(guarded)
 
 
-def json_reference(request):
+def json_reference(request, max_chars=300):
     if request.content_type != 'application/json':
         raise AssistanceError('invalid_request', 'Send the selection as JSON.')
     if len(request.body) > 8192:
         raise AssistanceError('request_too_large', 'The selection request is too large.', 413)
     try:
-        return reference(json.loads(request.body))
+        return reference(json.loads(request.body), max_chars=max_chars)
     except (ValueError, UnicodeDecodeError):
         raise AssistanceError('invalid_request', 'Send valid selection JSON.') from None
 
 
 @endpoint
 def explain(request):
-    selected = json_reference(request)
+    selected = json_reference(request, max_chars=1500)
     provider.configuration('TEXT')
     with allowance(request.user.pk):
         return JsonResponse(provider.explain(selected))
 
 
 @endpoint
-def pronounce(request):
+def lookup(request):
     selected = json_reference(request)
+    provider.configuration('LOOKUP')
+    with allowance(request.user.pk):
+        return JsonResponse(provider.lookup(selected))
+
+
+@endpoint
+def sentence(request):
+    selected = json_reference(request, max_chars=1500)
+    provider.configuration('LOOKUP')
+    with allowance(request.user.pk):
+        return JsonResponse(provider.lookup(selected))
+
+
+@endpoint
+def phonetics(request):
+    selected = json_reference(request, max_chars=1500)
+    provider.configuration('LOOKUP')
+    with allowance(request.user.pk):
+        return JsonResponse(provider.phonetics(selected))
+
+
+@endpoint
+def pronounce(request):
+    selected = json_reference(request, max_chars=1500)
     provider.configuration('TTS')
     with allowance(request.user.pk):
         return HttpResponse(provider.pronounce(selected), content_type='audio/wav')
@@ -93,15 +117,15 @@ def practice(request):
     except (ValueError, TypeError):
         raise AssistanceError('invalid_request', 'Invalid upload size.') from None
     if content_length > 5 * 1024 * 1024 + 16384:
-        raise AssistanceError('clip_too_large', 'Record at most 15 seconds and 5 MiB.', 413)
-    selected = reference(request.POST.dict())
+        raise AssistanceError('clip_too_large', 'Record at most 60 seconds and 5 MiB.', 413)
+    selected = reference(request.POST.dict(), max_chars=1500)
     upload = request.FILES.get('audio')
     if upload is None or len(request.FILES) != 1 or len(request.FILES.getlist('audio')) != 1:
         raise AssistanceError('invalid_audio', 'Include exactly one WAV recording.')
     if upload.content_type not in ('audio/wav', 'audio/wave', 'audio/x-wav'):
         raise AssistanceError('invalid_audio', 'Only mono PCM WAV recordings are supported.')
     if upload.size > 5 * 1024 * 1024:
-        raise AssistanceError('clip_too_large', 'Record at most 15 seconds and 5 MiB.', 413)
+        raise AssistanceError('clip_too_large', 'Record at most 60 seconds and 5 MiB.', 413)
     audio = validate_wav(upload.read(5 * 1024 * 1024 + 1))
     with allowance(request.user.pk):
         return JsonResponse(provider.practice(selected, audio))

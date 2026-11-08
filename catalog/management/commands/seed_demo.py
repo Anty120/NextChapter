@@ -40,7 +40,9 @@ class Command(BaseCommand):
             })
             item.full_clean()
         # Retire unsupported narration without changing its identity or progress.
-        MediaItem.objects.filter(slug='the-blue-door').update(published=False)
+        MediaItem.objects.filter(slug__in=[
+            'the-blue-door', 'audiobook-en-01', 'song-en-01', 'song-en-02',
+        ]).update(published=False)
         for slug, defaults in media.items():
             MediaItem.objects.update_or_create(slug=slug, defaults=defaults)
         for slug, club in clubs.items():

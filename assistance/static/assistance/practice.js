@@ -85,7 +85,7 @@
       if (token !== generation || panel.hidden) { acquired.getTracks().forEach(track => track.stop()); return; }
       stream = acquired;
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      context = new AudioContextClass({sampleRate: 48000});
+      context = new AudioContextClass({sampleRate: 24000});
       await context.resume();
       if (token !== generation) return;
       rate = context.sampleRate;
@@ -99,18 +99,18 @@
       processor.onaudioprocess = event => {
         if (!recording) return;
         const input = event.inputBuffer.getChannelData(0);
-        const count = Math.min(input.length, Math.floor(rate * 15) - frames);
+        const count = Math.min(input.length, Math.floor(rate * 60) - frames);
         if (count > 0) { chunks.push(new Float32Array(input.subarray(0, count))); frames += count; }
-        if (frames >= rate * 15) stop();
+        if (frames >= rate * 60) stop();
       };
       const started = performance.now();
       get('timer').hidden = false; get('timer').querySelector('span').textContent = '0';
       timer = setInterval(() => {
-        const seconds = Math.min(15, Math.floor((performance.now() - started) / 1000));
+        const seconds = Math.min(60, Math.floor((performance.now() - started) / 1000));
         get('timer').querySelector('span').textContent = String(seconds);
-        if (performance.now() - started >= 15000) stop();
+        if (performance.now() - started >= 60000) stop();
       }, 200);
-      status('Recording locally. Other playback is paused. Stop within 15 seconds.'); controls();
+      status('Recording locally. Other playback is paused. Stop within 60 seconds.'); controls();
     } catch (error) {
       if (token !== generation) return;
       stopHardware(); chunks = []; frames = 0;
@@ -126,7 +126,7 @@
     get('match').textContent = data.reference_match || 'No reliable comparison was returned.';
     const list = get('feedback'); list.replaceChildren();
     if (data.assessment_supported === true && Array.isArray(data.feedback) && data.feedback.length) {
-      data.feedback.forEach(item => { const li = document.createElement('li'); li.textContent = [item.observation, item.suggestion].filter(Boolean).join(' — '); list.append(li); });
+      data.feedback.forEach(item => { const li = document.createElement('li'); li.textContent = [item.observation, item.suggestion].filter(Boolean).join(' â€” '); list.append(li); });
     } else { const li = document.createElement('li'); li.textContent = 'Pronunciation could not be assessed reliably. Try a short, clear recording in a quieter space.'; list.append(li); }
     get('uncertainty').textContent = data.uncertainty || 'Automated feedback can be mistaken. A matching transcript does not establish perfect pronunciation.';
     get('results').hidden = false;
@@ -165,7 +165,7 @@
     if (!selected || !selected.selection || !['media_id', 'paragraph', 'start', 'end', 'locale', 'explanation_locale'].every(key => selected[key] !== undefined)) return;
     clearPersonal(); previousFocus = document.activeElement; reference = {...selected}; panel.hidden = false;
     get('target').textContent = selected.selection; get('languages').textContent = `Practice language: ${selected.locale}. Explanation language: ${selected.explanation_locale}.`;
-    status(!enabled() ? 'Sign in and enable assistance to use this feature.' : !voiceEnabled() ? 'Voice analysis is unavailable until the configured Gemini voice service is approved. You can still listen to a reference.' : !secure() ? 'Recording needs HTTPS (or localhost) and a browser with microphone and Web Audio support. You can still listen to a reference.' : 'Listen first, then choose Record. Recording is limited to 15 seconds.');
+    status(!enabled() ? 'Sign in and enable assistance to use this feature.' : !voiceEnabled() ? 'Voice analysis is unavailable until the configured Gemini voice service is approved. You can still listen to a reference.' : !secure() ? 'Recording needs HTTPS (or localhost) and a browser with microphone and Web Audio support. You can still listen to a reference.' : 'Listen first, then choose Record. Recording is limited to 60 seconds.');
     controls(); get('heading').focus();
   });
   get('record').addEventListener('click', record); get('stop').addEventListener('click', stop);

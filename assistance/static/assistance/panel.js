@@ -14,6 +14,8 @@
   let reference = null, opener = null, explainAbort = null, voiceAbort = null, generation = 0, voiceGeneration = 0;
   let voice = null, voiceUrl = null, voiceKey = '';
   let anchorRange = null, anchorElement = null;
+  const lookupCache = new Map(), hints = new Map();
+  const coach = document.createElement('section'); coach.className = 'sentence-coach'; coach.setAttribute('aria-label', 'Sentence learning tools');
   const points = (s) => Array.from(s);
   const prefixLength = (text, offset) => points(text.slice(0, offset)).length;
   const locale = story?.dataset.assistLocale || root.dataset.targetLocale || 'en-US';
@@ -63,25 +65,26 @@
   const csrf = () => root.querySelector('[name=csrfmiddlewaretoken]')?.value || document.cookie.split('; ').find((v) => v.startsWith('csrftoken='))?.slice(10) || '';
   const payload = () => reference && ({media_id: reference.media_id, paragraph: reference.paragraph, start: reference.start, end: reference.end, locale: reference.locale, explanation_locale: reference.explanation_locale});
   const errors = {401: 'Please log in again to use language help.', 403: 'Your session could not be verified. Refresh this page and retry.', 429: 'Language help is busy. Wait a moment, then retry.', 503: 'Language help is not configured or temporarily unavailable. You can continue reading.', 502: 'The language service could not finish. Please retry.'};
-  const request = async (url, signal) => {
+  const request = async (url, signal, data = payload()) => {
     if (!url) throw new Error('Language help is not configured. You can continue reading.');
-    const response = await fetch(url, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', 'X-CSRFToken': decodeURIComponent(csrf()), Accept: 'application/json, audio/*'}, body: JSON.stringify(payload()), signal});
+    const response = await fetch(url, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', 'X-CSRFToken': decodeURIComponent(csrf()), Accept: 'application/json, audio/*'}, body: JSON.stringify(data), signal});
     if (!response.ok) {
       let data; try { data = await response.json(); } catch (_) { /* Status fallback remains useful. */ }
       throw new Error(data?.error?.message || errors[response.status] || 'That passage could not be explained. Choose a shorter passage or retry.');
     }
     return response;
   };
-  function choose(p, start, end, moveFocus = false) {
+  function choose(p, start, end, moveFocus = false, limit = 300) {
     const practice = root.querySelector('#practice-panel'); if (practice) practice.hidden = true;
     const text = p.prose.textContent;
-    if (start < 0 || end <= start || end > points(text).length || end - start > 300) {
+    if (start < 0 || end <= start || end > points(text).length || end - start > limit) {
       explainAbort?.abort(); generation++; stopVoice(true); reference = null;
       el('result').hidden = true; el('actions').hidden = true; el('explain').disabled = true;
       show(moveFocus); status('Choose a word or sentence of at most 300 characters.', true); return false;
     }
     explainAbort?.abort(); generation++; stopVoice(true);
     reference = {media_id: Number(story.dataset.assistMedia || root.dataset.mediaId), paragraph: p.index, start, end, locale, explanation_locale: root.dataset.explanationLocale || 'en', selection: points(text).slice(start, end).join('')};
+    showCoach(p, start);
     anchorRange = rangeFor(p, start, end); anchorElement = p.prose;
     if (anchorRange && typeof Highlight === 'function' && CSS.highlights) CSS.highlights.set('reader-word', new Highlight(anchorRange));
     el('selection').textContent = reference.selection; el('selection').lang = locale;
@@ -107,13 +110,16 @@
       select.append(group);
     }
   }
-  async function explain() {
+  async function explain(full = false) {
     if (!reference || !allowed) return;
     explainAbort?.abort(); explainAbort = new AbortController(); const current = ++generation;
-    status('Asking Gemini about this passage…'); el('result').hidden = true; el('explain').setAttribute('aria-busy', 'true');
+    const url = full ? root.dataset.explainUrl : reference.end - reference.start > 300 ? root.dataset.sentenceUrl : root.dataset.lookupUrl || root.dataset.explainUrl;
+    const key = url + JSON.stringify(payload()), cached = lookupCache.get(key);
+    status(cached ? '' : 'Looking up…'); el('result').hidden = true; el('explain').setAttribute('aria-busy', 'true');
     try {
-      const data = await (await request(root.dataset.explainUrl, explainAbort.signal)).json();
+      const data = cached || await (await request(url, explainAbort.signal)).json();
       if (current !== generation) return;
+      if (!cached) { lookupCache.set(key, data); if (lookupCache.size > 256) lookupCache.delete(lookupCache.keys().next().value); }
       const meaning = typeof data.translation === 'string' && data.translation.trim() ? data.translation : data.meaning;
       el('meaning').textContent = typeof meaning === 'string' ? (points(meaning).length > 220 ? points(meaning).slice(0, 220).join('') + '…' : meaning) : '';
       el('ipa').textContent = typeof data.ipa === 'string' ? data.ipa : '';
@@ -160,6 +166,7 @@
     catch (_) { status('Copy is unavailable. Select the text and use your device’s Copy command.', true); }
   });
   el('explain').addEventListener('click', () => { captureSelection(false); explain(); });
+  el('deeper').addEventListener('click', () => explain(true));
   for (const p of paragraphs) { const option = document.createElement('option'); option.value = String(p.index); option.textContent = `Paragraph ${p.index + 1}: ${p.prose.textContent.slice(0, 65)}`; el('paragraph').append(option); }
   el('paragraph').addEventListener('change', () => { window.getSelection()?.removeAllRanges(); const p = paragraphs.find((p) => String(p.index) === el('paragraph').value); populatePassages(p); el('passage').dispatchEvent(new Event('change')); });
   el('passage').addEventListener('change', () => { window.getSelection()?.removeAllRanges(); const p = paragraphs.find((p) => String(p.index) === el('paragraph').value); const [start, end] = el('passage').value.split(':').map(Number); if (p) choose(p, start, end, false); });
@@ -216,11 +223,60 @@
     el('practice').disabled = Boolean(event.detail?.active);
   });
   window.NextChapterAssistance = Object.assign(window.NextChapterAssistance || {}, {openPractice: (selected) => { stopVoice(); el('details').open = false; el('picker').open = false; el('picker').hidden = true; window.dispatchEvent(new CustomEvent('nextchapter:practice', {detail: selected})); }});
-  el('practice').addEventListener('click', () => { if (reference && allowed) window.NextChapterAssistance.openPractice({...reference}); });
+  el('practice').addEventListener('click', () => { if (reference && allowed) practiceSentence(reference); });
   el('login').hidden = authenticated;
   el('availability').textContent = !story || !paragraphs.length ? 'No readable text here.' : !authenticated ? '' : !enabled ? 'Word help is temporarily unavailable.' : '';
   el('explain').disabled = !allowed || !paragraphs.length;
   if (paragraphs.length) populatePassages(paragraphs[0]);
+  function sentenceAt(p, at) {
+    return segments(p.prose.textContent, 'sentence').find(s => at >= s.start && at < s.end)
+      || segments(p.prose.textContent, 'sentence')[0];
+  }
+  function practiceSentence(selected) {
+    const p = paragraphs.find(p => p.index === selected.paragraph), sentence = p && sentenceAt(p, selected.start);
+    if (!sentence || !choose(p, sentence.start, sentence.end, false, 1500)) return;
+    window.NextChapterAssistance.openPractice({...reference});
+  }
+  function showCoach(p, at) {
+    const sentence = sentenceAt(p, at); if (!sentence) return;
+    coach.replaceChildren();
+    const label = document.createElement('strong'); label.textContent = 'Try the whole sentence';
+    const quote = document.createElement('div'); quote.className = 'sentence-quote'; quote.textContent = sentence.text.trim(); quote.lang = locale;
+    const actions = document.createElement('div'); actions.className = 'sentence-buttons';
+    const add = (text, action) => { const b = document.createElement('button'); b.type = 'button'; b.textContent = text; b.disabled = !allowed; b.addEventListener('click', action); actions.append(b); return b; };
+    const selected = {media_id: Number(root.dataset.mediaId), paragraph:p.index, start:sentence.start, end:sentence.end,
+      locale, explanation_locale:root.dataset.explanationLocale || 'en', selection:sentence.text};
+    add('🎙 Speak sentence', () => practiceSentence(selected));
+    add('Explain sentence', () => { if (choose(p, sentence.start, sentence.end, false, 1500)) explain(); });
+    const hintButton = add('Pronunciation hints', async () => {
+      const key = `${p.index}:${sentence.start}:${sentence.end}`;
+      if (hints.has(key)) { hints.delete(key); renderHints(p); hintButton.textContent = 'Pronunciation hints'; return; }
+      hintButton.disabled = true; hintButton.textContent = 'Preparing hints…';
+      try {
+        const data = await (await request(root.dataset.phoneticsUrl, undefined, selected)).json();
+        hints.set(key, {paragraph:p.index, start:sentence.start, words:data.words}); renderHints(p);
+        hintButton.textContent = 'Hide hints';
+      } catch (error) { hintButton.textContent = 'Retry hints'; coach.querySelector('.sentence-note').textContent = error.message; }
+      finally { hintButton.disabled = !allowed; }
+    });
+    const note = document.createElement('small'); note.className = 'sentence-note'; note.textContent = 'Sound hints are approximate; listen to the reference too. Up to 60 seconds per attempt.';
+    coach.append(label, quote, actions, note); p.prose.after(coach);
+  }
+  function renderHints(p) {
+    const text = points(p.prose.textContent), fragment = document.createDocumentFragment(); let cursor = 0;
+    const words = Array.from(hints.values()).filter(h => h.paragraph === p.index)
+      .flatMap(h => h.words.map(w => ({...w,start:w.start+h.start,end:w.end+h.start}))).sort((a,b) => a.start-b.start);
+    for (const word of words) {
+      if (word.start < cursor || text.slice(word.start,word.end).join('') !== word.text) continue;
+      fragment.append(document.createTextNode(text.slice(cursor,word.start).join('')));
+      const span = document.createElement('span'); span.className = 'phonetic-word'; span.textContent = word.text;
+      span.dataset.sound = word.sound || word.ipa; span.title = `${word.ipa} · approximate: ${word.sound}`;
+      fragment.append(span); cursor = word.end;
+    }
+    fragment.append(document.createTextNode(text.slice(cursor).join(''))); p.prose.replaceChildren(fragment);
+    if (reference?.paragraph === p.index) { anchorRange = rangeFor(p,reference.start,reference.end); if (anchorRange && typeof Highlight === 'function' && CSS.highlights) CSS.highlights.set('reader-word',new Highlight(anchorRange)); position(); }
+  }
+  if (paragraphs.length) showCoach(paragraphs.find(p => p.prose.textContent.length >= 30) || paragraphs[0], 0);
   new ResizeObserver(position).observe(panel);
   window.addEventListener('resize', position);
   window.addEventListener('scroll', (event) => {

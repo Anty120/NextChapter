@@ -21,7 +21,7 @@ class DemoTests(TestCase):
         cls.user = get_user_model().objects.create_user('reader', password='a-test-only-password-293')
         cls.other = get_user_model().objects.create_user('other', password='another-test-password-719')
         cls.story = MediaItem.objects.get(slug='la-panaderia')
-        cls.audio = MediaItem.objects.get(slug='audiobook-en-01')
+        cls.audio = MediaItem.objects.get(slug='audiobook-fr-01')
         cls.club = Club.objects.get(slug='the-morning-pages')
 
     def test_seed_twice_preserves_identity_and_user_activity(self):
@@ -46,7 +46,7 @@ class DemoTests(TestCase):
         self.assertEqual(len(response.context['items']), 3)
         self.assertContains(response, self.story.title)
         self.assertNotContains(response, self.audio.title)
-        response = self.client.get('/', {'language': 'French', 'format': 'audiobook'})
+        response = self.client.get('/', {'language': 'French', 'format': 'audiobook', 'level': 'C2'})
         self.assertContains(response, 'No media matches these filters')
         self.assertContains(response, 'Explore the full shelf')
 

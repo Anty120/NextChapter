@@ -6,13 +6,14 @@
   <p id="assist-login" hidden><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in for word help</a>.</p>
   <div class="assist-toolbar" role="toolbar" aria-label="Text actions">
     <button type="button" id="assist-explain">Explain</button>
-    <span id="assist-actions" hidden><button type="button" id="assist-listen">Listen</button><button type="button" id="assist-stop" hidden>Stop</button><button type="button" id="assist-practice">Practice</button></span>
+    <span id="assist-actions" hidden><button type="button" id="assist-listen">Listen</button><button type="button" id="assist-stop" hidden>Stop</button><button type="button" id="assist-practice" aria-label="Speak whole sentence" title="Practice the whole sentence">Speak</button></span>
     <button type="button" id="assist-copy" disabled>Copy</button>
   </div>
   <p id="assist-status" role="status" aria-live="polite" aria-atomic="true"></p>
   <div id="assist-result" hidden>
     <p id="assist-meaning" class="assist-meaning"></p><p id="assist-ipa" class="assist-ipa"></p>
     <details id="assist-details"><summary>Pronunciation &amp; details</summary>
+      <button type="button" id="assist-deeper">Explain more</button>
       <dl id="assist-definitions"></dl><ul id="assist-examples"></ul>
       <label for="assist-speed">Voice speed<select id="assist-speed"><option value="1">Normal</option><option value="0.75">Slower (0.75&times;)</option></select></label>
       <p class="muted">Gemini can make mistakes. Sound comparisons are approximate and depend on your accent.</p>

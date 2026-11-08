@@ -42,6 +42,7 @@ does **not** load `.env.example` automatically.
 GEMINI_ENABLED=true
 GEMINI_API_KEY=<injected backend secret>
 GEMINI_TEXT_MODEL=<current generateContent-compatible text model>
+GEMINI_LOOKUP_MODEL=<current low-latency structured-output model; optional>
 GEMINI_TTS_MODEL=<current generateContent-compatible speech model>
 GEMINI_AUDIO_MODEL=<current generateContent-compatible audio-input model>
 ```
@@ -86,7 +87,11 @@ Practice starts from a selected reference. Listen first, then choose Record.
 The browser asks for microphone permission only after that action. Stop creates
 a mono PCM WAV in browser memory; Listen to my attempt lets you replay it locally.
 Discard/Close releases the recording. Analyze is the explicit upload action.
-Recordings are limited to 15 seconds and 5 MiB, with matching server-side checks.
+Practice always expands a clicked word to its entire sentence. The sentence tools
+offer Speak sentence, Explain sentence and optional pronunciation hints under
+each word. Hints preserve the original passage and its saved offsets. Both IPA
+and familiar-sound comparisons are approximate, with regional variation.
+Recordings are limited to 60 seconds and 5 MiB, with matching server-side checks.
 Microphone capture requires HTTPS or localhost and a supported Web Audio browser.
 
 No browser recognizer is silently used instead of Gemini. The server receives
@@ -112,7 +117,13 @@ test data, not a fake production provider or proof of model pronunciation qualit
 
 The owner supplied credentials through Doppler and confirmed permitted voice
 inputs. Development now enables the live-tested `gemini-3.8-flash` text/audio and
-`gemini-3.8-flash-tts` models. Live text/TTS/audio and the complete Edge flow passed
+`gemini-3.8-flash-tts` models. Fast lookups use the separately verified
+`gemini-3.5-flash-lite` model in development Doppler. Word clicks request four
+short fields; Explain more requests the full teaching response only on demand.
+Successful public reference lookups are cached for up to an hour on the server
+and within the page. One measured cold lookup took 0.876 s versus 12.307 s for
+the earlier full response; its server-cached repeat took under 1 ms. These are
+individual samples, not a latency guarantee. Live text/TTS/audio and the complete Edge flow passed
 with generated public speech as the microphone source. This verifies integration;
 it does not verify a real learner's pronunciation. A human/reference-annotated
 pronunciation benchmark, including

@@ -1,0 +1,19 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Book quiz · {{ item.title }}{% endblock %}
+{% block content %}
+<a class="back" href="{{ item.get_absolute_url }}">← Back to {{ item.title }}</a>
+<section class="paper">
+  <p class="eyebrow">After the last page</p><h1>{{ item.title }}: book quiz</h1>
+  <p>Five optional questions to reflect on your reading. This checks story comprehension, not your language level. Answers contain spoilers.</p>
+  {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+  {% if graded %}<h2 role="status">{{ score }} of {{ questions|length }} correct</h2><p>You can try again whenever you like. Results are not saved.</p>{% endif %}
+  <form method="post">{% csrf_token %}
+    {% for question in questions %}<fieldset style="margin:1.5rem 0;padding:1rem">
+      <legend>{{ forloop.counter }}. {{ question.prompt }}</legend>
+      {% for choice in question.choices %}<label style="display:block;margin:.65rem 0"><input style="width:auto" type="radio" name="{{ question.name }}" value="{{ choice.value }}" required{% if choice.selected %} checked{% endif %}> {{ choice.label }}</label>{% endfor %}
+      {% if graded %}<p>{% if question.correct %}✓ Correct.{% else %}Answer: {{ question.answer }}.{% endif %} {{ question.explanation }}</p>{% endif %}
+    </fieldset>{% endfor %}
+    <button class="button" type="submit">Check my answers</button>
+  </form>
+</section>
+{% endblock %}

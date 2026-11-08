@@ -35,7 +35,7 @@ class LiveAssistanceCheck(StaticLiveServerTestCase):
             language='French', text=text, published=True)
         client = Client()
         client.force_login(user)
-        reference = {'selection': 'moi', 'context': text, 'language': 'fr-FR', 'explanation_locale': 'en'}
+        reference = {'selection': text, 'context': text, 'language': 'fr-FR', 'explanation_locale': 'en'}
         with tempfile.TemporaryDirectory(prefix='nextchapter-public-reference-') as directory:
             microphone = Path(directory) / 'public-reference.wav'
             microphone.write_bytes(provider.pronounce(reference))
@@ -58,22 +58,27 @@ class LiveAssistanceCheck(StaticLiveServerTestCase):
                     page.locator('#assist-passage').select_option('5:8')
                     page.locator('#assist-explain').click()
                     expect(page.locator('#assist-result')).to_be_visible(timeout=45000)
-                    expect(page.locator('#assist-definitions')).to_contain_text('/mwa/')
+                    expect(page.locator('#assist-definitions')).to_contain_text('mwa')
                     page.locator('#assist-listen').click()
                     expect(page.locator('#assist-status')).to_contain_text('Playing', timeout=45000)
                     page.locator('#assist-practice').click()
                     page.locator('#practice-record').click()
                     expect(page.locator('#practice-status')).to_contain_text('Recording locally')
-                    page.wait_for_timeout(1800)
+                    expect(page.locator('#practice-target')).to_have_text(text)
+                    page.wait_for_timeout(4500)
                     page.locator('#practice-stop').click()
                     page.locator('#practice-replay').evaluate('(audio) => audio.play()')
                     page.locator('#practice-analyze').click()
                     expect(page.locator('#practice-results')).to_be_visible(timeout=45000)
                     self.assertTrue(page.locator('#practice-transcript').inner_text().strip())
                     self.assertEqual(responses, [{'path': path, 'status': 200}
-                        for path in ('explain/', 'pronounce/', 'practice/')])
+                        for path in ('lookup/', 'pronounce/', 'practice/')])
                     page.locator('#practice-discard').click()
                     expect(page.locator('#practice-results')).to_be_hidden()
+                    page.locator('#practice-cancel').click()
+                    page.locator('#assist-close').click()
+                    page.get_by_role('button', name='Pronunciation hints', exact=True).click()
+                    expect(page.locator('.phonetic-word')).to_have_count(7, timeout=45000)
                     print(json.dumps({'live_browser': 'passed', 'responses': responses,
                         'input': 'generated public French reference through browser microphone capture',
                         'assessment_quality': 'not benchmarked'}))

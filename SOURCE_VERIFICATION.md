@@ -1,5 +1,24 @@
 # Project knowledge: verification ledger
 
+## Reader speed and non-English recordings — checked 2026-11-08 02:29 UTC
+
+Exa is unavailable in this session. Official web search/page reads and direct
+HTTPS downloads were used as fallback; cached-page freshness is not guaranteed.
+These claims concern provider capabilities/content, not event prizes.
+
+| Source | Claim / status |
+| --- | --- |
+| https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite | Official low-latency model description. Actual account generateContent with structured JSON succeeded; new adapter cold 0.876 s, cached <1 ms for public French moi. Earlier full explanation sample 12.307 s. Individual samples, no SLA. |
+| https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-lite | Documentation exists, but actual account request returned configuration HTTP 503 through our adapter. Not selected; source/runtime conflict preserved. |
+| https://ai.google.dev/gemini-api/docs/optimization | Reviewed latency guidance. Implemented smaller output, separate lookup model and reference caching; no priority-tier or billing change. |
+| https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg | French sung performance by dwsChorale/Dwsolo; 2006, CC BY-SA 3.0 confirmed by page and live imageinfo metadata. Original Ogg downloaded, 1,446,765 bytes, SHA-256 in media.json. |
+| https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg | Spanish sung opening of Mexican birthday song; Elisa vocals / Kenmayer mix, Educational Options Inc.; CC BY-SA 3.0 confirmed in live imageinfo metadata. Original Ogg downloaded, 447,841 bytes. It is an excerpt. |
+
+French short-story narration was generated from project-owned public text with
+the already configured Gemini TTS model, saved as a local WAV and explicitly
+credited as synthetic. Commons recording license notices are retained separately
+from MIT source code. Runtime evidence is recorded in the learning-flow review.
+
 **Exa refresh completed:** 2026-11-07 22:24 UTC.
 **Method:** Exa search and page fetches from primary publishers; Git/GitHub for
 repository state. This ledger supersedes earlier unsourced or cached prize claims.

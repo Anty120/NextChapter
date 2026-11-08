@@ -9,6 +9,7 @@ from django.views.decorators.http import require_GET, require_POST, require_http
 
 from .forms import CommentForm, ProgressForm, ReportForm
 from .models import Club, Comment, MediaItem, Membership, ReadingProgress
+from .quizzes import book_quiz, public_questions
 
 
 @require_GET
@@ -57,8 +58,30 @@ def media_detail(request, pk):
         'item': item, 'progress': progress, 'report_form': ReportForm(),
         'metadata': metadata, 'chapters': chapters, 'paragraphs': paragraphs,
         'audio_mime': mime, 'duration_label': duration_label,
+        'has_quiz': item.format == 'book' and bool(book_quiz(item.slug)),
         'clubs': Club.objects.filter(featured_media=item),
     })
+
+
+@require_http_methods(['GET', 'POST'])
+def book_quiz_view(request, pk):
+    item = get_object_or_404(MediaItem, pk=pk, published=True, format='book')
+    questions = book_quiz(item.slug)
+    if not questions:
+        from django.http import Http404
+        raise Http404('No quiz is available for this book.')
+    submitted = request.POST if request.method == 'POST' else None
+    error = ''
+    if submitted is not None and any(
+            submitted.get(f'q{i}') not in {str(n) for n in range(len(q['choices']))}
+            for i, q in enumerate(questions)):
+        error = 'Choose one answer for every question, then check your answers.'
+    rows = public_questions(questions, submitted if not error else None)
+    return render(request, 'catalog/quiz.html', {
+        'item': item, 'questions': rows, 'error': error,
+        'graded': submitted is not None and not error,
+        'score': sum(row.get('correct', False) for row in rows),
+    }, status=400 if error else 200)
 
 
 @require_POST

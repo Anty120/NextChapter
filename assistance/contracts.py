@@ -20,7 +20,7 @@ LANGUAGES = {'English': 'en', 'French': 'fr', 'Spanish': 'es', 'German': 'de',
 LOCALE = re.compile(r'^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8}){0,2}$')
 
 
-def reference(data):
+def reference(data, max_chars=300):
     if not isinstance(data, dict):
         raise AssistanceError('invalid_selection', 'Choose a word or sentence in published media.')
     numbers = []
@@ -34,8 +34,8 @@ def reference(data):
     if item is None or paragraph >= len(item.paragraphs):
         raise AssistanceError('invalid_selection', 'That published passage is unavailable.')
     text = item.paragraphs[paragraph]
-    if not (0 <= start < end <= len(text)) or end - start > 300 or not text[start:end].strip():
-        raise AssistanceError('invalid_selection', 'Choose between 1 and 300 characters within one paragraph.')
+    if not (0 <= start < end <= len(text)) or end - start > max_chars or not text[start:end].strip():
+        raise AssistanceError('invalid_selection', f'Choose between 1 and {max_chars} characters within one paragraph.')
     locale = data.get('locale', '')
     explanation_locale = data.get('explanation_locale', 'en')
     if not isinstance(locale, str) or not LOCALE.fullmatch(locale) or not isinstance(explanation_locale, str) or not LOCALE.fullmatch(explanation_locale):
@@ -44,15 +44,16 @@ def reference(data):
     if locale.split('-')[0] != expected.split('-')[0]:
         raise AssistanceError('invalid_locale', 'The reference language must match the media language.')
     # Keep selection plus nearby context within a hard total bound, even for long paragraphs.
-    left = max(0, start - (800 - (end - start)) // 2)
-    left = max(0, min(left, len(text) - 800))
-    return {'selection': text[start:end], 'context': text[left:left + 800],
+    context_size = max(800, end - start)
+    left = max(0, start - (context_size - (end - start)) // 2)
+    left = max(0, min(left, len(text) - context_size))
+    return {'selection': text[start:end], 'context': text[left:left + context_size],
             'language': locale, 'explanation_locale': explanation_locale}
 
 
 def validate_wav(raw):
     if len(raw) > 5 * 1024 * 1024:
-        raise AssistanceError('clip_too_large', 'Record at most 15 seconds and 5 MiB.', 413)
+        raise AssistanceError('clip_too_large', 'Record at most 60 seconds and 5 MiB.', 413)
     if len(raw) < 44 or raw[:4] != b'RIFF' or raw[8:12] != b'WAVE' or struct.unpack('<I', raw[4:8])[0] + 8 != len(raw):
         raise AssistanceError('invalid_audio', 'Upload a complete mono PCM WAV recording.')
     try:
@@ -60,7 +61,7 @@ def validate_wav(raw):
             frames, rate = recording.getnframes(), recording.getframerate()
             if (recording.getnchannels() != 1 or recording.getsampwidth() != 2
                     or recording.getcomptype() != 'NONE' or not 8000 <= rate <= 48000
-                    or not 0 < frames <= rate * 15):
+                    or not 0 < frames <= rate * 60):
                 raise ValueError
             samples = recording.readframes(frames)
             if len(samples) != frames * 2 or not any(samples):
@@ -70,7 +71,7 @@ def validate_wav(raw):
             if max(amplitudes) - min(amplitudes) < 32:
                 raise ValueError
     except (wave.Error, EOFError, ValueError, struct.error):
-        raise AssistanceError('invalid_audio', 'Use a non-silent mono 16-bit PCM WAV recording of at most 15 seconds.') from None
+        raise AssistanceError('invalid_audio', 'Use a non-silent mono 16-bit PCM WAV recording of at most 60 seconds.') from None
     return raw
 
 

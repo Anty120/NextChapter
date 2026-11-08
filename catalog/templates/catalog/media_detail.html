@@ -22,17 +22,19 @@
   {% if user.is_authenticated and item.audio_file %}
   <form id="audio-progress" method="post" action="{% url 'save_progress' item.pk %}">{% csrf_token %}<label>Saved position (seconds)<input id="audio-seconds" name="seconds" type="number" min="0" max="86400" step="0.1" value="{{ progress.seconds|default:0 }}"></label><button class="button" type="submit">Save listening position</button><p id="save-status" class="muted" role="status">{% if progress %}Your last listening position is saved.{% else %}Your position saves while listening and when paused.{% endif %}</p></form>
   {% endif %}
-  <h2>{% if item.format == 'song' %}Lyrics{% else %}Chapter transcript{% endif %}</h2>
+  <h2>{% if metadata.text_kind == 'editorial_summary' %}Song context (not lyrics){% elif item.format == 'song' %}Lyrics{% elif metadata.excerpt %}Chapter transcript{% else %}Transcript{% endif %}</h2>
 {% else %}
   <h2>Reading</h2>
   {% if progress %}<p><a href="#paragraph-{{ progress.paragraph }}">Return to your saved paragraph →</a></p>{% endif %}
 {% endif %}
 {% if chapters %}<nav class="chapter-toc" aria-label="Table of contents"><details open><summary>Table of contents</summary><ol>{% for chapter in chapters %}<li><a href="#paragraph-{{ chapter.start_paragraph }}">{{ chapter.title }}</a></li>{% endfor %}</ol></details></nav>{% endif %}
+{% if has_quiz %}<p><a href="#book-quiz">End-of-book quiz ↓</a></p>{% endif %}
 {% if paragraphs %}
 {% if user.is_authenticated and not item.is_audio %}<form method="post" action="{% url 'save_progress' item.pk %}">{% csrf_token %}{% endif %}
 <div class="story-text">{% for paragraph in paragraphs %}<section id="paragraph-{{ forloop.counter0 }}" class="paragraph{% if progress and progress.paragraph == forloop.counter0 and not item.is_audio %} saved-paragraph{% endif %}" tabindex="-1"><p lang="{% if item.language == 'Spanish' %}es{% elif item.language == 'French' %}fr{% else %}en{% endif %}">{{ paragraph }}</p>{% if user.is_authenticated and not item.is_audio %}<button class="bookmark" name="paragraph" value="{{ forloop.counter0 }}" type="submit" aria-label="Save my place at paragraph {{ forloop.counter }}">{% if progress and progress.paragraph == forloop.counter0 %}● Saved here{% else %}○ Save my place{% endif %}</button>{% endif %}</section>{% endfor %}</div>
 {% if user.is_authenticated and not item.is_audio %}</form>{% endif %}
 {% elif item.is_audio %}<p>{% if item.format == 'song' %}Lyrics are not available for reuse with this recording.{% else %}A transcript is not available for this recording.{% endif %}</p>{% endif %}
+{% if has_quiz %}<section id="book-quiz" class="callout"><h2>Finished the book?</h2><p>Try five optional comprehension questions and see explanations of each answer.</p><a class="button" href="{% url 'book_quiz' item.pk %}">Take the book quiz</a></section>{% endif %}
 {% if not user.is_authenticated %}<p class="callout"><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in</a> to save your place and come back anytime.</p>{% endif %}
 </article>
 <aside class="context">

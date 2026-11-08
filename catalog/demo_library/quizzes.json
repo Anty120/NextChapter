@@ -1,0 +1,16 @@
+{
+  "book-es-01": [
+    {"prompt": "Who guides Pablo through the countryside?", "choices": ["Marianela", "The railway guard", "Florentina's father"], "answer": 0, "explanation": "Marianela, also called Nela, accompanies and guides Pablo, who is blind at the beginning of the novel."},
+    {"prompt": "What is Teodoro Golfín's profession?", "choices": ["Miner", "Doctor", "Musician"], "answer": 1, "explanation": "Teodoro Golfín is the doctor who treats Pablo's blindness."},
+    {"prompt": "Which setting surrounds much of the story?", "choices": ["A royal palace", "A tropical island", "The mines of Socartes"], "answer": 2, "explanation": "Socartes and its mines form the landscape of Marianela's daily life."},
+    {"prompt": "What changes for Pablo after the operation?", "choices": ["He gains sight", "He leaves Spain forever", "He becomes a doctor"], "answer": 0, "explanation": "Pablo gains sight. The consequences expose the novel's tension between inner worth and outward appearance."},
+    {"prompt": "Which contrast is central to the novel?", "choices": ["Summer and winter sports", "Appearance and inner worth", "City traffic and sailing"], "answer": 1, "explanation": "Marianela's kindness and social exclusion invite reflection on appearance, poverty and human worth."}
+  ],
+  "book-en-01": [
+    {"prompt": "What catches Alice's attention before she follows the White Rabbit?", "choices": ["His pocket watch", "His bicycle", "His violin"], "answer": 0, "explanation": "The Rabbit takes a watch out of his waistcoat pocket, prompting Alice to follow him."},
+    {"prompt": "What happens after Alice drinks from the bottle marked DRINK ME?", "choices": ["She flies", "She shrinks", "She turns into a rabbit"], "answer": 1, "explanation": "Alice shrinks, allowing her to approach the little door, although she has left its key on the table."},
+    {"prompt": "Which character can disappear while leaving a grin?", "choices": ["The Dodo", "The White Rabbit", "The Cheshire Cat"], "answer": 2, "explanation": "The Cheshire Cat vanishes gradually, leaving its grin behind."},
+    {"prompt": "What objects take the place of ordinary croquet equipment?", "choices": ["Flamingoes and hedgehogs", "Books and teacups", "Umbrellas and apples"], "answer": 0, "explanation": "The Queen's croquet game uses flamingoes as mallets and hedgehogs as balls."},
+    {"prompt": "How does Alice return from Wonderland at the end?", "choices": ["She boards a train", "She wakes from a dream", "She swims across the sea"], "answer": 1, "explanation": "Alice wakes beside her sister and tells her about the strange dream."}
+  ]
+}

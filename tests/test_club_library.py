@@ -30,7 +30,7 @@ class ClubLibraryTests(TestCase):
             'la-panaderia': ('story', 'Spanish'),
             'book-es-01': ('book', 'Spanish'),
             'audiobook-es-01': ('audiobook', 'Spanish'),
-            'song-en-01': ('song', 'English'),
+            'song-es-01': ('song', 'English'),
         }
         cls.clubs = []
         for record in cls.records:
@@ -55,7 +55,7 @@ class ClubLibraryTests(TestCase):
         self.assertEqual(manifest['schema_version'], 1)
         self.assertEqual({record['slug']: record['featured_media_slug'] for record in self.records}, {
             'the-morning-pages': 'la-panaderia', 'demo-book-club': 'book-es-01',
-            'demo-audio-club': 'audiobook-es-01', 'demo-song-club': 'song-en-01',
+            'demo-audio-club': 'audiobook-es-01', 'demo-song-club': 'song-es-01',
         })
         self.assertEqual(len(self.records), 4)
         for record in self.records:
