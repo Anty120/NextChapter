@@ -39,13 +39,20 @@ def reference_cache(kind, reference, producer):
     _, model = configuration(kind)
     fingerprint = json.dumps({'version': 1, 'kind': kind, 'model': model, 'reference': reference}, sort_keys=True)
     key = 'assistance:reference:' + hashlib.sha256(fingerprint.encode()).hexdigest()
-    cached = cache.get(key)
+    ttl = max(0, min(3600, int(getattr(settings, 'GEMINI_CACHE_TTL_SECONDS', 3600))))
+    try:
+        cached = cache.get(key) if ttl else None
+    except Exception:
+        cached = None  # Reference caching is optional; quota checks already passed.
     if cached is not None:
         return cached
     result = producer()
     size = len(result) if isinstance(result, bytes) else len(json.dumps(result))
-    if size <= 1024 * 1024:
-        cache.set(key, result, max(1, min(3600, int(getattr(settings, 'GEMINI_REFERENCE_CACHE_TTL', 3600)))))
+    if ttl and size <= 1024 * 1024:
+        try:
+            cache.set(key, result, ttl)
+        except Exception:
+            pass
     return result
 
 

@@ -23,6 +23,7 @@
   }
   function stopHardware() {
     recording = false; starting = false;
+    window.dispatchEvent(new CustomEvent('nextchapter:recording', {detail: {active: false}}));
     clearInterval(timer); timer = null;
     if (processor) { processor.onaudioprocess = null; processor.disconnect(); processor = null; }
     if (source) { source.disconnect(); source = null; }
@@ -74,6 +75,7 @@
     if (!voiceEnabled() || !secure() || starting || recording || request) return;
     clearPersonal(); const token = generation; starting = true; controls();
     // Reference playback must not become part of a pronunciation attempt.
+    window.dispatchEvent(new CustomEvent('nextchapter:recording', {detail: {active: true}}));
     document.querySelectorAll('audio,video').forEach(media => media.pause());
     status('Requesting microphone permission. Recording starts only if you allow it.');
     try {
@@ -81,12 +83,12 @@
       if (token !== generation || panel.hidden) { acquired.getTracks().forEach(track => track.stop()); return; }
       stream = acquired;
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      context = new AudioContextClass();
+      context = new AudioContextClass({sampleRate: 48000});
       await context.resume();
       if (token !== generation) return;
       rate = context.sampleRate;
       // Bound every actual capture rate, rather than trusting a requested sample rate.
-      if (!Number.isFinite(rate) || rate < 8000 || rate > 96000) throw new Error('This microphone sample rate is unsupported. Try another browser or device.');
+      if (!Number.isFinite(rate) || rate < 8000 || rate > 48000) throw new Error('This microphone sample rate is unsupported. Try another browser or device.');
       source = context.createMediaStreamSource(stream);
       processor = context.createScriptProcessor(4096, 1, 1);
       mute = context.createGain(); mute.gain.value = 0;
@@ -146,6 +148,7 @@
     try {
       const response = await fetch(root.dataset.pronounceUrl, {method: 'POST', credentials: 'same-origin', headers: {'Content-Type': 'application/json', 'X-CSRFToken': csrf()}, body: JSON.stringify(fields()), signal: request.signal});
       if (!response.ok) throw new Error(await failure(response));
+      if (!response.headers.get('Content-Type')?.startsWith('audio/')) throw new Error('The pronunciation service did not return playable audio.');
       const audio = await response.blob(); if (token !== generation) return;
       clearAudio(get('reference-audio'), referenceURL); referenceURL = URL.createObjectURL(audio); get('reference-audio').src = referenceURL;
       await get('reference-audio').play(); status('Playing the reference.');

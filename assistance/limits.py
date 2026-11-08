@@ -36,4 +36,7 @@ def allowance(user_id):
     try:
         yield
     finally:
-        cache.delete(lease)
+        try:
+            cache.delete(lease)
+        except Exception:
+            pass  # The bounded lease expires; do not expose speech in a debug error.

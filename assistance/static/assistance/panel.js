@@ -46,6 +46,7 @@
     return response;
   };
   function choose(p, start, end, moveFocus = true) {
+    const practice = root.querySelector('#practice-panel'); if (practice) practice.hidden = true;
     const text = p.prose.textContent;
     if (start < 0 || end <= start || end > points(text).length || end - start > 300) {
       explainAbort?.abort(); generation++; stopVoice(true); reference = null;
@@ -152,6 +153,11 @@
   });
   el('stop').addEventListener('click', () => { stopVoice(); status('Pronunciation reference stopped.'); });
   el('speed').addEventListener('change', () => { if (voice) voice.playbackRate = Number(el('speed').value); });
+  window.addEventListener('nextchapter:recording', (event) => {
+    if (event.detail?.active) stopVoice();
+    el('listen').disabled = Boolean(event.detail?.active);
+    el('practice').disabled = Boolean(event.detail?.active);
+  });
   window.NextChapterAssistance = Object.assign(window.NextChapterAssistance || {}, {openPractice: (selected) => { stopVoice(); window.dispatchEvent(new CustomEvent('nextchapter:practice', {detail: selected})); }});
   el('practice').addEventListener('click', () => { if (reference && allowed) window.NextChapterAssistance.openPractice({...reference}); });
   el('login').hidden = authenticated;
