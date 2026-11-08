@@ -1,49 +1,61 @@
-{% extends 'catalog/base.html' %}{% load static %}
+{% extends 'catalog/base.html' %}{% load static nextchapter_ui %}
 {% block title %}{{ item.title }} · NextChapter{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'catalog/reader.css' %}">{% endblock %}
 {% block content %}
-<a class="back" href="{% url 'catalog' %}">← Back to the shelf</a>
+<a class="back reveal" style="--i:0" href="{% url 'catalog' %}"><span aria-hidden="true">←</span> Back to the shelf</a>
 <section class="media-header">
-  <p class="eyebrow">{{ item.language }} / {{ item.get_format_display }}</p>
-  <h1>{{ item.title }}</h1><p class="subtitle">{{ item.description }}</p>
-  <p>By {{ item.creator }} <span class="badge">{{ item.level }} · estimated difficulty</span></p>
-  {% if metadata.performer %}<p>Performed by {{ metadata.performer }}</p>{% endif %}
-  {% if item.is_audio %}<p>{% if metadata.excerpt %}{% if item.format == 'song' %}Song excerpt{% else %}Chapter excerpt{% endif %}{% else %}Recording{% endif %}{% if duration_label %} · {{ duration_label }}{% endif %} · No autoplay</p>{% endif %}
+  <div class="media-cover cover color-{{ item|cover_color }}" aria-hidden="true"><span class="cover-mark">{% if item.is_audio %}♫{% else %}✳{% endif %}</span><span class="cover-title">{{ item.title }}</span></div>
+  <div class="media-intro">
+  <p class="eyebrow reveal" style="--i:1">{{ item.language }} / {{ item.get_format_display }}</p>
+  <h1 class="reveal" style="--i:2">{{ item.title }}</h1><p class="subtitle reveal" style="--i:3">{{ item.description }}</p>
+  <p class="byline reveal" style="--i:4">By {{ item.creator }} <span class="badge">{{ item.level }} · estimated difficulty</span></p>
+  {% if metadata.performer %}<p class="media-fact reveal" style="--i:5">Performed by {{ metadata.performer }}</p>{% endif %}
+  {% if item.is_audio %}<p class="media-fact reveal" style="--i:5">{% if metadata.excerpt %}{% if item.format == 'song' %}Song excerpt{% else %}Chapter excerpt{% endif %}{% else %}Recording{% endif %}{% if duration_label %} · {{ duration_label }}{% endif %} · No autoplay</p>{% endif %}
+  </div>
 </section>
 <div class="reading-layout">
-<article class="paper" aria-label="{% if item.is_audio %}Audio and transcript{% else %}Reading{% endif %}">
+<article class="paper reveal" style="--i:6" aria-label="{% if item.is_audio %}Audio and transcript{% else %}Reading{% endif %}">
 {% if item.is_audio %}
   <h2>{% if item.format == 'song' %}Listen to the song{% elif metadata.excerpt %}Listen to an audiobook chapter excerpt{% else %}Listen to the audiobook{% endif %}</h2>
   {% if item.audio_file %}
+  <div class="deck" data-deck hidden>
+    <button class="deck-play" type="button" data-deck-play aria-label="Play"><svg class="deck-icon deck-icon-play" aria-hidden="true" viewBox="0 0 24 24" width="26" height="26"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg><svg class="deck-icon deck-icon-pause" aria-hidden="true" viewBox="0 0 24 24" width="26" height="26"><rect x="6.5" y="5.5" width="4" height="13" rx="1" fill="currentColor"/><rect x="13.5" y="5.5" width="4" height="13" rx="1" fill="currentColor"/></svg></button>
+    <div class="deck-body">
+      <div class="deck-meter"><span class="deck-fill" aria-hidden="true"></span><span class="deck-saved" aria-hidden="true"><i></i></span><input class="deck-seek" type="range" min="0" max="1" step="0.1" value="0" aria-label="Seek" data-deck-seek></div>
+      <div class="deck-times"><span data-deck-current>0:00</span><span class="deck-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span data-deck-duration>{{ duration_label|default:'–:––' }}</span></div>
+    </div>
+    <div class="deck-skips"><button type="button" data-deck-skip="-15" aria-label="Back 15 seconds">−15</button><button type="button" data-deck-skip="15" aria-label="Forward 15 seconds">+15</button><label class="deck-volume"><span class="visually-hidden">Volume</span><input type="range" min="0" max="1" step="0.05" value="1" data-deck-volume></label></div>
+  </div>
   <audio id="player" controls preload="metadata" data-seconds="{{ progress.seconds|default:0 }}" aria-label="{{ item.title }} audio"><source src="{% static item.audio_file %}"{% if audio_mime %} type="{{ audio_mime }}"{% endif %}>Your browser does not support audio. <a href="{% static item.audio_file %}">Download the audio</a>.</audio>
   <p id="audio-error" class="error" hidden>Audio could not load. Try <a href="{% static item.audio_file %}">opening the recording directly</a>.</p>
   {% if item.format == 'audiobook' %}<label class="playback-speed" for="playback-speed">Playback speed<select id="playback-speed"><option value="0.75">0.75×</option><option value="1" selected>1× (normal)</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>{% endif %}
   {% else %}<p class="error">A recording is not available for this item.</p>{% endif %}
   {% if user.is_authenticated and item.audio_file %}
-  <form id="audio-progress" method="post" action="{% url 'save_progress' item.pk %}">{% csrf_token %}<label>Saved position (seconds)<input id="audio-seconds" name="seconds" type="number" min="0" max="86400" step="0.1" value="{{ progress.seconds|default:0 }}"></label><button class="button" type="submit">Save listening position</button><p id="save-status" class="muted" role="status">{% if progress %}Your last listening position is saved.{% else %}Your position saves while listening and when paused.{% endif %}</p></form>
+  <form id="audio-progress" method="post" action="{% url 'save_progress' item.pk %}">{% csrf_token %}<label>Saved position (seconds)<input id="audio-seconds" name="seconds" type="number" min="0" max="86400" step="0.1" value="{{ progress.seconds|default:0 }}"></label><button class="button secondary" type="submit">Save listening position</button><p id="save-status" class="muted" role="status">{% if progress %}Your last listening position is saved.{% else %}Your position saves while listening and when paused.{% endif %}</p></form>
   {% endif %}
   <h2>{% if metadata.text_kind == 'editorial_summary' %}Song context (not lyrics){% elif item.format == 'song' %}Lyrics{% elif metadata.excerpt %}Chapter transcript{% else %}Transcript{% endif %}</h2>
 {% else %}
   <h2>Reading</h2>
-  {% if progress %}<p><a href="#paragraph-{{ progress.paragraph }}">Return to your saved paragraph →</a></p>{% endif %}
+  {% if progress %}<p><a class="saved-link" href="#paragraph-{{ progress.paragraph }}">Return to your saved paragraph <span aria-hidden="true">→</span></a></p>{% endif %}
 {% endif %}
-{% if chapters %}<nav class="chapter-toc" aria-label="Table of contents"><details open><summary>Table of contents</summary><ol>{% for chapter in chapters %}<li><a href="#paragraph-{{ chapter.start_paragraph }}">{{ chapter.title }}</a></li>{% endfor %}</ol></details></nav>{% endif %}
-{% if has_quiz %}<p><a href="#book-quiz">End-of-book quiz ↓</a></p>{% endif %}
+{% if paragraphs and not item.is_audio or chapters %}<div class="reader-bar">{% if chapters %}<button class="button secondary small toc-trigger" type="button" popovertarget="toc" aria-controls="toc" aria-expanded="false"><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Chapters <span class="toc-current" data-toc-current></span></button>{% endif %}{% if paragraphs %}<span class="read-progress" aria-hidden="true"><span></span></span>{% endif %}</div>{% endif %}
+{% if chapters %}<nav class="chapter-toc sheet glide" id="toc" popover aria-label="Table of contents"><div class="sheet-head"><h2>Chapters</h2><button class="icon-button" type="button" popovertarget="toc" popovertargetaction="hide" aria-label="Close table of contents"><svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div><ol>{% for chapter in chapters %}<li><a class="menu-item" href="#paragraph-{{ chapter.start_paragraph }}">{{ chapter.title }}</a></li>{% endfor %}</ol></nav>{% endif %}
+{% if has_quiz %}<p><a class="quiz-link" href="#book-quiz">End-of-book quiz <span aria-hidden="true">↓</span></a></p>{% endif %}
 {% if paragraphs %}
-{% if user.is_authenticated and not item.is_audio %}<form method="post" action="{% url 'save_progress' item.pk %}">{% csrf_token %}{% endif %}
-<div class="story-text">{% for paragraph in paragraphs %}<section id="paragraph-{{ forloop.counter0 }}" class="paragraph{% if progress and progress.paragraph == forloop.counter0 and not item.is_audio %} saved-paragraph{% endif %}" tabindex="-1"><p lang="{% if item.language == 'Spanish' %}es{% elif item.language == 'French' %}fr{% else %}en{% endif %}">{{ paragraph }}</p>{% if user.is_authenticated and not item.is_audio %}<button class="bookmark" name="paragraph" value="{{ forloop.counter0 }}" type="submit" aria-label="Save my place at paragraph {{ forloop.counter }}">{% if progress and progress.paragraph == forloop.counter0 %}● Saved here{% else %}○ Save my place{% endif %}</button>{% endif %}</section>{% endfor %}</div>
+{% if user.is_authenticated and not item.is_audio %}<form class="bookmarks" method="post" action="{% url 'save_progress' item.pk %}">{% csrf_token %}{% endif %}
+<div class="story-text">{% for paragraph in paragraphs %}<section id="paragraph-{{ forloop.counter0 }}" class="paragraph{% if progress and progress.paragraph == forloop.counter0 and not item.is_audio %} saved-paragraph{% endif %}" tabindex="-1"><p lang="{% if item.language == 'Spanish' %}es{% elif item.language == 'French' %}fr{% else %}en{% endif %}">{{ paragraph }}</p>{% if user.is_authenticated and not item.is_audio %}<button class="bookmark" name="paragraph" value="{{ forloop.counter0 }}" type="submit" aria-label="Save my place at paragraph {{ forloop.counter }}"><span class="bookmark-dot" aria-hidden="true"></span><span class="bookmark-label">{% if progress and progress.paragraph == forloop.counter0 %}Saved here{% else %}Save my place{% endif %}</span></button>{% endif %}</section>{% endfor %}</div>
 {% if user.is_authenticated and not item.is_audio %}</form>{% endif %}
 {% elif item.is_audio %}<p>{% if item.format == 'song' %}Lyrics are not available for reuse with this recording.{% else %}A transcript is not available for this recording.{% endif %}</p>{% endif %}
-{% if has_quiz %}<section id="book-quiz" class="callout"><h2>Finished the book?</h2><p>Try five optional comprehension questions and see explanations of each answer.</p><a class="button" href="{% url 'book_quiz' item.pk %}">Take the book quiz</a></section>{% endif %}
+{% if has_quiz %}<section id="book-quiz" class="callout quiz-callout"><h2>Finished the book?</h2><p>Try five optional comprehension questions and see explanations of each answer.</p><a class="button" href="{% url 'book_quiz' item.pk %}">Take the book quiz</a></section>{% endif %}
 {% if not user.is_authenticated %}<p class="callout"><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in</a> to save your place and come back anytime.</p>{% endif %}
 </article>
 <aside class="context">
-<section class="panel yellow"><p class="eyebrow">Beyond the page</p><h2>A little context</h2><p>{{ item.cultural_context }}</p></section>
-<section class="panel"><h2>Find your comfort zone</h2><p>{{ item.difficulty_note }}</p></section>
-<section class="panel reader-credits"><h2>Credits &amp; source</h2><p>{{ item.attribution }}</p>
+<section class="panel yellow reveal" style="--i:7"><p class="eyebrow">Beyond the page</p><h2>A little context</h2><p>{{ item.cultural_context }}</p></section>
+<section class="panel reveal" style="--i:8"><h2>Find your comfort zone</h2><p>{{ item.difficulty_note }}</p></section>
+<section class="panel reader-credits reveal" style="--i:9"><h2>Credits &amp; source</h2><p>{{ item.attribution }}</p>
 {% for source in metadata.sources %}<div class="component-credit"><h3>{{ source.component|capfirst }}</h3><p>{{ source.creator }} · <a href="{{ source.source_url }}">Source</a> · <a href="{{ source.license_url }}">{{ source.license }}</a></p><p>{{ source.rights_territory }}</p>{% if source.modifications %}<p>{{ source.modifications }}</p>{% endif %}</div>{% endfor %}
-<a href="{% url 'report' 'media' item.pk %}">Report a content or rights concern →</a></section>
-{% for club in clubs %}<section class="panel green"><h2>Keep the conversation going.</h2><p>{{ club.name }}</p><a class="button" href="{{ club.get_absolute_url }}">Visit the club ↗</a></section>{% endfor %}
+<a href="{% url 'report' 'media' item.pk %}">Report a content or rights concern <span aria-hidden="true">→</span></a></section>
+{% for club in clubs %}<section class="panel green reveal" style="--i:10"><h2>Keep the conversation going.</h2><p>{{ club.name }}</p><a class="button" href="{{ club.get_absolute_url }}">Visit the club <span aria-hidden="true">↗</span></a></section>{% endfor %}
 </aside></div>
 {% endblock %}
-{% block scripts %}{% if item.is_audio %}<script src="{% static 'catalog/player.js' %}" defer></script>{% endif %}<script src="{% static 'catalog/reader.js' %}" defer></script>{% endblock %}
+{% block scripts %}{% if item.is_audio %}<script src="{% static 'catalog/player.js' %}" defer></script><script src="{% static 'catalog/audio-deck.js' %}" defer></script>{% endif %}<script src="{% static 'catalog/reader.js' %}" defer></script>{% endblock %}

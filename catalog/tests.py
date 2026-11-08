@@ -56,7 +56,8 @@ class DemoTests(TestCase):
         items = list(response.context['items'])
         self.assertEqual({item.format for item in items}, {'song', 'audiobook'})
         self.assertTrue(all(item.published for item in items))
-        self.assertContains(response, '<option value="audio" selected>Songs &amp; audiobooks</option>', html=True)
+        # Format is a segmented radio group (#75): the shortcut preselects the combined option.
+        self.assertContains(response, '<label class="chip"><input type="radio" name="format" value="audio" checked><span>Songs &amp; audiobooks</span></label>', html=True)
         response = self.client.get('/', {'format':'audio', 'language':'Spanish'})
         self.assertEqual({item.format for item in response.context['items']}, {'song', 'audiobook'})
         self.assertTrue(all(item.language == 'Spanish' for item in response.context['items']))

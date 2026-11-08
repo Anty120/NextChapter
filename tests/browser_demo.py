@@ -6,6 +6,7 @@ and staff, never prints passwords, and saves screenshots plus machine evidence.
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 import sys
 from uuid import uuid4
@@ -75,9 +76,10 @@ def main():
         page.goto(base)
         keyboard_check(page)
         page.screenshot(path=str(output / 'catalog-desktop.png'), full_page=True)
-        for fmt, count in [('story', 6), ('book', 2), ('audiobook', 2), ('song', 2)]:
+        # Format is a segmented radio group (was a select); check the option, then submit.
+        for fmt, label, count in [('story', 'Short story', 6), ('book', 'Book', 2), ('audiobook', 'Audiobook', 2), ('song', 'Song', 2)]:
             page.goto(base)
-            page.get_by_role('combobox', name='Format', exact=True).select_option(fmt)
+            page.get_by_role('group', name='Format').get_by_role('radio', name=label, exact=True).check()
             page.get_by_role('button', name='Find a story').press('Enter')
             expect(page.locator('.book-card')).to_have_count(count)
             evidence['formats'][fmt] = count
@@ -97,12 +99,16 @@ def main():
             keyboard_check(page)
             expect(page.locator('.story-text .paragraph')).to_have_count(len(item.paragraphs))
             if item.format == 'book':
+                # The table of contents is a sheet opened from the reader bar's Chapters button.
+                page.get_by_role('button', name='Chapters', exact=False).press('Enter')
                 expect(page.get_by_role('navigation', name='Table of contents')).to_be_visible()
                 expect(page.locator('.chapter-toc a')).to_have_count(len(get_media_metadata(item.slug)['chapters']))
                 last = get_media_metadata(item.slug)['chapters'][-1]['start_paragraph']
                 page.locator('.chapter-toc a').last.press('Enter')
                 expect(page.locator(f'#paragraph-{last}')).to_be_focused()
             page.get_by_role('button', name='Save my place at paragraph 3', exact=True).press('Enter')
+            # Bookmarks now save in place (fetch, no navigation); wait for the confirmation.
+            expect(page.locator('#paragraph-2 .bookmark-label')).to_have_text('Saved here')
             page.reload()
             expect(page.locator('#paragraph-2')).to_have_class('paragraph saved-paragraph')
             page.screenshot(path=str(output / (item.slug + '.png')), full_page=False)
@@ -111,17 +117,21 @@ def main():
             metadata = get_media_metadata(item.slug)
             page.goto(base + item.get_absolute_url())
             keyboard_check(page)
-            audio = page.locator('audio')
-            url = page.locator('audio source').evaluate('(source) => source.src')
-            expect(page.locator('audio source')).to_have_attribute('type', metadata['audio_mime'])
+            # The word-help practice panel adds its own <audio> elements; target the media player.
+            audio = page.locator('audio#player')
+            url = page.locator('audio#player source').evaluate('(source) => source.src')
+            expect(page.locator('audio#player source')).to_have_attribute('type', metadata['audio_mime'])
             expect(page.get_by_text(metadata['performer'], exact=False).first).to_be_visible()
             expect(page.locator('.component-credit')).to_have_count(len(metadata['sources']))
             expect(page.locator('.story-text .paragraph')).to_have_count(len(item.paragraphs))
             if item.format == 'song':
-                expect(page.get_by_text('Full lyrics not bundled.', exact=False).first).to_be_visible()
+                # Wording changed with main's song pack ("written lyrics are not bundled"); same intent.
+                expect(page.get_by_text(re.compile(r'lyrics (are )?not bundled', re.I)).first).to_be_visible()
                 assert page.locator('.component-credit a').count() >= 4
             else:
-                expect(page.get_by_role('heading', name='Chapter transcript')).to_be_visible()
+                # Main titles full (non-excerpt) audiobook text "Transcript", excerpts "Chapter transcript".
+                heading = 'Chapter transcript' if metadata.get('excerpt') else 'Transcript'
+                expect(page.get_by_role('heading', name=heading, exact=True)).to_be_visible()
             response = context.request.get(url, headers={'Range': 'bytes=0-63'})
             assert response.status == 206
             assert response.headers['content-type'] == metadata['audio_mime']
@@ -140,7 +150,7 @@ def main():
             expect(page.locator('#save-status')).to_have_text('Your listening position is saved.')
             page.reload()
             page.wait_for_function('Math.abs(document.querySelector("audio").currentTime - 12) < 0.1')
-            assert page.locator('audio').evaluate('(a) => a.paused && !a.autoplay')
+            assert audio.evaluate('(a) => a.paused && !a.autoplay')
             page.screenshot(path=str(output / (item.slug + '.png')), full_page=False)
             fixture = context.new_page()
             check_player_browser(fixture, base, url)
@@ -192,6 +202,8 @@ def main():
             page.screenshot(path=str(output / f'clubs-{width}.png'), full_page=True)
             page.goto(base)
             page.screenshot(path=str(output / f'catalog-{width}.png'), full_page=True)
+        # Log out lives in the account popover menu.
+        page.get_by_role('button', name='account menu', exact=False).press('Enter')
         page.get_by_role('button', name='Log out', exact=True).press('Enter')
         expect(page.get_by_role('link', name='Log in', exact=True)).to_be_visible()
         csrf = next(cookie['value'] for cookie in context.cookies() if cookie['name'] == 'csrftoken')
@@ -206,7 +218,7 @@ def main():
             expect(private.locator('.saved-paragraph')).to_have_count(0)
         for item in audio_items:
             private.goto(base + item.get_absolute_url())
-            expect(private.locator('audio')).to_have_attribute('data-seconds', '0')
+            expect(private.locator('audio#player')).to_have_attribute('data-seconds', '0')
         other.close()
         staff = browser.new_context()
         admin = staff.new_page()

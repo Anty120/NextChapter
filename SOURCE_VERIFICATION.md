@@ -53,8 +53,8 @@ local runtime tests. No deployment, provider account or secrets changes followed
 | https://motion.dev/docs/animate | Motion's browser animation API supports easing and spring transitions. Local integration uses transform/opacity animation, not a React framework migration. |
 | https://motion.dev/docs/spring | Reviewed spring configuration. UI uses restrained stiffness/damping/mass for hover, press and a short heading entrance. Runtime behavior is separately browser-tested. |
 | https://motion.dev/docs/quick-start | Official script-tag distribution is supported. Runtime scripts are bundled locally, with a no-library/no-JS fallback; no external CDN is contacted by the app. |
-| https://registry.npmjs.org/motion/14.10.1 | Verified package version, MIT license and published SHA-512 tarball integrity. Extracted only the named browser build and license, with no dependency install or lifecycle script. |
-| https://registry.npmjs.org/motion/-/motion-14.10.1.tgz | Downloaded tarball matched registry integrity. Unmodified `dist/motion.js`: 183,604 bytes; SHA-256 `b39d6cdb97506ae8c00da5221ad23bb3799845b64bf58b8e19c297d81211a916`. License and machine-readable provenance retained under `catalog/static/catalog/vendor/motion/`. |
+| https://registry.npmjs.org/motion/14.5.0 | Verified package version (published 2026-10-21), MIT license and published tarball shasum `b1569d659b06f550e3933414cc7a1f065823b6d6`. Extracted only the browser build and license, with no dependency install or lifecycle script. This single copy replaces the earlier 14.10.1 vendoring (#75). |
+| https://registry.npmjs.org/motion/-/motion-14.5.0.tgz | Downloaded tarball matched the registry shasum. Unmodified `dist/motion.js`: 172,010 bytes; SHA-256 `69c327fe2d655b3da6112e5723c6ea85c29b063e59fa5471e6ebbc96a087b39d`. License and provenance (`SOURCE.txt`) retained under `catalog/static/catalog/vendor/motion/`. |
 
 The remote project audit closed completed #3/#4/#5/#10/#28/#61/#62/#71/#72 and
 retired #66 as not planned because the English recordings were superseded.

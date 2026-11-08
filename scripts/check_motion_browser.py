@@ -14,6 +14,51 @@ from catalog.models import Club, Comment, MediaItem
 
 @override_settings(GEMINI_ENABLED=True)
 class MotionBrowserCheck(StaticLiveServerTestCase):
+    def check_card_menu_anchor(self, page):
+        from playwright.sync_api import expect
+
+        trigger = page.locator('.book-card .icon-button').first
+        menu = page.locator('.book-card [popover]').first
+
+        def check_geometry():
+            # Include the press spring, hover transition and popover entrance. A check
+            # during those animations can briefly pass before the trigger moves away.
+            page.wait_for_function('''() => {
+                const trigger = document.querySelector('.book-card .icon-button');
+                return [trigger, trigger.closest('.book-card'), document.querySelector('.book-card [popover]')]
+                    .every(e => e.getAnimations().every(a => a.playState !== 'running'));
+            }''')
+            page.wait_for_function('''() => {
+                const t = document.querySelector('.book-card .icon-button').getBoundingClientRect();
+                const m = document.querySelector('.book-card [popover]').getBoundingClientRect();
+                const vertical = Math.min(Math.abs(m.top - t.bottom - 8), Math.abs(t.top - m.bottom - 8));
+                const clamp = left => Math.max(8, Math.min(left, document.documentElement.clientWidth - m.width - 8));
+                const horizontal = Math.min(Math.abs(m.left - clamp(t.left)), Math.abs(m.left - clamp(t.right - m.width)));
+                return vertical < 3 && horizontal < 3;
+            }''')
+            box = menu.bounding_box()
+            self.assertGreaterEqual(box['x'], 0)
+            self.assertLessEqual(box['x'] + box['width'], page.viewport_size['width'])
+
+        # A quick click catches the press and hover animations in progress.
+        trigger.click()
+        expect(menu).to_be_visible()
+        check_geometry()
+        page.mouse.move(5, 5)
+        check_geometry()
+        page.evaluate('scrollBy(0, 80)')
+        check_geometry()
+        page.keyboard.press('Escape')
+        expect(menu).to_be_hidden()
+        expect(trigger).to_be_focused()
+        trigger.press('Enter')
+        expect(menu).to_be_visible()
+        expect(menu.locator('.menu-item').first).to_be_focused()
+        check_geometry()
+        page.keyboard.press('Escape')
+        expect(menu).to_be_hidden()
+        expect(trigger).to_be_focused()
+
     def test_motion_and_progressive_fallbacks(self):
         from playwright.sync_api import expect, sync_playwright
 
@@ -43,7 +88,8 @@ class MotionBrowserCheck(StaticLiveServerTestCase):
                 expect(card).to_be_visible()
                 page.wait_for_function('document.querySelector(".book-card").getAnimations().length === 0')
                 card.hover()
-                page.wait_for_function('new DOMMatrixReadOnly(getComputedStyle(document.querySelector(".book-card")).transform).m42 < -3')
+                # Hover lift uses the individual `translate` property (it composes with Motion's press transform).
+                page.wait_for_function('parseFloat((getComputedStyle(document.querySelector(".book-card")).translate.split(" ")[1]) || "0") < -3')
                 page.mouse.down()
                 page.wait_for_function('new DOMMatrixReadOnly(getComputedStyle(document.querySelector(".book-card")).transform).m11 < .99')
                 page.mouse.move(5,5); page.mouse.up()
@@ -51,6 +97,7 @@ class MotionBrowserCheck(StaticLiveServerTestCase):
                 page.wait_for_function('document.querySelector(".book-card").getAnimations().length === 0')
                 page.evaluate('scrollTo({top:0,behavior:"instant"})')
                 page.screenshot(path=str(artifacts / 'motion-after-desktop.png'))
+                self.check_card_menu_anchor(page)
                 for width in [320,390]:
                     page.set_viewport_size({'width':width,'height':844})
                     for path in ['/', '/?format=audio', '/clubs/', club.get_absolute_url(), story.get_absolute_url(),
@@ -65,6 +112,7 @@ class MotionBrowserCheck(StaticLiveServerTestCase):
                     page.wait_for_function('document.querySelectorAll(".book-card")[0].getAnimations().length === 0')
                     page.evaluate('scrollTo({top:0,behavior:"instant"})')
                     page.screenshot(path=str(artifacts / f'motion-after-{width}.png'))
+                    self.check_card_menu_anchor(page)
                 page.emulate_media(reduced_motion='reduce')
                 expect(page.locator('html')).to_have_attribute('data-ui-motion','reduced')
                 card.hover()
@@ -93,9 +141,10 @@ class MotionBrowserCheck(StaticLiveServerTestCase):
                     tab = fallback.new_page();tab.on('pageerror',lambda e:errors.append(str(e)))
                     tab.goto(self.live_server_url + '/')
                     expect(tab.locator('.book-card').first).to_be_visible()
-                    tab.locator('select[name=format]').select_option('audio')
+                    # Format is a segmented radio group in the #75 redesign.
+                    tab.get_by_role('radio', name='Songs & audiobooks', exact=True).check()
                     tab.get_by_role('button',name='Find a story',exact=False).click()
-                    expect(tab).to_have_url(self.live_server_url+'/?q=&language=&format=audio&level=')
+                    expect(tab).to_have_url(self.live_server_url+'/?q=&format=audio&language=&level=')
                     self.assertEqual(tab.locator('.book-card').count(),4)
                     fallback.close();receipts.append(mode)
                 self.assertFalse(errors,errors)

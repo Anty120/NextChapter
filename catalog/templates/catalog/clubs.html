@@ -1,20 +1,20 @@
 {% extends 'catalog/base.html' %}
-{% load static %}
+{% load static nextchapter_ui %}
 {% block title %}Reading and listening clubs · NextChapter{% endblock %}
 {% block head %}<link rel="stylesheet" href="{% static 'catalog/clubs.css' %}">{% endblock %}
 {% block content %}
 <section class="club-library" aria-labelledby="clubs-title">
-  <div class="heading"><div><p class="eyebrow">Good stories bring people together</p><h1 id="clubs-title">Find your people.</h1><p class="subtitle">A shared page, a voice, a song. Browse freely and join a conversation at your own pace.</p></div></div>
+  <div class="heading"><div><p class="eyebrow reveal" style="--i:0">Good stories bring people together</p><h1 class="reveal" style="--i:1" id="clubs-title">Find your people.</h1><p class="subtitle reveal" style="--i:2">A shared page, a voice, a song. Browse freely and join a conversation at your own pace.</p></div></div>
   <div class="club-grid">
     {% for club in clubs %}
-    <article class="panel club-card" aria-labelledby="club-{{ club.pk }}-name">
+    <article class="panel club-card club-{{ club|club_color }} reveal" style="--i:{{ forloop.counter|add:2 }};--pose:{{ forloop.counter|pose }}" aria-labelledby="club-{{ club.pk }}-name">
       <span class="badge">{{ club.language }} · All levels welcome</span>
       <h2 id="club-{{ club.pk }}-name"><a href="{{ club.get_absolute_url }}">{{ club.name }}</a></h2>
       <p>{{ club.description }}</p>
       {% if club.featured_media and club.featured_media.published %}
-      <div class="club-featured-preview"><p class="eyebrow">Shared {{ club.featured_media.get_format_display|lower }}</p><a href="{{ club.featured_media.get_absolute_url }}">{{ club.featured_media.title }}</a></div>
+      <div class="club-featured-preview"><span class="mini-cover color-{{ club.featured_media|cover_color }}" aria-hidden="true">{% if club.featured_media.is_audio %}♫{% else %}✳{% endif %}</span><div><p class="eyebrow">Shared {{ club.featured_media.get_format_display|lower }}</p><a href="{{ club.featured_media.get_absolute_url }}">{{ club.featured_media.title }}</a></div></div>
       {% endif %}
-      <a class="button club-meet" href="{{ club.get_absolute_url }}" aria-label="Meet {{ club.name }}">Meet the club ↗</a>
+      <a class="button club-meet" href="{{ club.get_absolute_url }}" aria-label="Meet {{ club.name }}">Meet the club <span aria-hidden="true">↗</span></a>
     </article>
     {% empty %}<p class="empty">Our next reading or listening circle is on its way. <a href="{% url 'catalog' %}">Explore the shelf</a> while you wait.</p>{% endfor %}
   </div>

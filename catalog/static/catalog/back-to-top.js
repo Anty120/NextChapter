@@ -18,5 +18,7 @@
     top?.focus({preventScroll: true});
     window.scrollTo({top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth'});
   });
-  update();
+  // The ResizeObserver's first report (after layout) runs the initial check, so start-up
+  // never forces a synchronous layout. Without ResizeObserver, check on the next frame.
+  if (typeof ResizeObserver !== 'function') schedule();
 })();

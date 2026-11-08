@@ -1,0 +1,12 @@
+Motion (https://motion.dev) vanilla JS UMD build, vendored for offline use.
+
+Package:   motion@14.5.0 (published to npm 2026-10-21)
+File:      package/dist/motion.js from https://registry.npmjs.org/motion/-/motion-14.5.0.tgz
+Tarball:   sha1 b1569d659b06f550e3933414cc7a1f065823b6d6 (matches npm dist.shasum)
+           integrity sha512-A0MinYYhYU12CHELw4+9jKPVreI43yDOprC4kAATHhF1rLfMFMhfpBR0GvdRR/IWEuKsHDnVn4fT+R2gQRyulw==
+motion.js: sha256 69c327fe2d655b3da6112e5723c6ea85c29b063e59fa5471e6ebbc96a087b39d
+License:   MIT, see LICENSE.md (copied unmodified from the package).
+
+Loaded with <script defer> as window.Motion; there is no runtime CDN and no npm build.
+To upgrade: download the new tarball, verify its shasum against the npm registry,
+replace motion.js and LICENSE.md, and update this file.
