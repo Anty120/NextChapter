@@ -1,0 +1,11 @@
+/* Keep long books and their credits readable within the existing responsive shell. */
+.chapter-toc{border-block:1px solid #ddd;margin-block:20px;padding-block:8px}
+.chapter-toc ol{max-height:18rem;overflow:auto;padding-inline-start:26px;margin:8px 0}
+.chapter-toc a{display:inline-block;padding:6px 2px;overflow-wrap:anywhere}
+.paper,.context,.reader-credits{min-width:0}
+.story-text p{overflow-wrap:anywhere;white-space:pre-line}
+.reader-credits{overflow-wrap:anywhere}
+.component-credit{border-top:1px solid #ddd;padding-top:14px}
+.playback-speed{display:block;max-width:220px;margin-block:20px}
+.playback-speed select{margin-top:6px}
+.paragraph:focus{outline:3px solid #154caa;outline-offset:3px}
