@@ -14,6 +14,7 @@
   let reference = null, opener = null, explainAbort = null, voiceAbort = null, generation = 0, voiceGeneration = 0;
   let voice = null, voiceUrl = null, voiceKey = '';
   let anchorRange = null, anchorElement = null;
+  let manualSize = null, resizeOrigin = null, expanded = false, drag = null;
   const lookupCache = new Map(), hints = new Map();
   const coach = document.createElement('section'); coach.className = 'sentence-coach'; coach.setAttribute('aria-label', 'Sentence learning tools');
   const points = (s) => Array.from(s);
@@ -24,13 +25,60 @@
     if (panel.hidden) return;
     const rect = anchorRange?.getBoundingClientRect() || (anchorElement || el('open')).getBoundingClientRect();
     const width = document.documentElement.clientWidth, height = window.innerHeight, gap = 10, edge = 12;
-    panel.style.maxHeight = `${Math.min(480, height - edge * 2)}px`;
+    const availableWidth = Math.max(1, width - edge * 2), availableHeight = Math.max(1, height - edge * 2);
+    const roomy = !root.querySelector('#practice-panel').hidden || el('details').open || (!el('picker').hidden && el('picker').open);
+    panel.style.maxHeight = `${manualSize || expanded ? availableHeight : Math.min(roomy ? 480 : 250, availableHeight)}px`;
+    panel.style.width = expanded ? `${Math.min(760, availableWidth)}px` : manualSize ? `${Math.min(manualSize.width, availableWidth)}px` : '';
+    panel.style.height = expanded ? `${availableHeight}px` : manualSize ? `${Math.min(manualSize.height, availableHeight)}px` : '';
     const box = panel.getBoundingClientRect();
+    if (expanded || manualSize) {
+      panel.style.left = `${expanded ? (width - box.width) / 2 : Math.max(edge, Math.min(resizeOrigin.left, width - box.width - edge))}px`;
+      panel.style.top = `${expanded ? edge : Math.max(edge, Math.min(resizeOrigin.top, height - box.height - edge))}px`;
+      return;
+    }
     const left = Math.max(edge, Math.min(rect.left + rect.width / 2 - box.width / 2, width - box.width - edge));
     const above = rect.top - box.height - gap;
     const top = above >= edge ? above : Math.min(height - box.height - edge, rect.bottom + gap);
     panel.style.left = `${left}px`; panel.style.top = `${Math.max(edge, top)}px`;
   }
+  function updateSizeControl() {
+    el('expand').setAttribute('aria-expanded', String(expanded));
+    el('expand').setAttribute('aria-label', expanded ? 'Restore word help size' : 'Expand word help');
+    el('expand').title = expanded ? 'Restore word help size' : 'Expand word help';
+    el('expand').querySelector('span').textContent = expanded ? 'Restore' : 'Expand';
+  }
+  function resizeTo(width, height, origin) {
+    expanded = false;
+    const availableWidth = Math.max(1, document.documentElement.clientWidth - 24);
+    const availableHeight = Math.max(1, window.innerHeight - 24);
+    manualSize = {width: Math.min(availableWidth, Math.max(Math.min(280, availableWidth), width)),
+      height: Math.min(availableHeight, Math.max(Math.min(220, availableHeight), height))};
+    resizeOrigin = origin; updateSizeControl(); position();
+  }
+  el('expand').addEventListener('click', () => { expanded = !expanded; updateSizeControl(); position(); });
+  const resizeGrip = el('resize');
+  resizeGrip.addEventListener('pointerdown', (event) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    const box = panel.getBoundingClientRect();
+    drag = {id: event.pointerId, x: event.clientX, y: event.clientY, width: box.width, height: box.height,
+      origin: {left: box.left, top: box.top}};
+    resizeGrip.setPointerCapture(event.pointerId); resizeGrip.focus({preventScroll: true}); event.preventDefault();
+  });
+  resizeGrip.addEventListener('pointermove', (event) => {
+    if (!drag || drag.id !== event.pointerId) return;
+    resizeTo(drag.width + event.clientX - drag.x, drag.height + event.clientY - drag.y, drag.origin);
+  });
+  const endResize = () => { drag = null; };
+  resizeGrip.addEventListener('pointerup', endResize);
+  resizeGrip.addEventListener('pointercancel', endResize);
+  resizeGrip.addEventListener('lostpointercapture', endResize);
+  resizeGrip.addEventListener('keydown', (event) => {
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(event.key)) return;
+    event.preventDefault();
+    const box = panel.getBoundingClientRect(), step = event.shiftKey ? 60 : 20;
+    resizeTo(box.width + (event.key === 'ArrowRight' ? step : event.key === 'ArrowLeft' ? -step : 0),
+      box.height + (event.key === 'ArrowDown' ? step : event.key === 'ArrowUp' ? -step : 0), {left: box.left, top: box.top});
+  });
   function rangeFor(p, start, end) {
     const range = document.createRange(), walker = document.createTreeWalker(p.prose, NodeFilter.SHOW_TEXT);
     const from = points(p.prose.textContent).slice(0, start).join('').length;
@@ -278,11 +326,12 @@
   }
   if (paragraphs.length) showCoach(paragraphs.find(p => p.prose.textContent.length >= 30) || paragraphs[0], 0);
   new ResizeObserver(position).observe(panel);
+  new MutationObserver(position).observe(panel, {attributes: true, subtree: true, attributeFilter: ['hidden', 'open']});
   window.addEventListener('resize', position);
   window.addEventListener('scroll', (event) => {
     if (panel.hidden || panel.contains(event.target)) return;
     const rect = anchorRange?.getBoundingClientRect();
-    if (rect && (rect.bottom < 0 || rect.top > window.innerHeight)) close(); else position();
+    if (!expanded && !manualSize && rect && (rect.bottom < 0 || rect.top > window.innerHeight)) close(); else position();
   }, true);
   window.addEventListener('pagehide', () => { explainAbort?.abort(); stopVoice(true); });
 })();
