@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.management import call_command, CommandError
 from django.test import TestCase, override_settings
+from django.templatetags.static import static
 
 from catalog.models import MediaItem
 from tests.test_assistance import explanation, wav
@@ -35,7 +36,7 @@ class AssistanceIntegrationTests(TestCase):
         self.assertContains(response, 'Pour moi, un livre.')
         self.assertContains(response, 'data-enabled="false"')
         self.assertNotContains(response, 'test-only-key')
-        self.assertContains(response, '/static/assistance/panel.js')
+        self.assertContains(response, static('assistance/panel.js'))
         self.assertEqual(self.post().status_code, 503)
 
     @patch('assistance.provider.generate')
