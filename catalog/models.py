@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models
 from django.urls import reverse
+import uuid
 
 
 class MediaItem(models.Model):
@@ -133,3 +134,84 @@ class Report(models.Model):
 
     def __str__(self):
         return f'{self.get_status_display()}: {self.reason[:60]}'
+
+
+class UploadedMedia(models.Model):
+    """Private, bounded personal files. Never added to the public seed catalog."""
+    class Kind(models.TextChoices):
+        BOOK = 'book', 'PDF book'
+        SONG = 'song', 'MP3 song'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='uploads')
+    title = models.CharField(max_length=180)
+    creator = models.CharField(max_length=180, blank=True)
+    language = models.CharField(max_length=40)
+    kind = models.CharField(max_length=4, choices=Kind.choices)
+    description = models.TextField(max_length=1000, blank=True)
+    content = models.BinaryField(editable=False)
+    byte_size = models.PositiveIntegerField()
+    sha256 = models.CharField(max_length=64, editable=False)
+    page_count = models.PositiveIntegerField(default=0)
+    duration_seconds = models.FloatField(default=0)
+    saved_page = models.PositiveIntegerField(default=1)
+    saved_seconds = models.FloatField(default=0)
+    permission_confirmed_at = models.DateTimeField()
+    class ReviewStatus(models.TextChoices):
+        PRIVATE = 'private', 'Private'
+        PENDING = 'pending', 'Awaiting review'
+        APPROVED = 'approved', 'Published'
+        REJECTED = 'rejected', 'Changes requested'
+
+    review_status = models.CharField(max_length=8, choices=ReviewStatus.choices, default=ReviewStatus.PRIVATE)
+    rights_note = models.TextField(max_length=1500, blank=True)
+    license_name = models.CharField(max_length=80, blank=True)
+    source_url = models.URLField(max_length=500, blank=True)
+    review_notes = models.TextField(max_length=1500, blank=True)
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
+                                   on_delete=models.SET_NULL, related_name='reviewed_uploads')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-id']
+        constraints = [
+            models.UniqueConstraint(fields=['owner', 'sha256'], name='unique_owner_uploaded_file'),
+            models.CheckConstraint(condition=models.Q(byte_size__gt=0) & (
+                models.Q(kind='book',byte_size__lte=3145728) | models.Q(kind='song',byte_size__lte=10000000)), name='upload_bounded_bytes'),
+            models.CheckConstraint(condition=models.Q(kind__in=['book', 'song']), name='upload_supported_kind'),
+        ]
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('uploads:detail', args=[self.pk])
+
+    @property
+    def mime(self):
+        return 'application/pdf' if self.kind == self.Kind.BOOK else 'audio/mpeg'
+
+    @property
+    def extension(self):
+        return 'pdf' if self.kind == self.Kind.BOOK else 'mp3'
+
+    @property
+    def public_url(self):
+        return reverse('uploads:public_detail', args=[self.pk])
+
+
+class SongUploadDraft(models.Model):
+    """Private short-lived chunks; one bounded in-progress song per account."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    expected_size = models.PositiveIntegerField()
+    metadata = models.JSONField()
+    content = models.BinaryField(default=bytes,editable=False)
+    expires_at = models.DateTimeField(db_index=True)
+    complete = models.BooleanField(default=False)
+    finished_upload = models.ForeignKey(UploadedMedia,null=True,blank=True,on_delete=models.SET_NULL)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(expected_size__gt=3145728,expected_size__lte=10000000),name='song_draft_bounded_bytes')]

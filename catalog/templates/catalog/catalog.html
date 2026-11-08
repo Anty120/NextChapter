@@ -25,7 +25,8 @@
     <button class="menu-item" type="button" data-copy-link="{{ item.get_absolute_url }}" hidden>Copy link</button>
   </div>
 </article>
-{% empty %}<div class="empty"><h3>A new chapter is just around the corner.</h3><p>No media matches these filters. Try another language, format, or level.</p><a class="button" href="{% url 'catalog' %}">Explore the full shelf <span aria-hidden="true">→</span></a></div>{% endfor %}</div>
+{% empty %}{% if community_uploads %}<div class="empty"><h3>Your matches are on the community shelf.</h3><a href="#community-title">See community contributions <span aria-hidden="true">↓</span></a></div>{% else %}<div class="empty"><h3>A new chapter is just around the corner.</h3><p>No media matches these filters. Try another language, format, or level.</p><a class="button" href="{% url 'catalog' %}">Explore the full shelf <span aria-hidden="true">→</span></a></div>{% endif %}{% endfor %}</div>
 <p class="shelf-note">Levels are approximate guides. Every story is open to everyone.</p></section>
 <div class="more"><a class="orange" href="{% url 'club_list' %}"><span>Better together.<small>Meet your next reading circle.</small></span><span aria-hidden="true">↗</span></a><a class="yellow" href="?format=audio"><span>Make room for listening.<small>Songs and audiobooks for your ears. A moment for you.</small></span><span aria-hidden="true">♫</span></a></div>
+{% include 'catalog/uploads/community_shelf.html' %}
 {% endblock %}

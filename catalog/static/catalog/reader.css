@@ -65,16 +65,14 @@ html:not(.ui-ready) .read-progress { display: none; }
 .bookmark-label { display: inline-block; }
 
 /* ---------- Audio ---------- */
-audio { display: block; width: 100%; margin: 16px 0; }
 .playback-speed { display: block; max-width: 220px; margin-block: 18px; font-weight: 700; font-size: 14px; }
 .playback-speed select { margin-top: 6px; }
-#audio-progress { border-top: 1px solid var(--rule); padding-top: 20px; margin-bottom: 26px; }
-#audio-progress label { display: block; font-weight: 700; font-size: 14px; }
-#audio-progress input { max-width: 200px; margin: 6px 0 15px; }
-#save-status { margin: 12px 0 0; }
 
-/* The deck: custom controls layered over the native <audio>, which stays visible,
-   focusable and fully working underneath. Hidden until audio-deck.js wires it. */
+/* The deck: custom controls over the native <audio>. Hidden until audio-deck.js wires it.
+   Once it is up, the native strip is visually hidden so there is one player on screen, but
+   the element stays rendered, playing and in the tab order: keyboard focus brings the native
+   controls back. No JS, or an audio error (the deck re-hides), leaves the native player shown. */
+.deck:not([hidden]) + audio:not(:focus, :focus-within) { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); opacity: 0; }
 .deck { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px; margin: 18px 0 6px; padding: 14px 16px 14px 14px; background: var(--yellow-soft); border: var(--line); border-radius: var(--r-lg); box-shadow: var(--sticker); }
 .deck-play { position: relative; display: grid; place-items: center; width: 64px; height: 64px; padding: 0; border: var(--line); border-radius: 50%; background: var(--yellow); box-shadow: var(--sticker-sm); }
 .deck-icon { grid-area: 1 / 1; }
@@ -107,7 +105,12 @@ audio { display: block; width: 100%; margin: 16px 0; }
   .deck[data-state="playing"] .deck-eq i:nth-child(3) { animation-duration: .62s; }
   .deck[data-state="playing"] .deck-eq i:nth-child(4) { animation-duration: .44s; }
 }
-.deck-skips { display: flex; gap: 6px; }
+.deck-skips { display: flex; align-items: center; gap: 6px; }
+.deck-volume { display: inline-flex; align-items: center; margin-left: 4px; }
+.deck-volume input { width: 70px; margin: 0; accent-color: var(--ink); cursor: pointer; }
+.deck-volume input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+/* Touch devices use hardware volume; iOS ignores audio.volume. */
+@media (pointer: coarse) { .deck-volume { display: none; } }
 .deck-skips button { min-width: 44px; height: 36px; padding: 0 8px; border: var(--line); border-radius: var(--r-sm); background: var(--paper); font-size: 12.5px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .deck-skips button:hover { background: #fff; }
 

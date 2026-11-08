@@ -1,9 +1,10 @@
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
 urlpatterns = [
+    path('my-library/',include('catalog.upload_urls')),
     path('', views.catalog, name='catalog'),
     path('media/<int:pk>/', views.media_detail, name='media_detail'),
     path('media/<int:pk>/quiz/', views.book_quiz_view, name='book_quiz'),

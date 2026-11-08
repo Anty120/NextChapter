@@ -1,5 +1,6 @@
 /* Custom listening deck layered over the native <audio id="player">.
-   The native element stays visible, focusable and authoritative: the deck only
+   The native element stays focusable and authoritative (reader.css hides its strip
+   visually while the deck is up, and keyboard focus brings it back): the deck only
    calls play()/pause()/currentTime on it and mirrors its events. player.js still
    owns resume and saving, so this file can fail without losing anyone's place. */
 (() => {
@@ -18,6 +19,11 @@
   const iconPlay = deck.querySelector('.deck-icon-play');
   const iconPause = deck.querySelector('.deck-icon-pause');
   deck.hidden = false;
+  // If the recording cannot load, step aside: the native player and its error message remain.
+  const stepAside = () => { deck.hidden = true; };
+  audio.addEventListener('error', stepAside);
+  audio.querySelector('source')?.addEventListener('error', stepAside);
+  if (audio.error) stepAside();
 
   const clock = (s) => {
     if (!Number.isFinite(s) || s < 0) return '–:––';
@@ -101,6 +107,11 @@
     if (!d) return;
     audio.currentTime = Math.min(d, Math.max(0, audio.currentTime + Number(button.dataset.deckSkip)));
   }));
+
+  // Volume stays reachable with the native strip hidden; follows native changes too.
+  const volume = deck.querySelector('[data-deck-volume]');
+  volume?.addEventListener('input', () => { audio.volume = Number(volume.value); audio.muted = audio.volume === 0; });
+  audio.addEventListener('volumechange', () => { if (volume) volume.value = String(audio.muted ? 0 : audio.volume); });
 
   // Scrubbing previews the time; the seek is committed once (on change), so the
   // native element and player.js see a single seek and save once.

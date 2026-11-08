@@ -24,7 +24,7 @@
       <div class="deck-meter"><span class="deck-fill" aria-hidden="true"></span><span class="deck-saved" aria-hidden="true"><i></i></span><input class="deck-seek" type="range" min="0" max="1" step="0.1" value="0" aria-label="Seek" data-deck-seek></div>
       <div class="deck-times"><span data-deck-current>0:00</span><span class="deck-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span data-deck-duration>{{ duration_label|default:'–:––' }}</span></div>
     </div>
-    <div class="deck-skips"><button type="button" data-deck-skip="-15" aria-label="Back 15 seconds">−15</button><button type="button" data-deck-skip="15" aria-label="Forward 15 seconds">+15</button></div>
+    <div class="deck-skips"><button type="button" data-deck-skip="-15" aria-label="Back 15 seconds">−15</button><button type="button" data-deck-skip="15" aria-label="Forward 15 seconds">+15</button><label class="deck-volume"><span class="visually-hidden">Volume</span><input type="range" min="0" max="1" step="0.05" value="1" data-deck-volume></label></div>
   </div>
   <audio id="player" controls preload="metadata" data-seconds="{{ progress.seconds|default:0 }}" aria-label="{{ item.title }} audio"><source src="{% static item.audio_file %}"{% if audio_mime %} type="{{ audio_mime }}"{% endif %}>Your browser does not support audio. <a href="{% static item.audio_file %}">Download the audio</a>.</audio>
   <p id="audio-error" class="error" hidden>Audio could not load. Try <a href="{% static item.audio_file %}">opening the recording directly</a>.</p>

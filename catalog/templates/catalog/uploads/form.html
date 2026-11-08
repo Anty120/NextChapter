@@ -1,0 +1,10 @@
+{% extends 'catalog/base.html' %}{% load static %}
+{% block title %}Upload a book or song · NextChapter{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'catalog/uploads.css' %}">{% endblock %}
+{% block content %}<a class="back" href="{% url 'uploads:library' %}">← My Library</a>
+<section class="paper upload-form"><p class="eyebrow">Make room for your favorites</p><h1>Upload a book or song</h1><p id="upload-limits">PDF books up to 3 MiB and MP3 songs up to 10 MB (10,000,000 bytes). Your file starts private. Your library can hold up to 30 files or 30 MiB.</p><p class="muted">PDFs must be unencrypted, without scripts or attachments, and at most 1000 pages. MP3s may be up to two hours. Uploads are not sent to Gemini.</p>
+<form class="stack" method="post" enctype="multipart/form-data" data-upload-form data-song-start-url="{% url 'uploads:song_start' %}">{% csrf_token %}
+{% if form.errors %}<div class="error" role="alert"><p>Please check the details below. You may need to select your file again.</p>{{ form.non_field_errors }}</div>{% endif %}
+{{ form.as_p }}<button class="button" type="submit">Upload to My Library</button><button type="button" data-upload-cancel hidden>Cancel upload</button><progress data-upload-progress hidden aria-label="Song upload progress"></progress><p class="muted" data-upload-status role="status" aria-live="polite"></p><noscript><p>Songs larger than 3 MiB need JavaScript enabled to upload.</p></noscript>
+</form></section>{% endblock %}
+{% block scripts %}<script src="{% static 'catalog/uploads.js' %}" defer></script>{% endblock %}
