@@ -277,131 +277,154 @@
       ]
     },
     {
-      "slug": "audiobook-en-01",
-      "title": "Alice — Chapter I",
-      "creator": "Lewis Carroll",
-      "language": "English",
-      "format": "audiobook",
-      "level": "B2",
-      "description": "Complete Chapter I (chapter excerpt from the full audiobook), narrated by Kara Shallenberg. Includes LibriVox spoken notices; the readable transcript contains the chapter text only.",
-      "text_file": "text/audiobook-en-01.txt",
-      "attribution": "Lewis Carroll; text from Project Gutenberg eBook 11, credited to Arthur DiBianca and David Widger. Public domain in the USA; see bundled source notices. Narration: Kara Shallenberg / LibriVox, 2010. Recording public domain in the USA.",
-      "cultural_context": "Published in 1865, this English literary-nonsense story plays with Victorian manners, logic and wordplay. Historical attitudes and vocabulary remain in the original text.",
-      "difficulty_note": "B2 editorial estimate, not a tested CEFR rating: clear narrative is mixed with Victorian vocabulary, puns, verse and deliberately strange logic.",
+      "slug": "song-fr-01",
+      "title": "Tourdion",
+      "creator": "Pierre Attaignant / traditional French text",
+      "language": "French",
+      "format": "song",
+      "level": "B1",
+      "description": "Sung in French. Bundled recording with original-language editorial summary; written lyrics are not bundled.",
+      "text_file": "text/song-fr-01.txt",
+      "attribution": "dwsChorale / Dwsolo; recording from Wikimedia Commons, CC BY-SA 3.0. Unmodified. Pierre Attaignant / traditional French text. Original editorial summary by NextChapter (MIT).",
+      "cultural_context": "A French Renaissance drinking song associated with Pierre Attaignant. The dwsChorale performance dates to 2006. Singing and overlapping voices make individual words less distinct.",
+      "difficulty_note": "B1 editorial listening estimate, not a certified rating. Sung vowels and repeated phrases require careful listening.",
       "published": true,
       "sources": [
         {
-          "component": "text",
-          "creator": "Lewis Carroll",
-          "source_url": "https://www.gutenberg.org/ebooks/11",
-          "license": "Public domain in the USA; Project Gutenberg electronic-edition terms retained",
-          "license_url": "https://www.gutenberg.org/policy/license.html",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "UTF-8; hard-wrapped lines joined; blank-line paragraph boundaries normalized. Front matter/illustration markers omitted from reader; full source including notices retained alongside. Complete Chapter I only; LibriVox spoken intro/outro not transcribed."
+          "component": "recording",
+          "creator": "dwsChorale / Dwsolo",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg",
+          "license": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "Unmodified original Ogg Vorbis recording. No remix or conversion."
         },
         {
-          "component": "recording",
-          "creator": "Kara Shallenberg",
-          "source_url": "https://librivox.org/alices-adventures-in-wonderland-by-lewis-carroll-4/",
-          "license": "LibriVox public domain dedication (USA)",
-          "license_url": "https://librivox.org/pages/public-domain/",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "Original 64 kbps MP3 chapter bytes, unmodified; decoded for verification only."
+          "component": "composition",
+          "creator": "Pierre Attaignant / traditional French text",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg",
+          "license": "Historical traditional composition; source performance licensed CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "Composition heard in the credited performance; no score bundled."
+        },
+        {
+          "component": "lyrics",
+          "creator": "Pierre Attaignant / traditional French text",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg",
+          "license": "Lyrics heard in the source performance; source recording licensed CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "No written lyrics or subtitles redistributed; source link only."
+        },
+        {
+          "component": "text",
+          "creator": "NextChapter",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg",
+          "license": "Project-authored editorial summary (MIT)",
+          "license_url": "https://github.com/Anty120/NextChapter/blob/main/LICENSE",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "New summary, not a lyric transcription."
         }
       ],
       "assets": [
         {
-          "path": "text/audiobook-en-01.txt",
-          "sha256": "6ac8701ac410da5799ca8fcae298622754234a2e97931dc91f2904f35ac1d8d9"
+          "path": "text/song-fr-01.txt",
+          "sha256": "83fd190f762a3059aab654e997f6109852637a3eba427dec7f06c6b2611ee5d6"
         },
         {
-          "path": "catalog/audio/library/audiobook-en-01.mp3",
-          "sha256": "da919b104680c7184a3451ec2cdd65ad0b48ebc0b4eb2ec91620dd9b29e623c6"
+          "path": "catalog/audio/library/song-fr-01.ogg",
+          "sha256": "2e3ad136100e0da14e301efa1d3fa489b9221c91ba13146e3cc9d8a697f1c268"
         }
       ],
-      "audio_file": "catalog/audio/library/audiobook-en-01.mp3",
-      "audio_mime": "audio/mpeg",
-      "duration_seconds": 796.2859375,
-      "performer": "Kara Shallenberg",
+      "audio_file": "catalog/audio/library/song-fr-01.ogg",
+      "audio_mime": "audio/ogg",
+      "duration_seconds": 87.2667120181406,
+      "performer": "dwsChorale / Dwsolo",
+      "excerpt": false,
+      "lyrics_url": "https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg",
+      "lyrics_status": "Full lyrics not bundled",
+      "text_kind": "editorial_summary",
+      "components_not_supplied": [
+        "translation",
+        "cover"
+      ]
+    },
+    {
+      "slug": "song-es-01",
+      "title": "Las Mañanitas — sung opening",
+      "creator": "Traditional Mexican song",
+      "language": "Spanish",
+      "format": "song",
+      "level": "B1",
+      "description": "Sung in Spanish. Bundled recording with original-language editorial summary; written lyrics are not bundled.",
+      "text_file": "text/song-es-01.txt",
+      "attribution": "Elisa (vocals); Kenmayer (mix), Educational Options, Inc.; recording from Wikimedia Commons, CC BY-SA 3.0. Unmodified. Traditional Mexican song. Original editorial summary by NextChapter (MIT).",
+      "cultural_context": "A traditional Mexican birthday song. This educational recording by Kenmayer with Elisa on vocals contains the commonly sung opening lines, rather than the whole song.",
+      "difficulty_note": "B1 editorial listening estimate, not a certified rating. Sung vowels and repeated phrases require careful listening.",
+      "published": true,
+      "sources": [
+        {
+          "component": "recording",
+          "creator": "Elisa (vocals); Kenmayer (mix), Educational Options, Inc.",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg",
+          "license": "CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "Unmodified original Ogg Vorbis recording. No remix or conversion."
+        },
+        {
+          "component": "composition",
+          "creator": "Traditional Mexican song",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg",
+          "license": "Historical traditional composition; source performance licensed CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "Composition heard in the credited performance; no score bundled."
+        },
+        {
+          "component": "lyrics",
+          "creator": "Traditional Mexican song",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg",
+          "license": "Lyrics heard in the source performance; source recording licensed CC BY-SA 3.0",
+          "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "No written lyrics or subtitles redistributed; source link only."
+        },
+        {
+          "component": "text",
+          "creator": "NextChapter",
+          "source_url": "https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg",
+          "license": "Project-authored editorial summary (MIT)",
+          "license_url": "https://github.com/Anty120/NextChapter/blob/main/LICENSE",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "New summary, not a lyric transcription."
+        }
+      ],
+      "assets": [
+        {
+          "path": "text/song-es-01.txt",
+          "sha256": "4277551369ff3a36edc8a04af8214508126934170b56e3bcb860b4b3afc7971a"
+        },
+        {
+          "path": "catalog/audio/library/song-es-01.ogg",
+          "sha256": "65b880d4aed0f258c94d07f083a8a71fbc4fe95342076d4392657d0584fe904a"
+        }
+      ],
+      "audio_file": "catalog/audio/library/song-es-01.ogg",
+      "audio_mime": "audio/ogg",
+      "duration_seconds": 35.79260770975057,
+      "performer": "Elisa (vocals); Kenmayer (mix), Educational Options, Inc.",
       "excerpt": true,
-      "components_not_supplied": [
-        "translation",
-        "cover"
-      ]
-    },
-    {
-      "slug": "song-en-01",
-      "title": "Daisy Bell",
-      "creator": "Harry Dacre",
-      "language": "English",
-      "format": "song",
-      "level": "B2",
-      "description": "Complete 1894 sung archival recording with musical accompaniment and surface noise. Full lyrics not bundled; the text panel is a credited summary with a lyrics source link.",
-      "text_file": "text/song-en-01.txt",
-      "attribution": "Words/music: Harry Dacre (1892); sung by Edward M. Favor (1894), Edison 1058; UCSB cylinder 10477, original cylinder John Levin collection. Spoken introduction removed upstream. Recording public domain in the USA. Full lyrics not bundled.",
-      "cultural_context": "Harry Dacre’s 1892 popular courtship song connects cycling with romance. This 1894 Edison cylinder is sung by Edward M. Favor; it is a historical performance, not a modern studio recording.",
-      "difficulty_note": "B2 editorial listening estimate, not a tested CEFR rating: historic diction, sung phrasing and cylinder noise make familiar courtship vocabulary harder to hear.",
-      "published": true,
-      "sources": [
-        {
-          "component": "recording",
-          "creator": "Edward M. Favor",
-          "source_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
-          "license": "Public domain in the USA (pre-1926 sound recording)",
-          "license_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "Unmodified Ogg Vorbis source bytes. Spoken introduction removed upstream."
-        },
-        {
-          "component": "composition",
-          "creator": "Harry Dacre",
-          "source_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
-          "license": "Public domain in the USA",
-          "license_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "No new arrangement; original historical performance retained."
-        },
-        {
-          "component": "lyrics",
-          "creator": "Harry Dacre",
-          "source_url": "https://rpo.library.utoronto.ca/content/daisy-bell-or-bicycle-built-two",
-          "license": "Historical original public domain in the USA; lyrics not redistributed in this pack",
-          "license_url": "https://commons.wikimedia.org/wiki/File:Daisy_Bell_sung_by_Edward_M._Favor.ogg",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "No lyric or subtitle text bundled. Linked source only; modern Commons subtitle adaptation not copied."
-        },
-        {
-          "component": "text",
-          "creator": "NextChapter editorial summary",
-          "source_url": "https://rpo.library.utoronto.ca/content/daisy-bell-or-bicycle-built-two",
-          "license": "Project-authored editorial summary (MIT)",
-          "license_url": "https://github.com/Anty120/NextChapter/blob/main/LICENSE",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "New summary/context; explicitly not lyrics or transcription."
-        }
-      ],
-      "assets": [
-        {
-          "path": "text/song-en-01.txt",
-          "sha256": "8601a2f564d93a70814cc9e7c34774c8063cec4d50f5b44f5c7aef18528ec61f"
-        },
-        {
-          "path": "catalog/audio/library/song-en-01.ogg",
-          "sha256": "26322d595d596470474543b069a53ee23c6ecea0ca18d6093903a00155bdf82b"
-        }
-      ],
-      "audio_file": "catalog/audio/library/song-en-01.ogg",
-      "audio_mime": "audio/ogg",
-      "duration_seconds": 134.5096875,
-      "performer": "Edward M. Favor",
-      "excerpt": false,
-      "lyrics_url": "https://rpo.library.utoronto.ca/content/daisy-bell-or-bicycle-built-two",
+      "lyrics_url": "https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg",
       "lyrics_status": "Full lyrics not bundled",
       "text_kind": "editorial_summary",
       "components_not_supplied": [
@@ -410,78 +433,55 @@
       ]
     },
     {
-      "slug": "song-en-02",
-      "title": "Auld Lang Syne",
-      "creator": "Robert Burns / traditional",
-      "language": "English",
-      "format": "song",
-      "level": "C1",
-      "description": "Complete 1910 sung archival recording with musical accompaniment and surface noise. Full lyrics not bundled; the text panel is a credited summary with a lyrics source link.",
-      "text_file": "text/song-en-02.txt",
-      "attribution": "Lyrics: Robert Burns / Scottish song tradition; traditional tune; sung by Frank C. Stanley (1910), Indestructible 1267; UCSB cylinder 4410. Click removal by Adam Cuerden. Recording public domain in the USA. Full lyrics not bundled.",
-      "cultural_context": "Robert Burns collected and reworked a Scots song associated with friendship and Hogmanay. Frank C. Stanley’s 1910 performance uses English adaptations and Scots words; it is not a Spanish song. The linked Scots original differs from the performed wording.",
-      "difficulty_note": "C1 editorial listening estimate, not a tested CEFR rating: Scots words, historical adapted wording, sung phrasing and cylinder noise add difficulty. English catalog label reflects the adapted performance.",
+      "slug": "audiobook-fr-01",
+      "title": "Le livre jaune — complete short story",
+      "creator": "NextChapter Studio",
+      "language": "French",
+      "format": "audiobook",
+      "level": "A1",
+      "description": "Complete short French story with synthetic Gemini narration and matching transcript. Bundled locally; playback needs no API key.",
+      "text_file": "text/audiobook-fr-01.txt",
+      "attribution": "Original AI-assisted NextChapter story (MIT). Synthetic narration generated with Gemini; this is not a human narrator. No third-party voice recording was used.",
+      "cultural_context": "A fictional French-language bookshop and park, without a specified country.",
+      "difficulty_note": "A1 editorial estimate: short everyday sentences. Synthetic pronunciation is a reference, not an accent standard.",
       "published": true,
       "sources": [
         {
-          "component": "recording",
-          "creator": "Frank C. Stanley",
-          "source_url": "https://commons.wikimedia.org/wiki/File:Auld_Lang_Syne.ogg",
-          "license": "Public domain in the USA (pre-1926 sound recording)",
-          "license_url": "https://commons.wikimedia.org/wiki/File:Auld_Lang_Syne.ogg",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "Unmodified Ogg Vorbis source bytes. Upstream click removal by Adam Cuerden; original source claims no copyright."
-        },
-        {
-          "component": "composition",
-          "creator": "Traditional Scottish tune",
-          "source_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
-          "license": "Public domain in the USA",
-          "license_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "No new arrangement; original historical performance retained."
-        },
-        {
-          "component": "lyrics",
-          "creator": "Robert Burns / traditional",
-          "source_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
-          "license": "Historical original public domain in the USA; lyrics not redistributed in this pack",
-          "license_url": "https://commons.wikimedia.org/wiki/File:Auld_Lang_Syne.ogg",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "No lyric or subtitle text bundled. Linked source only; modern Commons subtitle adaptation not copied."
-        },
-        {
           "component": "text",
-          "creator": "NextChapter editorial summary",
-          "source_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
-          "license": "Project-authored editorial summary (MIT)",
+          "creator": "NextChapter Studio",
+          "source_url": "https://github.com/Anty120/NextChapter/blob/main/catalog/demo_content.py",
+          "license": "Project-authored original story (MIT)",
           "license_url": "https://github.com/Anty120/NextChapter/blob/main/LICENSE",
-          "rights_territory": "United States; other jurisdictions not cleared by this pack",
-          "checked_at_utc": "2026-11-08T00:27:34Z",
-          "modifications": "New summary/context; explicitly not lyrics or transcription."
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "Original text unchanged."
+        },
+        {
+          "component": "recording",
+          "creator": "Gemini synthetic voice, generated by NextChapter",
+          "source_url": "https://ai.google.dev/gemini-api/docs/speech-generation",
+          "license": "AI-generated recording; distributed by NextChapter under MIT",
+          "license_url": "https://github.com/Anty120/NextChapter/blob/main/LICENSE",
+          "rights_territory": "Worldwide under the stated license; underlying traditional work as credited",
+          "checked_at_utc": "2026-11-08T02:23:03Z",
+          "modifications": "Generated once from the original French story; PCM wrapped in WAV. No human voice upload."
         }
       ],
       "assets": [
         {
-          "path": "text/song-en-02.txt",
-          "sha256": "9bcf7751712127ed1659ff32140aa456cbc5d308be456545ba073767f5280e92"
+          "path": "text/audiobook-fr-01.txt",
+          "sha256": "374d87534db153d2025c217e22c549509f15a3408da9ef526ec49b4ad1741665"
         },
         {
-          "path": "catalog/audio/library/song-en-02.ogg",
-          "sha256": "0d277de969ce02959923ec32fd94897a6791cf183fd954198d5e02166e36fb04"
+          "path": "catalog/audio/library/audiobook-fr-01.wav",
+          "sha256": "4bc555e7950eda82a05d5eb0ea8d8c32c067f07a10d2071e3da5f64b4e2aeba2"
         }
       ],
-      "audio_file": "catalog/audio/library/song-en-02.ogg",
-      "audio_mime": "audio/ogg",
-      "duration_seconds": 141.5456875,
-      "performer": "Frank C. Stanley",
+      "audio_file": "catalog/audio/library/audiobook-fr-01.wav",
+      "audio_mime": "audio/wav",
+      "duration_seconds": 24.6,
+      "performer": "Gemini synthetic voice (Kore)",
       "excerpt": false,
-      "lyrics_url": "https://www.scottishpoetrylibrary.org.uk/poem/auld-lang-syne/",
-      "lyrics_status": "Full lyrics not bundled",
-      "text_kind": "editorial_summary",
       "components_not_supplied": [
         "translation",
         "cover"

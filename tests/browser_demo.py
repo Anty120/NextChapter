@@ -6,6 +6,7 @@ and staff, never prints passwords, and saves screenshots plus machine evidence.
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 import sys
 from uuid import uuid4
@@ -124,10 +125,13 @@ def main():
             expect(page.locator('.component-credit')).to_have_count(len(metadata['sources']))
             expect(page.locator('.story-text .paragraph')).to_have_count(len(item.paragraphs))
             if item.format == 'song':
-                expect(page.get_by_text('Full lyrics not bundled.', exact=False).first).to_be_visible()
+                # Wording changed with main's song pack ("written lyrics are not bundled"); same intent.
+                expect(page.get_by_text(re.compile(r'lyrics (are )?not bundled', re.I)).first).to_be_visible()
                 assert page.locator('.component-credit a').count() >= 4
             else:
-                expect(page.get_by_role('heading', name='Chapter transcript')).to_be_visible()
+                # Main titles full (non-excerpt) audiobook text "Transcript", excerpts "Chapter transcript".
+                heading = 'Chapter transcript' if metadata.get('excerpt') else 'Transcript'
+                expect(page.get_by_role('heading', name=heading, exact=True)).to_be_visible()
             response = context.request.get(url, headers={'Range': 'bytes=0-63'})
             assert response.status == 206
             assert response.headers['content-type'] == metadata['audio_mime']

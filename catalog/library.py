@@ -17,12 +17,12 @@ DATA_ROOT = Path(__file__).resolve().parent / 'demo_library'
 STATIC_ROOT = Path(__file__).resolve().parent / 'static'
 REQUIRED_MEDIA = {
     'book-es-01': ('book', 'Spanish'), 'book-en-01': ('book', 'English'),
-    'audiobook-es-01': ('audiobook', 'Spanish'), 'audiobook-en-01': ('audiobook', 'English'),
-    'song-en-01': ('song', 'English'), 'song-en-02': ('song', 'English'),
+    'audiobook-es-01': ('audiobook', 'Spanish'), 'audiobook-fr-01': ('audiobook', 'French'),
+    'song-es-01': ('song', 'Spanish'), 'song-fr-01': ('song', 'French'),
 }
 REQUIRED_CLUBS = {
     'demo-book-club': 'book-es-01', 'demo-audio-club': 'audiobook-es-01',
-    'demo-song-club': 'song-en-01',
+    'demo-song-club': 'song-es-01',
 }
 MODEL_FIELDS = ('title', 'creator', 'language', 'format', 'level', 'description',
                 'attribution', 'cultural_context', 'difficulty_note', 'published')

@@ -82,7 +82,9 @@ audio { display: block; width: 100%; margin: 16px 0; }
 .deck[data-state="playing"] .deck-icon-play { opacity: 0; transform: scale(.6); }
 .deck[data-state="playing"] .deck-icon-pause { opacity: 1; transform: none; }
 .deck-body { min-width: 0; }
-.deck-meter { position: relative; height: 26px; }
+/* The saved tick moves by translating a full-width layer; clip it to the track so a
+   position near the end never widens the page (seen at 320px). */
+.deck-meter { position: relative; height: 26px; overflow-x: clip; overflow-clip-margin: 6px; }
 .deck-meter::before { content: ""; position: absolute; left: 0; right: 0; top: 9px; height: 8px; border: 1.5px solid var(--ink); border-radius: 99px; background: var(--paper); }
 .deck-fill { position: absolute; left: 2px; right: 2px; top: 11px; height: 4px; border-radius: 99px; background: var(--ink); transform-origin: 0 50%; transform: scaleX(0); }
 /* Where you last saved: a small tick that springs to the new spot after each save. */

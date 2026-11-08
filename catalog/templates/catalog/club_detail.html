@@ -1,7 +1,7 @@
 {% extends 'catalog/base.html' %}
 {% load static nextchapter_ui %}
 {% block title %}{{ club.name }} · NextChapter{% endblock %}
-{% block head %}<link rel="stylesheet" href="{% static 'catalog/clubs.css' %}">{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'catalog/clubs.css' %}"><link rel="stylesheet" href="{% static 'assistance/comment-translation.css' %}">{% endblock %}
 {% block content %}
 <div class="club-library">
   <a class="back reveal" style="--i:0" href="{% url 'club_list' %}"><span aria-hidden="true">←</span> All clubs</a>
@@ -32,7 +32,7 @@
       <div class="comments" data-landing="posted:{{ club.pk }}">
       {% for comment in comments %}
       <article class="comment"><div class="comment-heading"><span class="comment-author"><span class="avatar" aria-hidden="true">{{ comment.user.username|first|upper }}</span><strong>{{ comment.user.username }}</strong></span><time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:'M j, H:i' }}</time></div>
-        {% if comment.spoiler %}<details class="spoiler"><summary>Contains spoilers · show comment</summary><p class="comment-body">{{ comment.body }}</p></details>{% else %}<p class="comment-body">{{ comment.body }}</p>{% endif %}
+        {% if comment.spoiler %}<details class="spoiler"><summary>Contains spoilers · show comment</summary><p class="comment-body">{{ comment.body }}</p>{% include 'assistance/comment_translation.html' %}</details>{% else %}<p class="comment-body">{{ comment.body }}</p>{% include 'assistance/comment_translation.html' %}{% endif %}
         <a class="report-link" href="{% url 'report' 'comment' comment.pk %}">Report comment</a>
       </article>
       {% empty %}<div class="empty"><h3>Be the first to share.</h3><p>{{ club.description }}</p><p>A small observation or an honest question is a good beginning.</p></div>{% endfor %}
@@ -42,3 +42,4 @@
   </div>
 </div>
 {% endblock %}
+{% block scripts %}<script src="{% static 'assistance/comment-translation.js' %}" defer></script>{% endblock %}

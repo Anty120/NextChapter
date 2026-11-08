@@ -56,7 +56,7 @@ permissions are unchanged.
 
 ## Verification (headless Chrome 156, local SQLite)
 
-- `manage.py test`: 90 tests OK. Also clean: `check`, `makemigrations --check
+- `manage.py test`: 103 tests OK after merging main (90 before). Also clean: `check`, `makemigrations --check
   --dry-run`, `migrate`, `seed_demo`, `verify_demo` and `collectstatic` (debug and
   production manifest storage), in a fresh venv with `pip install --require-hashes`.
 - `tests/browser_demo.py`: passes with `errors: []` and `failed_assets: []`. It covers
@@ -76,6 +76,28 @@ permissions are unchanged.
     - A read-after-write in the Format thumb, now measured in a ResizeObserver.
     - Per-frame text and slider writes in the deck: 164 layouts in 2.5 s down to 56,
       and the rest is the native player.
+
+## Integration with main (7 commits after 8a1164f)
+
+Main gained features while this branch was in progress, and the merge keeps all of
+them in the new templates: book quizzes (link and end-of-book section), comment
+translation, editorial song context headings, the "Songs & audiobooks" shortcut
+(a sixth Format option), the back-to-top button, and the new audio pack.
+
+The additive polish layer from #74 (`ui-polish.css`, `ui-motion.js` and a second
+vendored Motion, 14.10.1) is **superseded**. It restyled the old markup in a
+different direction (Georgia headings, 1px borders) and animated the same cards
+and buttons, so loading both would have double-animated them. The site now ships
+one Motion copy (14.5.0) and one motion layer. #74's browser check
+(`scripts/check_motion_browser.py`) still passes after three deliberate edits:
+the hover lift is read from `translate`, Format is a radio, and the query string
+order changed. `ui.js` sets the same `data-ui-motion` attribute that check reads.
+`SOURCE_VERIFICATION.md` now records 14.5.0.
+
+Main's own data changes had broken two rehearsal assertions (new song wording,
+"Transcript" for full audiobooks). Both are updated with the same intent. One
+optional check, `scripts.check_assistance_browser`, fails at a microphone-permission
+prompt in headless Chrome. It fails identically on unmodified main.
 
 ## Screenshots
 

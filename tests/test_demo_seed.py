@@ -105,7 +105,7 @@ class DemoSeedTests(TestCase):
         Report.objects.create(reporter=user, comment=comment, reason='Keep report')
         ReadingProgress.objects.create(user=user, media=story, paragraph=2)
         ReadingProgress.objects.create(user=user, media=legacy, seconds=33)
-        ReadingProgress.objects.create(user=user, media=MediaItem.objects.get(slug='audiobook-en-01'), seconds=0.05)
+        ReadingProgress.objects.create(user=user, media=MediaItem.objects.get(slug='audiobook-fr-01'), seconds=0.05)
         ids = dict(MediaItem.objects.values_list('slug', 'pk'))
         clubs = dict(Club.objects.values_list('slug', 'pk'))
         for _ in range(2):

@@ -1,5 +1,42 @@
 # Bundled library: source and verification record
 
+## Current non-English audio update — 2026-11-08 02:29 UTC
+
+The inventory below this section is the retained acquisition history. The current
+seed manifest replaces its three English recordings with these bundled files:
+
+| Slug | Language / content | Duration | Bytes |
+| --- | --- | ---: | ---: |
+| audiobook-fr-01 | French, complete original Le livre jaune short story | 24.6 s | 1,186,918 |
+| song-fr-01 | French, Tourdion sung by the dwsChorale | 87.26671 s | 1,446,765 |
+| song-es-01 | Spanish, Las Mañanitas sung opening, Elisa / Kenmayer | 35.79261 s | 447,841 |
+
+The Spanish Marianela Chapter I recording and both complete books remain in the
+manifest. Reseeding unpublishes the old English audio without deleting activity.
+`media.json` is authoritative for exact SHA-256 checksums and source components.
+
+Commons file pages and its imageinfo API were fetched directly, then the original
+Ogg bytes were downloaded without conversion. Both recordings explicitly offer
+CC BY-SA 3.0. Tourdion credits Dwsolo/dwsChorale (2006); Las Mañanitas credits
+Kenmayer's mix with Elisa's vocals for Educational Options, Inc. It is an excerpt.
+Text panels are new editorial summaries, not transcribed lyrics. Attribution and
+license links are visible in the reader and retained in LICENSES.md.
+
+- https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg
+- https://upload.wikimedia.org/wikipedia/commons/5/5f/Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg
+- https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg
+- https://upload.wikimedia.org/wikipedia/commons/b/b2/Las_Mananitas.ogg
+
+French narration was generated once with the configured Gemini speech model
+from the complete project-authored `FRENCH` story. The matching French transcript
+and WAV are bundled, so seeding/playback never contacts Gemini. It is explicitly
+credited as synthetic voice (Kore), not a human performance. WAV frame duration
+and Ogg Vorbis granule duration were checked locally; browser playback, seek,
+and duration checks cover all four current recordings. Source code for the text:
+https://github.com/Anty120/NextChapter/blob/main/catalog/demo_content.py .
+
+## Historical acquisition record
+
 Checked: 2026-11-08T00:27:34Z (UTC). Sources retrieved through Exa and asset bytes directly from the fixed HTTPS URLs below. Exa responses can be cached; byte downloads were independently hashed during this run. This is source evidence and bounded verification, not worldwide legal clearance.
 
 ## Inventory

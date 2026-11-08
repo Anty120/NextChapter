@@ -21,7 +21,7 @@ class DemoTests(TestCase):
         cls.user = get_user_model().objects.create_user('reader', password='a-test-only-password-293')
         cls.other = get_user_model().objects.create_user('other', password='another-test-password-719')
         cls.story = MediaItem.objects.get(slug='la-panaderia')
-        cls.audio = MediaItem.objects.get(slug='audiobook-en-01')
+        cls.audio = MediaItem.objects.get(slug='audiobook-fr-01')
         cls.club = Club.objects.get(slug='the-morning-pages')
 
     def test_seed_twice_preserves_identity_and_user_activity(self):
@@ -46,9 +46,25 @@ class DemoTests(TestCase):
         self.assertEqual(len(response.context['items']), 3)
         self.assertContains(response, self.story.title)
         self.assertNotContains(response, self.audio.title)
-        response = self.client.get('/', {'language': 'French', 'format': 'audiobook'})
+        response = self.client.get('/', {'language': 'French', 'format': 'audiobook', 'level': 'C2'})
         self.assertContains(response, 'No media matches these filters')
         self.assertContains(response, 'Explore the full shelf')
+
+    def test_listening_shortcut_includes_both_audio_formats_and_combines_filters(self):
+        self.assertContains(self.client.get('/'), 'href="?format=audio"')
+        response = self.client.get('/', {'format': 'audio'})
+        items = list(response.context['items'])
+        self.assertEqual({item.format for item in items}, {'song', 'audiobook'})
+        self.assertTrue(all(item.published for item in items))
+        # Format is a segmented radio group (#75): the shortcut preselects the combined option.
+        self.assertContains(response, '<label class="chip"><input type="radio" name="format" value="audio" checked><span>Songs &amp; audiobooks</span></label>', html=True)
+        response = self.client.get('/', {'format':'audio', 'language':'Spanish'})
+        self.assertEqual({item.format for item in response.context['items']}, {'song', 'audiobook'})
+        self.assertTrue(all(item.language == 'Spanish' for item in response.context['items']))
+        response = self.client.get('/', {'format':'audio', 'q':'Tourdion', 'level':'B1'})
+        self.assertEqual([item.slug for item in response.context['items']], ['song-fr-01'])
+        response = self.client.get('/', {'format':'audiobook'})
+        self.assertEqual({item.format for item in response.context['items']}, {'audiobook'})
 
     def test_media_text_credits_context_and_playable_audio_asset(self):
         response = self.client.get(self.story.get_absolute_url())

@@ -42,6 +42,7 @@ does **not** load `.env.example` automatically.
 GEMINI_ENABLED=true
 GEMINI_API_KEY=<injected backend secret>
 GEMINI_TEXT_MODEL=<current generateContent-compatible text model>
+GEMINI_LOOKUP_MODEL=<current low-latency structured-output model; optional>
 GEMINI_TTS_MODEL=<current generateContent-compatible speech model>
 GEMINI_AUDIO_MODEL=<current generateContent-compatible audio-input model>
 ```
@@ -80,13 +81,35 @@ shared cache; core reading/community continue to work. Add the optional install
 to the deployment build before enabling assistance there. Do not expose the URL
 or credentials in the browser. Shared Redis connectivity is a deployment check.
 
+## Club comment translation
+
+Sign in and open a club discussion. Each comment has a Translate to selector and
+Translate button. The default is English; choose from 11 supported languages.
+Translation appears beneath the original and is labeled as Gemini output. Hide
+or show it without another request. Changing language clears the previous result;
+the language preference is remembered locally when browser storage is available.
+Spoiler comments keep both controls and translations within their disclosure.
+
+Comments are sent to Gemini only when Translate is selected. The backend reads
+the comment from the database, detects its source language automatically and uses
+the existing fast lookup model, quotas, CSRF and error handling. Cached results
+are keyed by the comment's current text and chosen target. No translated copy is
+stored in the database, and original comments are never rewritten. Posting and
+reading still work if Gemini is disabled or unavailable.
+
+Optional browser rehearsal: `python manage.py test scripts.check_comment_translation_browser`.
+
 ## Recording flow
 
 Practice starts from a selected reference. Listen first, then choose Record.
 The browser asks for microphone permission only after that action. Stop creates
 a mono PCM WAV in browser memory; Listen to my attempt lets you replay it locally.
 Discard/Close releases the recording. Analyze is the explicit upload action.
-Recordings are limited to 15 seconds and 5 MiB, with matching server-side checks.
+Practice always expands a clicked word to its entire sentence. The sentence tools
+offer Speak sentence, Explain sentence and optional pronunciation hints under
+each word. Hints preserve the original passage and its saved offsets. Both IPA
+and familiar-sound comparisons are approximate, with regional variation.
+Recordings are limited to 60 seconds and 5 MiB, with matching server-side checks.
 Microphone capture requires HTTPS or localhost and a supported Web Audio browser.
 
 No browser recognizer is silently used instead of Gemini. The server receives
@@ -112,7 +135,13 @@ test data, not a fake production provider or proof of model pronunciation qualit
 
 The owner supplied credentials through Doppler and confirmed permitted voice
 inputs. Development now enables the live-tested `gemini-3.8-flash` text/audio and
-`gemini-3.8-flash-tts` models. Live text/TTS/audio and the complete Edge flow passed
+`gemini-3.8-flash-tts` models. Fast lookups use the separately verified
+`gemini-3.5-flash-lite` model in development Doppler. Word clicks request four
+short fields; Explain more requests the full teaching response only on demand.
+Successful public reference lookups are cached for up to an hour on the server
+and within the page. One measured cold lookup took 0.876 s versus 12.307 s for
+the earlier full response; its server-cached repeat took under 1 ms. These are
+individual samples, not a latency guarantee. Live text/TTS/audio and the complete Edge flow passed
 with generated public speech as the microphone source. This verifies integration;
 it does not verify a real learner's pronunciation. A human/reference-annotated
 pronunciation benchmark, including

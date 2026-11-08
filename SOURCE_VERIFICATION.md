@@ -1,5 +1,47 @@
 # Project knowledge: verification ledger
 
+## Motion UI and GitHub completion audit — 2026-11-08 04:27 UTC
+
+Exa tools are unavailable in this session. Official Motion documentation was
+opened through web search/open; package metadata and tarball were fetched directly
+from the npm registry. Page responses may be cached. GitHub issues/board/PRs and
+remote-main ancestry were read through authenticated `gh`/Git, separately from
+local runtime tests. No deployment, provider account or secrets changes followed.
+
+| Primary source | Claim / checked result |
+| --- | --- |
+| https://motion.dev/docs/animate | Motion's browser animation API supports easing and spring transitions. Local integration uses transform/opacity animation, not a React framework migration. |
+| https://motion.dev/docs/spring | Reviewed spring configuration. UI uses restrained stiffness/damping/mass for hover, press and a short heading entrance. Runtime behavior is separately browser-tested. |
+| https://motion.dev/docs/quick-start | Official script-tag distribution is supported. Runtime scripts are bundled locally, with a no-library/no-JS fallback; no external CDN is contacted by the app. |
+| https://registry.npmjs.org/motion/14.5.0 | Verified package version (published 2026-10-21), MIT license and published tarball shasum `b1569d659b06f550e3933414cc7a1f065823b6d6`. Extracted only the browser build and license, with no dependency install or lifecycle script. This single copy replaces the earlier 14.10.1 vendoring (#75). |
+| https://registry.npmjs.org/motion/-/motion-14.5.0.tgz | Downloaded tarball matched the registry shasum. Unmodified `dist/motion.js`: 172,010 bytes; SHA-256 `69c327fe2d655b3da6112e5723c6ea85c29b063e59fa5471e6ebbc96a087b39d`. License and provenance (`SOURCE.txt`) retained under `catalog/static/catalog/vendor/motion/`. |
+
+The remote project audit closed completed #3/#4/#5/#10/#28/#61/#62/#71/#72 and
+retired #66 as not planned because the English recordings were superseded.
+Deployment safety (#29), human speech evaluation (#64/#60), wider moderation
+(#21), teammate access (#8/#9) and ongoing independent redesign (#70) remain open.
+See `docs/reviews/project-audit-motion.md` and each issue's completion note for
+the evidence and limits; local-main-only work is not a remote deployment receipt.
+
+## Reader speed and non-English recordings — checked 2026-11-08 02:29 UTC
+
+Exa is unavailable in this session. Official web search/page reads and direct
+HTTPS downloads were used as fallback; cached-page freshness is not guaranteed.
+These claims concern provider capabilities/content, not event prizes.
+
+| Source | Claim / status |
+| --- | --- |
+| https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite | Official low-latency model description. Actual account generateContent with structured JSON succeeded; new adapter cold 0.876 s, cached <1 ms for public French moi. Earlier full explanation sample 12.307 s. Individual samples, no SLA. |
+| https://ai.google.dev/gemini-api/docs/models/gemini-2.5-flash-lite | Documentation exists, but actual account request returned configuration HTTP 503 through our adapter. Not selected; source/runtime conflict preserved. |
+| https://ai.google.dev/gemini-api/docs/optimization | Reviewed latency guidance. Implemented smaller output, separate lookup model and reference caching; no priority-tier or billing change. |
+| https://commons.wikimedia.org/wiki/File:Attaignant_Tourdion_Sung_by_the_dwsChorale.ogg | French sung performance by dwsChorale/Dwsolo; 2006, CC BY-SA 3.0 confirmed by page and live imageinfo metadata. Original Ogg downloaded, 1,446,765 bytes, SHA-256 in media.json. |
+| https://commons.wikimedia.org/wiki/File:Las_Mananitas.ogg | Spanish sung opening of Mexican birthday song; Elisa vocals / Kenmayer mix, Educational Options Inc.; CC BY-SA 3.0 confirmed in live imageinfo metadata. Original Ogg downloaded, 447,841 bytes. It is an excerpt. |
+
+French short-story narration was generated from project-owned public text with
+the already configured Gemini TTS model, saved as a local WAV and explicitly
+credited as synthetic. Commons recording license notices are retained separately
+from MIT source code. Runtime evidence is recorded in the learning-flow review.
+
 **Exa refresh completed:** 2026-11-07 22:24 UTC.
 **Method:** Exa search and page fetches from primary publishers; Git/GitHub for
 repository state. This ledger supersedes earlier unsourced or cached prize claims.

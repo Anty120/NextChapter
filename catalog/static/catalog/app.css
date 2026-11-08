@@ -159,6 +159,8 @@ html:not(.motion) .menu-item:hover, html:not(.motion) .menu-item:focus-visible {
 .toast-text { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .toast-close { flex: none; width: 32px; height: 32px; border: 0; border-radius: var(--r-sm); background: transparent; font-size: 20px; line-height: 1; }
 .toast-close:hover { background: rgb(23 23 23 / .1); }
+/* On phones, keep toasts clear of the back-to-top button in the corner. */
+@media (max-width: 700px) { .ui-ready .messages { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); } }
 
 /* ---------- Page-load reveal ----------
    CSS rather than JS: it runs off the main thread while the page is still loading
@@ -181,6 +183,8 @@ html:not(.motion) .menu-item:hover, html:not(.motion) .menu-item:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .reveal { animation: fade-in .2s ease-out both; }
 }
+/* Never shift a linked reading position: a block holding the #target skips its entrance. */
+.reveal:has(:target) { animation: none; }
 
 /* ---------- Page header ---------- */
 .heading { display: flex; align-items: center; justify-content: space-between; gap: 25px; padding: 44px 3px 30px; }
@@ -211,7 +215,8 @@ html:not(.motion) .menu-item:hover, html:not(.motion) .menu-item:focus-visible {
 
 /* Filters: one paper strip. Format is a segmented row of radios; a single yellow
    thumb slides between them (ui.js), falling back to per-chip fills without JS. */
-.tools { display: grid; grid-template-columns: minmax(180px, 1.2fr) auto minmax(130px, .55fr) minmax(110px, .45fr) auto; gap: 12px 14px; align-items: end; margin-bottom: 26px; padding: 14px; background: var(--paper); border: var(--line); border-radius: var(--r); }
+/* Format gets its own full-width row: it has six options since the audio shortcut. */
+.tools { display: grid; grid-template-columns: minmax(200px, 1.4fr) minmax(140px, .6fr) minmax(120px, .5fr) auto; gap: 12px 14px; align-items: end; margin-bottom: 26px; padding: 14px; background: var(--paper); border: var(--line); border-radius: var(--r); }
 .field { display: block; min-width: 0; margin: 0; padding: 0; border: 0; }
 .field-label { display: block; padding: 0; margin-bottom: 6px; font-size: 11px; font-weight: 800; letter-spacing: .04em; }
 input:not([type=checkbox]):not([type=hidden]):not([type=radio]):not([type=range]), select, textarea { display: block; width: 100%; border: var(--line); border-radius: var(--r-sm); background: var(--paper); padding: 10px; transition: box-shadow .15s var(--ease-out), background-color .15s ease; }
@@ -220,7 +225,9 @@ input::placeholder, textarea::placeholder { color: #77716a; }
 select { appearance: none; padding-right: 34px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%23171717' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
 .tools input, .tools select { height: 42px; font-size: 13px; padding-block: 8px; }
 textarea { resize: vertical; min-height: 96px; }
-.chip-row { position: relative; display: flex; gap: 4px; padding: 3px; border: var(--line); border-radius: var(--r-sm); background: var(--paper); height: 42px; }
+.tools .chips { grid-row: 2; grid-column: 1 / -1; }
+.chip-row { position: relative; display: flex; gap: 4px; padding: 3px; border: var(--line); border-radius: var(--r-sm); background: var(--paper); height: 42px; overflow-x: auto; scrollbar-width: none; }
+.chip-row::-webkit-scrollbar { display: none; }
 .chip { position: relative; z-index: 1; display: grid; place-items: center; padding: 0 11px; border-radius: 4px; font-size: 12.5px; font-weight: 700; white-space: nowrap; cursor: pointer; }
 /* The radio itself is stretched over its chip at zero opacity: native click, arrow-key
    and form semantics with a custom look. */
@@ -341,7 +348,6 @@ summary { cursor: pointer; font-size: 13px; font-weight: 700; padding: 10px 0; }
   .tools { grid-template-columns: 1fr 1fr; }
   .tools .search, .tools .chips { grid-column: 1 / -1; }
   .tools-actions { grid-column: 1 / -1; }
-  .chip-row { overflow-x: auto; scrollbar-width: none; }
   .chip { flex: 1 0 auto; }
   .story-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .heading-art { display: none; }
@@ -365,6 +371,9 @@ summary { cursor: pointer; font-size: 13px; font-weight: 700; padding: 10px 0; }
   .shelf-heading h2 { font-size: 20px; }
   .shelf-heading > .badge { display: none; }
   .tools { grid-template-columns: 1fr 1fr; padding: 10px; gap: 10px; }
+  /* On phones every format stays visible: the chips wrap instead of hiding off the edge. */
+  .chip-row { flex-wrap: wrap; height: auto; overflow: visible; }
+  .chip { height: 34px; flex: 1 0 auto; }
   .tools-actions { flex-wrap: wrap; }
   .tools .button { flex: 1; }
   .story-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; }
@@ -410,5 +419,6 @@ summary { cursor: pointer; font-size: 13px; font-weight: 700; padding: 10px 0; }
    No transforms, no blur, no springs. Short opacity changes only. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
-  .book-card, .button, .more a, .logo, .back span, .account-trigger .chevron { transition-property: box-shadow, background-color, opacity !important; }
+  .button, .more a, .logo, .back span, .account-trigger .chevron { transition-property: box-shadow, background-color, opacity !important; }
+  .book-card { transition: none !important; }
 }

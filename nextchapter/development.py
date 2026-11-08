@@ -7,7 +7,7 @@ import subprocess
 
 
 ASSISTANCE_KEYS = (
-    'GEMINI_API_KEY', 'GEMINI_ENABLED', 'GEMINI_TEXT_MODEL', 'GEMINI_TTS_MODEL',
+    'GEMINI_API_KEY', 'GEMINI_ENABLED', 'GEMINI_TEXT_MODEL', 'GEMINI_LOOKUP_MODEL', 'GEMINI_TTS_MODEL',
     'GEMINI_AUDIO_MODEL', 'GEMINI_VOICE_INPUT_ENABLED', 'GEMINI_VOICE_INPUT_APPROVED',
     'GEMINI_TIMEOUT_SECONDS', 'GEMINI_RATE_LIMIT', 'GEMINI_CACHE_TTL_SECONDS',
 )
@@ -25,7 +25,7 @@ def configure_runserver(argv, environ=None, root=None):
             or env.get('GEMINI_ENABLED', '').lower() in {'false', '0'}):
         return None
     required = ('GEMINI_API_KEY', 'GEMINI_TEXT_MODEL', 'GEMINI_TTS_MODEL', 'GEMINI_AUDIO_MODEL', 'GEMINI_ENABLED')
-    if all(env.get(name) for name in required):
+    if all(env.get(name) for name in required) and env.get('GEMINI_LOOKUP_MODEL'):
         return None
     base = Path(root) if root else Path(__file__).resolve().parent.parent
     executable = shutil.which('doppler')

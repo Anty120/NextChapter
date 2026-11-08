@@ -65,8 +65,9 @@ in the current demo. A future React task must define those interfaces first.
   staff notes. Public forms accept only reason; staff review occurs in Django admin.
 
 `seed_demo` owns six original story slugs, six manifest media slugs and four clubs.
-New slugs: `book-es-01`, `book-en-01`, `audiobook-es-01`, `audiobook-en-01`,
-`song-en-01`, `song-en-02`. Clubs: `the-morning-pages`, `demo-book-club`,
+Current slugs: `book-es-01`, `book-en-01`, `audiobook-es-01`, `audiobook-fr-01`,
+`song-es-01`, `song-fr-01`. Old English audio is unpublished on reseeding, preserving
+IDs and activity. Clubs: `the-morning-pages`, `demo-book-club`,
 `demo-audio-club`, `demo-song-club`. `catalog.library.get_media_metadata(slug)`
 returns local manifest metadata or `{}` for custom media. Book chapter entries use
 zero-based `start_paragraph`; audio metadata includes actual duration, MIME,
@@ -82,11 +83,23 @@ backward compatibility recorded in the issue.
 
 ## Optional Gemini assistance
 
+`POST /assist/comments/<comment_id>/translate/` accepts JSON
+`{"target_language":"en"}`. Supported targets: en/fr/es/de/it/pt/ja/ko/zh/ar/hi.
+It requires a signed-in session and CSRF, but not club membership, matching public
+comment visibility. The server reads the existing comment (up to 2000 characters);
+client-supplied text/model/prompts are ignored. Returns
+`{comment_id,target_language,translation}` as plain text data. Missing comments
+return 404; other errors follow the standard assistance envelope. The configured
+fast lookup model detects source language automatically. Existing quotas apply,
+and successful translations are cached by comment content and target language.
+The original text remains visible; translation controls/results stay inside
+spoiler disclosures. No database migration or new provider key is required.
+
 `POST /assist/explain/` and `POST /assist/pronounce/` require session authentication
 and a CSRF token. JSON fields: `media_id`, zero-based `paragraph`, `start`, `end`,
 BCP-47 `locale` and `explanation_locale` (default `en`). Offsets count Unicode
 codepoints, not JavaScript UTF-16 code units. The server resolves the published
-paragraph and accepts 1–300 selected characters with at most 800 total context
+paragraph and accepts 1–1500 selected characters with bounded nearby context
 characters. Clients cannot supply arbitrary prompts, models or URLs.
 
 Explain returns `selection`, `language`, `explanation_locale`, `meaning`,
@@ -94,7 +107,7 @@ Explain returns `selection`, `language`, `explanation_locale`, `meaning`,
 and `examples: [{text,note}]`. Pronounce returns playable `audio/wav` bytes.
 
 `POST /assist/practice/` uses multipart with the same reference fields and one
-`audio` file: real mono 16-bit PCM WAV, 8–48 kHz, non-silent, at most 15 seconds
+`audio` file: real mono 16-bit PCM WAV, 8–48 kHz, non-silent, at most 60 seconds
 and 5 MiB. It returns `transcript`, `reference_match`, `feedback: [{observation,suggestion}]`,
 `uncertainty`, and boolean `assessment_supported`. Unsupported assessment clears
 observations; dictation agreement is not a pronunciation grade.
@@ -103,3 +116,16 @@ Errors use `{error: {code,message}}`, statuses 400/401/403/413/429/502/503. Resp
 are private/no-store, including speech analysis. Missing configuration returns 503.
 Features remain optional and credential-free core flows keep working. See
 [ASSISTANCE.md](ASSISTANCE.md) for flags, deployment cache and data handling.
+
+`POST /assist/lookup/` uses the same reference, capped at 300 characters, and
+returns concise translation/meaning/IPA/approximation in the explain response
+shape. `POST /assist/sentence/` accepts up to 1500 characters for concise sentence
+help. Both use `GEMINI_LOOKUP_MODEL` (fallback: text model).
+`POST /assist/phonetics/` accepts the sentence reference and returns
+`words: [{start,end,text,ipa,sound}]`, codepoint offsets relative to that selection,
+plus a notice. Authentication, CSRF and quota handling match explain.
+
+`GET/POST /media/<pk>/quiz/` provides optional curated comprehension questions for
+the two bundled books. GET does not disclose answer keys; CSRF-protected POST
+validates all answers and grades on the server. Results are not stored and do not
+affect a learner's level. Drafts, nonbooks and books without a quiz return 404.

@@ -1,5 +1,8 @@
 <div id="assistance-root"
      data-explain-url="{% url 'assistance:explain' %}"
+     data-lookup-url="{% url 'assistance:lookup' %}"
+     data-sentence-url="{% url 'assistance:sentence' %}"
+     data-phonetics-url="{% url 'assistance:phonetics' %}"
      data-pronounce-url="{% url 'assistance:pronounce' %}"
      data-practice-url="{% url 'assistance:practice' %}"
      data-authenticated="{{ user.is_authenticated|yesno:'true,false' }}"

@@ -24,10 +24,10 @@
     },
     {
       "slug": "demo-song-club",
-      "name": "Daisy Bell Song Circle",
-      "language": "English",
-      "description": "Explore Daisy Bell through its words, voices, and music. All levels welcome, whether you share a single phrase or a longer thought. Which repeated line or musical moment stays with you, and what mood does it create? Questions about unfamiliar words belong here too; no singing experience needed.",
-      "featured_media_slug": "song-en-01"
+      "name": "Las Mañanitas Song Circle",
+      "language": "Spanish",
+      "description": "Listen to the sung opening of Las Mañanitas. Which repeated sound can you hear? Share a Spanish word, a favorite sound, or a birthday tradition from your own life. All levels welcome; no singing experience needed.",
+      "featured_media_slug": "song-es-01"
     }
   ]
 }

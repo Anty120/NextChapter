@@ -1,0 +1,18 @@
+{% if user.is_authenticated %}
+<form class="comment-translation" method="post" action="{% url 'assistance:translate_comment' comment.pk %}" data-translation-url="{% url 'assistance:translate_comment' comment.pk %}">
+  {% csrf_token %}
+  <div class="translation-tools">
+    <label for="translation-language-{{ comment.pk }}">Translate to</label>
+    <select id="translation-language-{{ comment.pk }}" name="target_language"{% if not assistance_enabled %} disabled{% endif %}>
+      {% for code, name in translation_languages %}<option value="{{ code }}">{{ name }}</option>{% endfor %}
+    </select>
+    <button type="submit" class="quiet translation-button" aria-controls="translation-result-{{ comment.pk }}" aria-expanded="false"{% if not assistance_enabled %} disabled{% endif %}>Translate</button>
+  </div>
+  <p class="translation-status" role="status" aria-live="polite">{% if not assistance_enabled %}Translation is temporarily unavailable.{% endif %}</p>
+  <div id="translation-result-{{ comment.pk }}" class="translation-result" hidden>
+    <small class="translation-label"></small><p class="translation-text" dir="auto"></p>
+    <small>AI translation by Gemini · May contain mistakes.</small>
+  </div>
+</form>
+<noscript><p class="translation-signin">Enable JavaScript to translate comments.</p></noscript>
+{% else %}<p class="translation-signin"><a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in to translate</a></p>{% endif %}

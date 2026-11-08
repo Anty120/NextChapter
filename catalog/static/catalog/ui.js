@@ -28,7 +28,13 @@
   const FADE = { duration: 0.18, ease: 'easeOut' };
 
   root.classList.add('ui-ready');
-  if (M) root.classList.add('motion');
+  if (M) {
+    root.classList.add('motion');
+    // Exposes the live motion mode (also read by scripts/check_motion_browser.py).
+    const mark = () => { root.dataset.uiMotion = reduceQuery.matches ? 'reduced' : 'enabled'; };
+    mark();
+    reduceQuery.addEventListener('change', mark);
+  }
 
   /* Animate with Motion when we can; otherwise jump to the end state.
      Under reduced motion, only opacity animates and everything else snaps. */

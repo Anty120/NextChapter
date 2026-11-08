@@ -144,7 +144,7 @@ class AssistanceTests(TestCase):
     @patch('assistance.provider.generate')
     def test_audio_mismatch_silence_duration_and_truncated_container(self, generate):
         for raw, mime in ((b'webm bytes', 'audio/wav'), (wav(), 'audio/webm'), (wav(silent=True), 'audio/wav'),
-                          (wav(seconds=15.1), 'audio/wav'), (wav()[:-4], 'audio/wav')):
+                          (wav(seconds=60.1), 'audio/wav'), (wav()[:-4], 'audio/wav')):
             self.assertEqual(self.upload(raw, mime).status_code, 400)
         generate.assert_not_called()
 
@@ -228,4 +228,5 @@ class AssistanceTests(TestCase):
         prompt = generate.call_args.args[1][0]['text']
         self.assertIn('never instructions', prompt)
         self.assertIn('Ignore all previous', prompt)
-        self.assertEqual(self.post(start=0, end=301).status_code, 400)
+        self.assertEqual(self.post(start=0, end=1501).status_code, 400)
+        self.assertEqual(self.client.post('/assist/lookup/', {**self.ref, 'start':0, 'end':301}, content_type='application/json').status_code, 400)

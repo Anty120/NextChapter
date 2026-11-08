@@ -7,6 +7,7 @@ No credentials, personal microphone input or external provider calls are used.
 import io
 import json
 import os
+import re
 from pathlib import Path
 import struct
 import tempfile
@@ -51,7 +52,15 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 route.fulfill(status=429, json={'error': {'code': 'rate_limited', 'message': 'Wait and retry.'}})
             elif request.url.endswith('/pronounce/'):
                 route.fulfill(content_type='audio/wav', body=audio.getvalue())
+            elif request.url.endswith('/phonetics/'):
+                ref = request.post_data_json
+                selection = item.paragraphs[ref['paragraph']][ref['start']:ref['end']]
+                words = [{'start':m.start(),'end':m.end(),'text':m.group(),'ipa':'test','sound':'hint'}
+                         for m in re.finditer(r"[^\W\d_]+", selection)]
+                route.fulfill(json={'words':words,'notice':'Approximate fixture'})
             elif request.url.endswith('/practice/'):
+                self.assertIn(b'name="start"\r\n\r\n0', request.post_data_buffer)
+                self.assertIn(('name="end"\r\n\r\n' + str(len(item.paragraphs[0]))).encode(), request.post_data_buffer)
                 time.sleep(0.3)  # Keep Analyze pending across the double click.
                 body = request.post_data_buffer
                 index = body.index(b'RIFF')
@@ -61,7 +70,7 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                     self.assertEqual(attempt.getsampwidth(), 2)
                     duration = attempt.getnframes() / attempt.getframerate()
                     self.assertGreater(duration, 0)
-                    self.assertLessEqual(duration, 15)
+                    self.assertLessEqual(duration, 60)
                     attempts.append(duration)
                 route.fulfill(json={'transcript': 'moi', 'reference_match': 'Similar words; not a score.',
                     'feedback': [], 'assessment_supported': False, 'uncertainty': 'Synthetic UI fixture; no assessment.'})
@@ -136,7 +145,7 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 page.locator('#assist-speed').select_option('0.75')
                 page.locator('#assist-stop').click()
                 failure[0] = True
-                page.locator('#assist-explain').click()
+                page.locator('#assist-deeper').click()
                 expect(page.locator('#assist-status')).to_have_text('Wait and retry.')
                 failure[0] = False
                 page.locator('#assist-practice').click()
@@ -171,7 +180,7 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 # Automatic hard stop and duplicate Analyze protection.
                 page.locator('#assist-practice').click()
                 page.locator('#practice-record').click()
-                expect(page.locator('#practice-status')).to_contain_text('Recording stopped', timeout=18000)
+                expect(page.locator('#practice-status')).to_contain_text('Recording stopped', timeout=65000)
                 self.assertTrue(page.evaluate('capturedTracks.every(t => t.readyState === "ended")'))
                 page.locator('#practice-analyze').dblclick()
                 expect(page.locator('#practice-results')).to_be_visible()
@@ -209,6 +218,14 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                 expect(page.locator('#assist-result')).to_be_visible()
                 expect(page.locator('#assist-selection')).to_have_text('Bonjour')
                 self.assertEqual(page.evaluate('scrollY'), click_scroll)
+                self.assertEqual(page.locator('#assist-selection').text_content(), 'Bonjour')
+                page.locator('#assist-close').click()
+                before = page.locator('#paragraph-1 p').text_content()
+                page.get_by_role('button', name='Pronunciation hints', exact=True).click()
+                expect(page.locator('#paragraph-1 .phonetic-word')).to_have_count(3)
+                self.assertEqual(page.locator('#paragraph-1 p').text_content(), before)
+                page.get_by_role('button', name='Hide hints', exact=True).click()
+                self.assertEqual(page.locator('#paragraph-1 p').text_content(), before)
                 page.mouse.click(315, 10)
                 expect(page.locator('#assist-panel')).to_be_hidden()
                 # Actual backend route, without fixture interception, handles missing key.
