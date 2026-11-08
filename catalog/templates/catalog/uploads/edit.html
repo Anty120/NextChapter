@@ -1,0 +1,4 @@
+{% extends 'catalog/base.html' %}{% load static %}
+{% block title %}Edit {{ upload.title }} · NextChapter{% endblock %}
+{% block head %}<link rel="stylesheet" href="{% static 'catalog/uploads.css' %}">{% endblock %}
+{% block content %}<a class="back" href="{{ upload.get_absolute_url }}">← Back to your upload</a><section class="paper upload-form"><h1>Edit upload details</h1><p>Changing a submitted or published upload returns it to private. You can submit the updated details for review again.</p><form class="stack" method="post">{% csrf_token %}{% if form.errors %}<div class="error" role="alert">Please check the details below.{{ form.non_field_errors }}</div>{% endif %}{{ form.as_p }}<button class="button" type="submit">Save details</button></form></section>{% endblock %}

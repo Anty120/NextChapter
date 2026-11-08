@@ -1,5 +1,34 @@
 # Demo interface and data contract
 
+## Personal uploads and public review
+
+`/my-library/` lists the signed-in owner's PDF/MP3 uploads. `/my-library/new/`
+accepts GET and CSRF-protected multipart POST (`file`, `title`, `creator`,
+`language`, `description`, `permission`). Limits: 3 MiB/file, 30 files or 30 MiB/
+owner. UUID IDs, server-owned identity and SHA-256 deduplication; bytes persist in
+the database. Renamed/empty/truncated/unsupported files and active/encrypted PDFs
+are rejected by structural parsers. Parsing is bounded before CSRF reads files.
+
+`/my-library/<uuid>/` is owner-only; its `/file/` endpoint supports GET/HEAD,
+single HTTP byte ranges (206/416) and `?download=1`. `/progress/` is POST with
+`page` for PDFs or `seconds` for MP3, bounded by the actual file. `/edit/` accepts
+metadata GET/POST and withdraws changed submissions. `/delete/` confirms via GET
+then requires POST `confirm=delete`; `/withdraw/` is POST and retains a private copy.
+Anonymous personal requests redirect to login; another user's ID returns 404.
+
+`/submit/` is owner-only GET/POST, requiring `creator`, `license_name`,
+`rights_note`, optional `source_url`, and explicit public `permission`. States:
+private → pending → approved/rejected; editing/withdrawal returns to private.
+Only staff with change permission can review pending files at
+`/my-library/review/<uuid>/[file/]`, using the Django admin queue to decide.
+Rejection requires feedback. Staff cannot preview private files in this queue.
+
+Approved-only `/my-library/public/<uuid>/[file/]` pages/files are public; all
+other states return 404 there. The catalog's paginated community shelf applies
+search/language/format filters; uploads are unrated, so difficulty filters exclude
+them. Owner saved positions/review feedback stay private. No automatic Gemini
+calls or production/storage-service changes are involved. See [UPLOADS.md](UPLOADS.md).
+
 Run #48 integration, initial base `fb5e15375cf9439291a7528cd93d7cfae8cbd0d6`; main through `16e7d19` incorporated.
 Source: `catalog/urls.py`, `catalog/views.py`, `catalog/forms.py`, and
 `catalog/models.py`. These are existing Django HTML/form interfaces. Changes need

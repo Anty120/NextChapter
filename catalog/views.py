@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 
 from .forms import CommentForm, ProgressForm, ReportForm
-from .models import Club, Comment, MediaItem, Membership, ReadingProgress
+from .models import Club, Comment, MediaItem, Membership, ReadingProgress, UploadedMedia
 from .quizzes import book_quiz, public_questions
 
 
@@ -24,6 +24,19 @@ def catalog(request):
                 items = items.filter(**{field: filters[field]})
     if filters['q']:
         items = items.filter(Q(title__icontains=filters['q']) | Q(creator__icontains=filters['q']))
+    community = UploadedMedia.objects.filter(review_status='approved').defer('content')
+    if filters['level'] or filters['format'] in ['story','audiobook']:
+        community = community.none()
+    elif filters['format'] in ['book','song']:
+        community = community.filter(kind=filters['format'])
+    elif filters['format'] not in ['', 'audio']:
+        community = community.none()
+    if filters['language']:
+        community = community.filter(language=filters['language'])
+    if filters['q']:
+        community = community.filter(Q(title__icontains=filters['q']) | Q(creator__icontains=filters['q']))
+    if filters['format'] == 'audio':
+        community = community.filter(kind='song')
     recent = None
     if request.user.is_authenticated:
         recent = ReadingProgress.objects.filter(user=request.user, media__published=True).select_related('media').first()
@@ -31,8 +44,10 @@ def catalog(request):
         'items': items, 'filters': filters,
         'formats': [('audio', 'Songs & audiobooks'), *MediaItem.Format.choices],
         'levels': MediaItem.LEVELS,
-        'languages': MediaItem.objects.filter(published=True).values_list('language', flat=True).distinct().order_by('language'),
+        'languages': sorted(set(MediaItem.objects.filter(published=True).values_list('language',flat=True))
+                            | set(UploadedMedia.objects.filter(review_status='approved').values_list('language',flat=True))),
         'recent': recent,
+        'community_uploads':Paginator(community,12).get_page(request.GET.get('community_page')),
     })
 
 

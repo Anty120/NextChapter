@@ -1,0 +1,2 @@
+{% extends 'catalog/base.html' %}
+{% block content %}<a class="back" href="{{ upload.get_absolute_url }}">← Keep this upload</a><section class="paper auth"><h1>Delete {{ upload.title }}?</h1><p>This removes the file, its saved position, and any public contribution. This cannot be undone.</p><form method="post">{% csrf_token %}<input type="hidden" name="confirm" value="delete"><button class="button" type="submit">Delete permanently</button> <a href="{{ upload.get_absolute_url }}">Cancel</a></form></section>{% endblock %}

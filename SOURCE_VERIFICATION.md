@@ -1,5 +1,30 @@
 # Project knowledge: verification ledger
 
+## PDF/MP3 upload implementation — checked 2026-11-08 05:15 UTC
+
+Exa is unavailable. Official documentation was read through web open/search;
+PyPI package metadata and hash-locked packages were fetched directly. Search
+snippets can be stale: the cached pypdf security snippet said 6.21.4, while the
+opened stable page and actual package metadata identified 7.0.0. Runtime imports
+and real PDF/MP3 browser checks separately verify the selected implementation.
+
+| Primary source | Claim / result |
+| --- | --- |
+| https://vercel.com/docs/functions/limitations | Current page documents a 4.5 MB request/response payload limit. The app caps file bytes at 3 MiB plus bounded metadata and stores bytes in the existing database; no new blob service or deployment is configured. |
+| https://docs.djangoproject.com/en/6.1/ref/files/uploads/ | Custom upload handlers can bound chunks and abort uploads before normal file storage. Implemented bounded in-memory handling before CSRF parsing; browser MIME is not trusted. |
+| https://pypdf.readthedocs.io/en/stable/user/security.html | Scoped parsing limits use `apply_configuration`; actual 7.0.0 package supports these limits. |
+| https://pypdf.readthedocs.io/en/stable/modules/configuration.html | Reviewed public limit names for stream size/decompression, page-tree depth/entries and container counts. Applied bounded values while structurally reading PDFs and rejecting active features/attachments. No OCR or arbitrary script execution. |
+| https://mutagen.readthedocs.io/en/latest/api/mp3.html | MP3 parsing exposes stream layer/sample rate/duration. Pinned 1.48.1; actual in-memory LibriVox-derived test MP3 parsed and played. Added complete-frame scanning and metadata-duration consistency rejection for truncation. |
+| https://pypi.org/pypi/pypdf/json | 7.0.0, Python >=3.10; installed from the hash-locked requirements. No optional crypto/OCR extras selected. |
+| https://pypi.org/pypi/mutagen/json | 1.48.1, Python >=3.10; no extra runtime dependencies. Hash-locked and tested. |
+
+Tests use synthetic PDFs and a temporary excerpt of the existing credited
+LibriVox MP3; no personal content is committed or sent to AI. Owner explicitly
+selected private uploads plus public staff-review submissions. This bounded
+review workflow does not reactivate deferred #21/#29/#64. Production persistence
+requires applying the new migration to the intended database during an authorized
+release; no live deployment or production write is claimed here.
+
 ## Motion UI and GitHub completion audit — 2026-11-08 04:27 UTC
 
 Exa tools are unavailable in this session. Official Motion documentation was

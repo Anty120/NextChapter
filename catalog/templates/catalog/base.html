@@ -5,11 +5,12 @@
 <link rel="stylesheet" href="{% static 'catalog/app.css' %}">
 <link rel="stylesheet" href="{% static 'catalog/back-to-top.css' %}">
 <link rel="stylesheet" href="{% static 'catalog/ui-polish.css' %}">
+<link rel="stylesheet" href="{% static 'catalog/uploads.css' %}">
 {% if item %}<link rel="stylesheet" href="{% static 'assistance/panel.css' %}"><link rel="stylesheet" href="{% static 'assistance/practice.css' %}">{% endif %}
 {% block head %}{% endblock %}</head>
 <body><a class="skip" href="#main">Skip to content</a><div class="app">
 <header class="topbar"><a class="brand" href="{% url 'catalog' %}"><span class="logo" aria-hidden="true">✿</span>NextChapter</a>
-<nav class="nav" aria-label="Main navigation"><a href="{% url 'catalog' %}" {% if request.resolver_match.url_name == 'catalog' %}aria-current="page"{% endif %}>Shelf</a><a href="{% url 'club_list' %}" {% if 'club' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Clubs</a></nav>
+<nav class="nav" aria-label="Main navigation"><a href="{% url 'catalog' %}" {% if request.resolver_match.url_name == 'catalog' %}aria-current="page"{% endif %}>Shelf</a><a href="{% url 'club_list' %}" {% if 'club' in request.resolver_match.url_name %}aria-current="page"{% endif %}>Clubs</a><a href="{% url 'uploads:library' %}" {% if request.resolver_match.namespace == 'uploads' %}aria-current="page"{% endif %}>My Library</a></nav>
 <div class="account">{% if user.is_authenticated %}<span class="username">Hi, {{ user.username }}</span><form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="quiet" type="submit">Log out</button></form>{% else %}<a href="{% url 'login' %}">Log in</a><a class="button small" href="{% url 'signup' %}">Join us ↗</a>{% endif %}</div></header>
 {% if messages %}<div class="messages" role="status">{% for message in messages %}<p>{{ message }}</p>{% endfor %}</div>{% endif %}
 <main id="main" tabindex="-1">{% block content %}{% endblock %}</main>
