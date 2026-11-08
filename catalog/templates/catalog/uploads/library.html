@@ -3,7 +3,7 @@
 {% block head %}<link rel="stylesheet" href="{% static 'catalog/uploads.css' %}">{% endblock %}
 {% block content %}
 <section class="heading"><div><p class="eyebrow">Your books. Your soundtrack.</p><h1>My Library</h1><p class="subtitle">Upload a PDF book or MP3 song. Files start private; sharing for public review is always your choice.</p></div><a class="button" href="{% url 'uploads:create' %}">Upload a file ↑</a></section>
-<p class="muted">{{ used_bytes|filesizeformat }} of {{ total_bytes|filesizeformat }} used · Up to 30 files · 3 MiB per file</p>
+<p class="muted">{{ used_bytes|filesizeformat }} of {{ total_bytes|filesizeformat }} used · Up to 30 files · PDF: 3 MiB ? MP3: 10 MB</p>
 <div class="upload-grid">{% for upload in uploads %}
 <article class="paper upload-card"><span class="badge">{{ upload.get_kind_display }}</span><h2><a href="{{ upload.get_absolute_url }}">{{ upload.title }}</a></h2><p>{{ upload.creator|default:'Your upload' }} · {{ upload.language }}</p><p class="muted">{{ upload.byte_size|filesizeformat }} · {% if upload.kind == 'book' %}{{ upload.page_count }} pages · Saved page {{ upload.saved_page }}{% else %}Saved at {{ upload.saved_seconds|floatformat:0 }} seconds{% endif %}</p><p class="upload-state">{{ upload.get_review_status_display }}</p><a class="button secondary" href="{{ upload.get_absolute_url }}">{% if upload.kind == 'book' %}Open book{% else %}Listen{% endif %} →</a></article>
 {% empty %}<section class="empty"><h2>A shelf of your own.</h2><p>Bring a PDF book or MP3 song you have permission to upload. Read or listen here, and save your place.</p><a class="button" href="{% url 'uploads:create' %}">Upload your first file</a></section>{% endfor %}</div>

@@ -1,0 +1,7 @@
+{% extends 'catalog/base.html' %}{% load static %}
+{% block title %}Download {{ upload.title }} · NextChapter{% endblock %}
+{% block content %}<section class="paper"><h1>Download {{ upload.title }}</h1><p>Your MP3 is {{ upload.byte_size|filesizeformat }}. Keep this page open while your download is prepared.</p>
+<div data-song-download data-url="{{ file_url }}" data-size="{{ upload.byte_size }}" data-filename="{{ filename }}">
+<button class="button" type="button" data-download-start>Download MP3</button><button type="button" data-download-cancel hidden>Cancel</button><progress hidden aria-label="Download progress"></progress><p role="status" aria-live="polite"></p></div>
+<noscript><p>Enable JavaScript to download this larger MP3.</p></noscript></section>{% endblock %}
+{% block scripts %}<script src="{% static 'catalog/song-download.js' %}" defer></script>{% endblock %}

@@ -1,5 +1,20 @@
 # Project knowledge: verification ledger
 
+## 10 MB songs — checked 2026-11-08 06:29 UTC
+
+- Primary source: [Vercel function limits](https://vercel.com/docs/functions/limitations).
+  Official web fetch confirmed a 4.5 MB request/response payload cap; Exa is not
+  available in this session. Cached responses remain possible. This is a provider
+  limit, not evidence about our deployed account or deployment behavior.
+- Songs now accept up to 10,000,000 bytes; PDFs remain 3 MiB. Larger songs use
+  authenticated 1 MiB upload chunks and bounded range responses. Downloads are
+  assembled in the browser. No streaming exemption is assumed for Django WSGI.
+- Separate local runtime evidence: Edge uploaded an exact 10,000,000-byte MP3;
+  maximum upload request body was 1,048,576 bytes. Native playback, distant seek,
+  refresh/resume and byte-identical download passed at mobile widths 320/390.
+  Production transport, migrations and persistence require separate verification;
+  deployment issue #29 remains deferred.
+
 ## PDF/MP3 upload implementation — checked 2026-11-08 05:15 UTC
 
 Exa is unavailable. Official documentation was read through web open/search;

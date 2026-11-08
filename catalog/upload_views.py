@@ -21,6 +21,7 @@ from django.views.decorators.http import require_GET, require_http_methods, requ
 from .models import UploadedMedia
 from .upload_forms import SubmissionForm, UploadForm, UploadMetadataForm, UploadProgressForm
 from .upload_validation import MAX_FILE_BYTES, MAX_USER_BYTES, MAX_USER_FILES
+from .upload_limits import DIRECT_UPLOAD_BYTES, CHUNK_BYTES
 
 
 def owned(request, pk, content=False):
@@ -34,6 +35,8 @@ def owned(request, pk, content=False):
 @login_required
 @require_GET
 def library(request):
+    from .song_uploads import cleanup_expired
+    cleanup_expired()
     items = UploadedMedia.objects.filter(owner=request.user).defer('content')
     used = items.aggregate(total=Sum('byte_size'))['total'] or 0
     return render(request, 'catalog/uploads/library.html', {
@@ -54,7 +57,7 @@ def create(request):
             length = MAX_FILE_BYTES + 65537
         if length > MAX_FILE_BYTES + 65536:
             form = UploadForm(data={})
-            form.add_error(None, 'The upload is too large. Choose one file of up to 3 MiB.')
+            form.add_error(None, 'PDFs may be up to 3 MiB. MP3s may be up to 10 MB; enable JavaScript for larger songs.')
             status = 413
         else:
             try:
@@ -62,7 +65,7 @@ def create(request):
                 rejected = getattr(request,'upload_rejected',False)
                 form = UploadForm(post, None if rejected else files)
                 if rejected:
-                    form.add_error(None,'Choose exactly one PDF or MP3 of up to 3 MiB.')
+                    form.add_error(None,'Choose one PDF up to 3 MiB or MP3 up to 10 MB. Larger songs need JavaScript enabled.')
                 if len(files) != 1 or len(files.getlist('file')) != 1:
                     form.add_error(None, 'Choose exactly one PDF or MP3 file.')
                 if form.is_valid():
@@ -75,8 +78,10 @@ def create(request):
                         if existing:
                             messages.info(request, 'That file is already in your library.')
                             return redirect(existing)
+                        from .song_uploads import reservation
+                        reserved_bytes,reserved_files=reservation(request.user)
                         used = entries.aggregate(total=Sum('byte_size'))['total'] or 0
-                        if entries.count() >= MAX_USER_FILES or used + data['byte_size'] > MAX_USER_BYTES:
+                        if entries.count()+reserved_files >= MAX_USER_FILES or used+reserved_bytes+data['byte_size'] > MAX_USER_BYTES:
                             form.add_error(None, 'Your library is full (30 files or 30 MiB). Delete an upload to make room.')
                         else:
                             item = form.save(commit=False)
@@ -90,7 +95,7 @@ def create(request):
                 status = 400
             except (RequestDataTooBig, TooManyFieldsSent, TooManyFilesSent):
                 form = UploadForm(data={})
-                form.add_error(None, 'The upload is too large or has too many fields. Choose one file of up to 3 MiB.')
+                form.add_error(None, 'Choose one PDF up to 3 MiB or MP3 up to 10 MB. Larger songs need JavaScript enabled.')
                 status = 413
             except (IntegrityError, OperationalError):
                 form = UploadForm(data={})
@@ -118,6 +123,11 @@ def file(request, pk):
 
 def file_response(request,item):
     size = item.byte_size
+    filename = (slugify(item.title)[:80] or 'upload')+'.'+item.extension
+    if size > DIRECT_UPLOAD_BYTES and request.method == 'GET' and not request.headers.get('Range'):
+        return render(request, 'catalog/uploads/download.html', {
+            'upload':item, 'file_url':request.path, 'filename':filename,
+        })
     start, end, status = 0, size-1, 200
     selected = request.headers.get('Range')
     if selected:
@@ -134,13 +144,14 @@ def file_response(request,item):
         if start >= size or start > end:
             response = HttpResponse(status=416); response['Content-Range'] = f'bytes */{size}'; return response
         status = 206
+        if size > DIRECT_UPLOAD_BYTES:
+            end = min(end, start + CHUNK_BYTES - 1)
     body = b'' if request.method == 'HEAD' else bytes(item.content)[start:end+1]
     response = HttpResponse(body, content_type=item.mime, status=status)
     response['Content-Length'] = str(end-start+1)
     response['Accept-Ranges'] = 'bytes'
     if status == 206:
         response['Content-Range'] = f'bytes {start}-{end}/{size}'
-    filename = (slugify(item.title)[:80] or 'upload')+'.'+item.extension
     response['Content-Disposition'] = content_disposition_header(request.GET.get('download')=='1',filename)
     response['X-Content-Type-Options'] = 'nosniff'
     response['X-Frame-Options'] = 'SAMEORIGIN'

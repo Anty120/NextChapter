@@ -1,8 +1,8 @@
 # Personal books, songs and public review
 
 Sign in and choose **My Library → Upload a file**. Accepted formats are PDF
-books and MP3 songs, up to **3 MiB per file** and **30 files or 30 MiB per
-account**. Enter title, language and optional author/artist/description, and
+books up to **3 MiB** and MP3 songs up to **10 MB (10,000,000 bytes)**, with
+**30 files or 30 MiB per account**. Enter title, language and optional author/artist/description, and
 confirm permission to upload. Files start private and are not sent to Gemini.
 Other users cannot access their metadata, files or positions. `seed_demo`
 preserves uploads; they are separate from the bundled catalog.
@@ -58,14 +58,26 @@ python manage.py runserver
 ```
 
 Migration `catalog/0002_uploadedmedia_updated.py` adds the upload table.
+Migration `catalog/0003_songuploaddraft_and_more.py` raises only the MP3 bound
+and adds temporary chunk-upload drafts.
 `pypdf==7.0.0` and `mutagen==1.48.1` are hash-locked direct dependencies.
 Existing catalog models and seed inventory remain intact.
 
 Bounded bytes live in Django's configured database: SQLite locally, PostgreSQL/
 Neon when configured. No public static file, ephemeral server directory, bucket,
 new provider account or object-storage credential is used. Metadata/list queries
-defer binary content. Larger files need a separately scoped private object-store
-design, rather than raising the cap beyond hosting request/response limits.
+defer binary content. Songs above 3 MiB use authenticated, CSRF-protected chunks
+of at most 1 MiB, avoiding Vercel's 4.5 MB request/response cap. JavaScript is
+required for these larger uploads and downloads. Native audio uses bounded byte
+ranges for playback/seeking; Download MP3 prepares an identical file in the browser
+from those ranges. Files above 10 MB are rejected. No production verification
+is implied by local browser checks.
+
+One temporary draft per account reserves space against the unchanged account quota.
+Retries at the same offset are idempotent; Cancel removes the draft. Drafts expire
+after 30 minutes and are removed on library visits or new uploads. An operator may
+also run `python manage.py cleanup_upload_drafts` periodically. Completed draft
+bytes are cleared immediately; retried finalization returns the same saved file.
 
 A bounded in-memory multipart handler runs before CSRF parsing and caps actual
 file bytes and count. Ownership, CSRF, structure and quota checks run server-side.
@@ -82,7 +94,7 @@ work is explicitly resumed.
 
 ```sh
 python manage.py test tests catalog
-python manage.py test scripts.check_uploads_browser
+python manage.py test scripts.check_uploads_browser scripts.check_large_songs_browser
 ```
 
 Optional Playwright checks need an installed browser; set `ASSISTANCE_BROWSER`

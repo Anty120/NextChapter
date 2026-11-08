@@ -9,9 +9,9 @@ from mutagen.mp3 import MP3
 from pypdf import PdfReader, apply_configuration
 from pypdf.generic import ArrayObject, DictionaryObject, IndirectObject, NameObject
 
-MAX_FILE_BYTES = 3 * 1024 * 1024
-MAX_USER_BYTES = 30 * 1024 * 1024
-MAX_USER_FILES = 30
+from .upload_limits import MAX_PDF_BYTES, MAX_SONG_BYTES, MAX_USER_BYTES, MAX_USER_FILES
+
+MAX_FILE_BYTES = MAX_PDF_BYTES  # Compatibility for the bounded direct/PDF path.
 
 
 def inspect_file(upload):
@@ -19,10 +19,11 @@ def inspect_file(upload):
     extension = PurePosixPath(name).suffix.lower()
     if extension not in {'.pdf', '.mp3'}:
         raise ValidationError('Choose a PDF book (.pdf) or MP3 song (.mp3).')
-    if not upload.size or upload.size > MAX_FILE_BYTES:
-        raise ValidationError('Choose a nonempty file of up to 3 MiB.')
-    raw = upload.read(MAX_FILE_BYTES + 1)
-    if not raw or len(raw) > MAX_FILE_BYTES or len(raw) != upload.size:
+    limit = MAX_SONG_BYTES if extension == '.mp3' else MAX_PDF_BYTES
+    if not upload.size or upload.size > limit:
+        raise ValidationError('MP3 songs must be 10 MB or less; PDF books must be 3 MiB or less. Choose a nonempty file.')
+    raw = upload.read(limit + 1)
+    if not raw or len(raw) > limit or len(raw) != upload.size:
         raise ValidationError('The file is empty, too large, or incomplete. Choose it again.')
     if extension == '.pdf':
         details = inspect_pdf(raw)

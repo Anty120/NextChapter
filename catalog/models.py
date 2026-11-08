@@ -178,7 +178,8 @@ class UploadedMedia(models.Model):
         ordering = ['-created_at', '-id']
         constraints = [
             models.UniqueConstraint(fields=['owner', 'sha256'], name='unique_owner_uploaded_file'),
-            models.CheckConstraint(condition=models.Q(byte_size__gt=0, byte_size__lte=3145728), name='upload_bounded_bytes'),
+            models.CheckConstraint(condition=models.Q(byte_size__gt=0) & (
+                models.Q(kind='book',byte_size__lte=3145728) | models.Q(kind='song',byte_size__lte=10000000)), name='upload_bounded_bytes'),
             models.CheckConstraint(condition=models.Q(kind__in=['book', 'song']), name='upload_supported_kind'),
         ]
 
@@ -199,3 +200,18 @@ class UploadedMedia(models.Model):
     @property
     def public_url(self):
         return reverse('uploads:public_detail', args=[self.pk])
+
+
+class SongUploadDraft(models.Model):
+    """Private short-lived chunks; one bounded in-progress song per account."""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    owner = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
+    expected_size = models.PositiveIntegerField()
+    metadata = models.JSONField()
+    content = models.BinaryField(default=bytes,editable=False)
+    expires_at = models.DateTimeField(db_index=True)
+    complete = models.BooleanField(default=False)
+    finished_upload = models.ForeignKey(UploadedMedia,null=True,blank=True,on_delete=models.SET_NULL)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(expected_size__gt=3145728,expected_size__lte=10000000),name='song_draft_bounded_bytes')]

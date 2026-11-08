@@ -1,0 +1,7 @@
+"""File limits and transport bounds are deliberately separate."""
+MAX_PDF_BYTES = 3 * 1024 * 1024
+MAX_SONG_BYTES = 10_000_000
+DIRECT_UPLOAD_BYTES = MAX_PDF_BYTES
+CHUNK_BYTES = 1024 * 1024
+MAX_USER_BYTES = 30 * 1024 * 1024
+MAX_USER_FILES = 30

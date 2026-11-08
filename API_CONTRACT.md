@@ -4,7 +4,7 @@
 
 `/my-library/` lists the signed-in owner's PDF/MP3 uploads. `/my-library/new/`
 accepts GET and CSRF-protected multipart POST (`file`, `title`, `creator`,
-`language`, `description`, `permission`). Limits: 3 MiB/file, 30 files or 30 MiB/
+`language`, `description`, `permission`). Limits: PDF 3 MiB, MP3 10 MB (10,000,000 bytes); 30 files or 30 MiB/
 owner. UUID IDs, server-owned identity and SHA-256 deduplication; bytes persist in
 the database. Renamed/empty/truncated/unsupported files and active/encrypted PDFs
 are rejected by structural parsers. Parsing is bounded before CSRF reads files.
@@ -109,6 +109,21 @@ user activity; reviewers must use an isolated local database. Local runs use SQL
 The migration owner must coordinate schema changes before another agent generates
 a migration. API, schema and UI contract changes must land together or have explicit
 backward compatibility recorded in the issue.
+
+
+Songs larger than 3 MiB use session/CSRF-protected POSTs:
+`/my-library/song-upload/start/` accepts JSON title/creator/language/description,
+`permission: true`, and integer `size` (3 MiB < size <= 10,000,000). It returns
+`id`, `chunk_bytes` (1 MiB), `chunk_url`, `finish_url`, `cancel_url`. POST raw
+`application/octet-stream` to `chunk_url?offset=N`; returns the acknowledged
+`offset`. Exact retries are safe; out-of-order chunks return 409 with `offset`.
+POST `finish_url` validates the complete MP3 and returns `{url}` idempotently;
+POST `cancel_url` discards the temporary draft. Every draft is owner-only, expires
+after 30 minutes, and reserves quota. One draft per account. Expired IDs return
+404; deleted completed uploads return 410. Large file GETs require `Range` for
+audio bytes (responses capped at 1 MiB). Without Range they show a JavaScript
+download page that assembles the original bytes. HEAD reports the full size.
+Private/public/staff file permissions are checked on each range request.
 
 ## Optional Gemini assistance
 

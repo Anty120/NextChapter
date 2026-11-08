@@ -1,8 +1,13 @@
 from django.urls import path
 from . import upload_views as views
+from . import song_uploads
 
 app_name = 'uploads'
 urlpatterns = [
+    path('song-upload/start/',song_uploads.start,name='song_start'),
+    path('song-upload/<uuid:pk>/chunk/',song_uploads.chunk,name='song_chunk'),
+    path('song-upload/<uuid:pk>/finish/',song_uploads.finish,name='song_finish'),
+    path('song-upload/<uuid:pk>/cancel/',song_uploads.cancel,name='song_cancel'),
     path('',views.library,name='library'),
     path('new/',views.create,name='create'),
     path('<uuid:pk>/',views.detail,name='detail'),
