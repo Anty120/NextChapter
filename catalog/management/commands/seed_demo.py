@@ -1,15 +1,26 @@
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from catalog.demo_content import BAKERY, ENGLISH_AUDIO, FRENCH, GARDEN, LETTER, MARKET, TRAIN
+from catalog.demo_content import BAKERY, FRENCH, GARDEN, LETTER, MARKET, TRAIN
 from catalog.models import Club, MediaItem
+from catalog.library import LibraryError, load_demo_library
 
 
 class Command(BaseCommand):
-    help = 'Create/update the original demo catalog and club. Safe to run repeatedly; never resets user activity or passwords.'
+    help = 'Validate the complete bundled library, then update demo rows without resetting user activity.'
 
-    @transaction.atomic
     def handle(self, *args, **options):
+        try:
+            media, clubs, _ = load_demo_library()
+        except (LibraryError, OSError) as exc:
+            raise CommandError(str(exc)) from exc
+        with transaction.atomic():
+            self.seed(media, clubs)
+        self.stdout.write(self.style.SUCCESS(
+            f'Demo ready: {len(media)} manifest media, 6 original stories, '
+            f'{len(clubs) + 1} demo clubs. Existing IDs and user activity preserved.'))
+
+    def seed(self, media, clubs):
         stories = [
             ('la-panaderia', 'La panadería de la calle Sol', 'Spanish', 'A1', BAKERY, 'Warm bread, a blue door, and a morning shared with family.', 'A fictional neighborhood bakery. Bread and daily markets connect many communities; this story does not depict a specific country.'),
             ('el-mercado', 'Un día en el mercado', 'Spanish', 'A1', MARKET, 'A red shopping bag leads Elena to an unexpected story.', 'A fictional European neighborhood market. The euro reference places this particular scene in Spain, rather than representing all Spanish-speaking communities.'),
@@ -28,19 +39,16 @@ class Command(BaseCommand):
                 'published': True, 'audio_file': '',
             })
             item.full_clean()
-        audio, _ = MediaItem.objects.update_or_create(slug='the-blue-door', defaults={
-            'title': 'The Blue Door', 'creator': 'NextChapter Studio', 'language': 'English',
-            'format': MediaItem.Format.AUDIOBOOK, 'level': 'A1', 'text': ENGLISH_AUDIO,
-            'description': 'Listen to a gentle morning at the neighborhood bakery. Transcript included.',
-            'audio_file': 'catalog/audio/the-blue-door.wav', 'published': True,
-            'attribution': attribution + ' Bundled synthetic narration rendered with Microsoft Zira (en-US). This is a demo voice, not a human contributor.',
-            'cultural_context': 'An original English adaptation of our fictional bakery scene. No claim to represent a specific region or accent community.',
-            'difficulty_note': 'Approximate A1 editorial estimate: slow synthetic narration and short everyday sentences. Reading and listening comfort may differ.',
-        })
-        audio.full_clean()
+        # Retire unsupported narration without changing its identity or progress.
+        MediaItem.objects.filter(slug='the-blue-door').update(published=False)
+        for slug, defaults in media.items():
+            MediaItem.objects.update_or_create(slug=slug, defaults=defaults)
+        for slug, club in clubs.items():
+            Club.objects.update_or_create(slug=slug, defaults={
+                key: club[key] for key in ('name', 'language', 'description')
+            } | {'featured_media': MediaItem.objects.get(slug=club['featured_media_slug'])})
         Club.objects.update_or_create(slug='the-morning-pages', defaults={
             'name': 'The Morning Pages', 'language': 'Spanish',
             'description': 'A welcoming corner for short stories, everyday culture, and good conversation. All levels welcome. Start with the bakery story and share a memory of a place that feels like home.',
             'featured_media': MediaItem.objects.get(slug='la-panaderia'),
         })
-        self.stdout.write(self.style.SUCCESS('Demo ready: 7 media items and The Morning Pages club. Existing memberships, comments, reports, and progress preserved.'))
