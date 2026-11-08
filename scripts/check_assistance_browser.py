@@ -86,8 +86,13 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                     const originalCapture = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
                     navigator.mediaDevices.getUserMedia = async (...args) => {
                       const stream = await originalCapture(...args);
+                      stream.getTracks().forEach(track => {
+                        const stop = track.stop.bind(track);
+                        track.stop = () => { stop(); localStorage.setItem('qa-stopped-tracks',
+                          String(Number(localStorage.getItem('qa-stopped-tracks') || 0) + 1)); };
+                      });
                       window.capturedTracks.push(...stream.getTracks()); return stream;
-                    };""")
+                    }; window.captureAllowed = navigator.mediaDevices.getUserMedia;""")
                 context.route('**/assist/**', provider_fixture)
                 page = context.new_page()
                 page.on('pageerror', lambda error: errors.append(str(error)))
@@ -188,6 +193,15 @@ class AssistanceBrowserCheck(StaticLiveServerTestCase):
                     return {status:r.status, data:await r.json()}; }""", item.pk)
                 self.assertEqual(result['status'], 503)
                 self.assertEqual(result['data']['error']['code'], 'not_configured')
+                page.evaluate('() => { navigator.mediaDevices.getUserMedia = window.captureAllowed; }')
+                page.locator('#assist-open').click()
+                page.locator('#assist-practice').click()
+                page.locator('#practice-record').click()
+                expect(page.locator('#practice-status')).to_contain_text('Recording locally')
+                stopped_before = page.evaluate("Number(localStorage.getItem('qa-stopped-tracks') || 0)")
+                page.get_by_role('button', name='Log out', exact=True).click()
+                expect(page).to_have_url(self.live_server_url + '/')
+                self.assertGreater(page.evaluate("Number(localStorage.getItem('qa-stopped-tracks') || 0)"), stopped_before)
                 self.assertFalse(errors, errors)
             finally:
                 browser.close()

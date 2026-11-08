@@ -131,7 +131,12 @@ class AssistanceTests(TestCase):
         self.assertEqual(result.status_code, 200)
         payload = generate.call_args.args[1][1]['inlineData']
         self.assertEqual(base64.b64decode(payload['data']), raw)
-        self.upload(raw)
+        other = get_user_model().objects.create_user('other-speaker')
+        self.client.force_login(other)
+        second = {'transcript': 'deuxième', 'reference_match': 'Different words',
+            'feedback': [], 'uncertainty': 'Unable to assess', 'assessment_supported': False}
+        generate.return_value = [{'text': json.dumps(second)}]
+        self.assertEqual(self.upload(raw).json()['transcript'], 'deuxième')
         self.assertEqual(generate.call_count, 2)
         self.assertNotIn('score', result.json())
         self.assertFalse(any('bonjour' in str(value) for value in cache._cache.values()))
