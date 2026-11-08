@@ -1,1 +1,20 @@
 .practice-panel{margin-top:1rem;padding:1rem;border:1px solid currentColor;border-radius:.75rem;max-width:100%;overflow-wrap:anywhere}.practice-panel[hidden],.practice-panel [hidden]{display:none!important}.practice-panel .practice-target{font-size:1.15rem;font-weight:600;white-space:pre-wrap}.practice-panel .practice-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin:1rem 0}.practice-panel button{min-height:44px;max-width:100%;white-space:normal}.practice-panel button:focus-visible,.practice-panel audio:focus-visible{outline:3px solid #ad4d17;outline-offset:3px}.practice-panel audio{display:block;width:100%;max-width:100%;margin:.5rem 0 1rem}.practice-panel #practice-timer{font-weight:700;color:#9c241a}.practice-panel #practice-feedback{padding-left:1.3rem}.practice-panel label{display:block;font-weight:600}.practice-panel p{line-height:1.5}
+
+/* Keep practice actions legible inside both the reader and compact word popup. */
+#practice-panel{border-color:#e2e4e0;background:#fcfdfb;border-radius:12px;font:14px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#26352c}
+#practice-panel .practice-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:16px 0;padding-top:12px;border-top:1px solid #e5e8e2}
+#practice-panel .practice-actions button{appearance:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:0;min-height:44px;max-width:100%;padding:10px 12px;border:1px solid #ccd4c9;border-radius:10px;background:#fff;color:#304336;box-shadow:0 1px 2px #2135260a;font:600 12px/1.35 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;text-align:center;white-space:normal;cursor:pointer;transition:background-color .15s,border-color .15s,box-shadow .15s,transform .15s}
+#practice-panel .practice-actions button span{min-width:0;overflow-wrap:normal}
+#practice-panel .practice-actions svg{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#practice-panel #practice-record{background:#ffdb65;border-color:#e3bd46;color:#382d10}
+#practice-panel #practice-analyze{background:#304f3d;border-color:#304f3d;color:#fff}
+#practice-panel #practice-stop{background:#fff0ed;border-color:#d6aaa0;color:#963b2c;grid-column:1/-1}
+#practice-panel #practice-cancel{grid-column:1/-1;background:transparent;border-color:transparent;box-shadow:none;color:#5d695f}
+#practice-panel .practice-actions button:disabled,#practice-panel #practice-record:disabled,#practice-panel #practice-analyze:disabled{background:#edf0eb;border-color:#e1e6de;color:#788273;box-shadow:none;opacity:1;cursor:not-allowed}
+#practice-panel .practice-actions button:focus-visible{outline:3px solid #ad4d17;outline-offset:3px}
+#practice-panel .practice-actions button:active:not(:disabled){transform:translateY(1px);box-shadow:none}
+#practice-panel label[for=practice-replay]{font-size:12px;letter-spacing:.02em;color:#53604f;margin-top:16px}
+#practice-panel #practice-replay{margin-top:8px;border-radius:12px}
+@media(hover:hover){#practice-panel .practice-actions button:hover:not(:disabled){background:#f3f6ef;border-color:#879c88;box-shadow:0 3px 8px #21352610}#practice-panel #practice-record:hover:not(:disabled){background:#ffd03d;border-color:#d5aa2d}#practice-panel #practice-analyze:hover:not(:disabled){background:#243f2e;border-color:#243f2e}#practice-panel #practice-stop:hover:not(:disabled){background:#fbe1da;border-color:#bb8276}#practice-panel #practice-cancel:hover{background:#edf1e9}}
+@media(max-width:360px){#practice-panel .practice-actions{grid-template-columns:minmax(0,1fr)}#practice-panel .practice-actions button{justify-content:flex-start;padding-inline:14px}#practice-panel #practice-cancel{justify-content:center}}
+@media(prefers-reduced-motion:reduce){#practice-panel .practice-actions button{transition:none}#practice-panel .practice-actions button:active:not(:disabled){transform:none}}
