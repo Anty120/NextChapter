@@ -2,7 +2,8 @@
 
 Feature parent #60; backend #61; panel #62; recorder #63; integration #64.
 Integration branch `work/issue-64-f3955c49` incorporates core `run48/integration`
-at `67ca4b8` (PR #65). No main merge/deployment/submission is performed.
+at `67ca4b8` (PR #65), subsequently merged with actual main `ddc2080` for compatibility.
+Gemini itself is not merged to main. No deployment/submission is performed.
 
 ## Live provider and browser receipts
 
@@ -45,7 +46,8 @@ Unicode codepoint offsets after an emoji, safe text rendering, 320/390 px layout
 keyboard picker/Escape, playable WAV, playback control, quota error, microphone
 permission refusal, no upload before Analyze, PCM WAV duration/container, local
 replay, duplicate Analyze prevention while pending, 15-second automatic stop,
-discard/close track cleanup and missing-key 503 from the real backend.
+discard/close/logout track cleanup and missing-key 503 from the real backend.
+Separate practice responses and per-user budgets are verified for two users.
 Screenshots were inspected; test output lives in the OS temp directory and contains
 only public synthetic fixtures. Automated viewport checks do not substitute for
 screen-reader or physical mobile-device testing.
@@ -55,6 +57,16 @@ conversion of hash-addressed bundled text, and test skips are restricted to the
 OS's missing-symlink-privilege error. No resource hashes/content were weakened.
 `seed_demo` twice and `verify_demo` validate 12 media items and four clubs; static
 collection includes both core and assistance assets.
+
+At the user's request, the actual clean main checkout was fast-forwarded to
+`ddc2080` and its local `C:/Users/antho/NextChapter/db.sqlite3` was backed up via
+SQLite's backup API. Main migrations, two seed runs and verify_demo pass: six
+stories, two books, two audiobooks, two songs, four clubs. Under production-style
+static settings, 18 catalog/media/club pages return 200 and all four audio assets
+return 206 byte ranges with correct MIME/length. Existing localhost:8000 main
+serves the new catalog. No source edits were left on main. Checkout used
+`core.autocrlf=false` for exact manifest bytes; the durable `.gitattributes` fix
+is in this PR. This is not a cloud/Neon seed or live production deployment receipt.
 
 ## Remaining acceptance boundary
 
