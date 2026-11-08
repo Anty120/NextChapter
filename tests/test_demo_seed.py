@@ -314,3 +314,21 @@ class DemoSeedTests(TestCase):
                 self.assertEqual(MediaItem.objects.count(), 0)
                 self.assertEqual(Club.objects.count(), 0)
                 path.write_bytes(original)
+
+    def test_manifest_can_include_original_morning_pages_without_duplicate_club(self):
+        self.clubs.insert(0, dict(slug='the-morning-pages', name='The Morning Pages', language='Spanish',
+                                 description='Welcome! Share a memory from the bakery story.',
+                                 featured_media_slug='la-panaderia'))
+        self.save()
+        self.command('seed_demo')
+        original_pk = Club.objects.get(slug='the-morning-pages').pk
+        self.command('seed_demo')
+        self.assertEqual(Club.objects.count(), 4)
+        club = Club.objects.get(slug='the-morning-pages')
+        self.assertEqual(club.pk, original_pk)
+        self.assertEqual(club.description, self.clubs[0]['description'])
+        self.assertIn('4 demo clubs', self.command('verify_demo'))
+        self.clubs[0]['featured_media_slug'] = 'missing-story'
+        self.save()
+        with self.assertRaisesMessage(CommandError, 'invalid featured media'):
+            self.command('seed_demo')

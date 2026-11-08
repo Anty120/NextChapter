@@ -18,7 +18,7 @@ class Command(BaseCommand):
             self.seed(media, clubs)
         self.stdout.write(self.style.SUCCESS(
             f'Demo ready: {len(media)} manifest media, 6 original stories, '
-            f'{len(clubs) + 1} demo clubs. Existing IDs and user activity preserved.'))
+            f"{len(set(clubs) | {'the-morning-pages'})} demo clubs. Existing IDs and user activity preserved."))
 
     def seed(self, media, clubs):
         stories = [
@@ -47,8 +47,9 @@ class Command(BaseCommand):
             Club.objects.update_or_create(slug=slug, defaults={
                 key: club[key] for key in ('name', 'language', 'description')
             } | {'featured_media': MediaItem.objects.get(slug=club['featured_media_slug'])})
-        Club.objects.update_or_create(slug='the-morning-pages', defaults={
-            'name': 'The Morning Pages', 'language': 'Spanish',
-            'description': 'A welcoming corner for short stories, everyday culture, and good conversation. All levels welcome. Start with the bakery story and share a memory of a place that feels like home.',
-            'featured_media': MediaItem.objects.get(slug='la-panaderia'),
-        })
+        if 'the-morning-pages' not in clubs:
+            Club.objects.update_or_create(slug='the-morning-pages', defaults={
+                'name': 'The Morning Pages', 'language': 'Spanish',
+                'description': 'A welcoming corner for short stories, everyday culture, and good conversation. All levels welcome. Start with the bakery story and share a memory of a place that feels like home.',
+                'featured_media': MediaItem.objects.get(slug='la-panaderia'),
+            })

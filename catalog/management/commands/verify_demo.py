@@ -92,4 +92,4 @@ class Command(BaseCommand):
             raise CommandError(str(exc)) from exc
         self.stdout.write(self.style.SUCCESS(
             f'Verified {len(media)} manifest media + 6 original stories; '
-            f'{len(clubs) + 1} demo clubs; all required assets and playable paths valid.'))
+            f"{len(set(clubs) | {'the-morning-pages'})} demo clubs; all required assets and playable paths valid."))

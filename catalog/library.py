@@ -227,11 +227,13 @@ def load_demo_library():
     for club in _read_manifest('clubs.json', 'clubs'):
         _require(isinstance(club, dict), 'Club entry must be an object')
         slug = club.get('slug')
-        _require(_nonempty(slug) and slug not in clubs and slug != 'the-morning-pages', f'Duplicate/reserved club slug: {slug}')
+        _require(_nonempty(slug) and slug not in clubs, f'Duplicate/reserved club slug: {slug}')
         for field in ('name', 'language', 'description', 'featured_media_slug'):
             _require(_nonempty(club.get(field)), f'{slug}: missing club {field}')
         target = club['featured_media_slug']
-        _require(target in media and media[target]['published'], f'{slug}: invalid featured media: {target}')
+        _require((target in media and media[target]['published'])
+                 or (slug == 'the-morning-pages' and target == 'la-panaderia'),
+                 f'{slug}: invalid featured media: {target}')
         try:
             Club(**{key: club[key] for key in ('slug', 'name', 'language', 'description')}).full_clean(
                 exclude=['featured_media'], validate_unique=False, validate_constraints=False)
