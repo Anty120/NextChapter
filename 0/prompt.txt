@@ -1,0 +1,43 @@
+explain the current status of the project. DO NOT THINK LONG. You must simply give an 2 sentence explanation.
+
+---
+
+Review the github projects and issues, and start closing issues we have already done. Then, decide on which open issues we can focus on next. Finally, make the UI better by using motion.dev or springs or whatever else would work best.
+
+---
+
+explain #11. Put a blocker on #29, #64, and #21, as we are not working on them currently or in the near future
+
+---
+
+Answer the following about the app, since this is for a hackathon: ## Inspiration
+
+## What it does
+
+## How we built it
+
+## Challenges we ran into
+
+## Accomplishments that we're proud of
+
+## What we learned
+
+## What's next for NextChapter
+
+---
+
+what frameworks, langauges, tools, etc. have we used in this project? I need an exhaustive breakdown.
+
+---
+
+Build an area for users to be able to upload their own books and songs (like mp3 files and pdf for now).
+
+---
+
+<send_user_message_question_reply>
+[{"answer":"Private library plus public review submissions","question":"I’m building uploads as a private “My Library” for each user, with PDF reading and MP3 playback. Should uploaded files stay private, or should users also be able to submit them for public catalog review?","questionItemId":"[\"request_user_input_async\",\"REDACTED\",0]"}]
+</send_user_message_question_reply>
+
+---
+
+Each song should be able to be 10MB or less, not 3.
